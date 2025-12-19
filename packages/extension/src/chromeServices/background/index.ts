@@ -38,7 +38,15 @@ import {
   ResponsePayload,
   ResponseType,
   RequestMessage,
-  RequestPayload
+  RequestPayload,
+  // AMM
+  ReceiveAMMCreateContentMessage,
+  ReceiveAMMDeleteContentMessage,
+  ReceiveAMMDepositContentMessage,
+  ReceiveAMMWithdrawContentMessage,
+  ReceiveAMMVoteContentMessage,
+  ReceiveAMMBidContentMessage,
+  ReceiveAMMClawbackContentMessage
 } from '@gemwallet/constants';
 
 import {
@@ -61,7 +69,15 @@ import {
   PARAMETER_TRANSACTION_TRUSTLINE,
   PARAMETER_TRANSACTION_SET_ACCOUNT,
   PARAMETER_TRANSACTION_SET_HOOK,
-  PARAMETER_TRANSACTION_SET_REGULAR_KEY
+  PARAMETER_TRANSACTION_SET_REGULAR_KEY,
+  // AMM
+  PARAMETER_TRANSACTION_AMM_CREATE,
+  PARAMETER_TRANSACTION_AMM_DELETE,
+  PARAMETER_TRANSACTION_AMM_DEPOSIT,
+  PARAMETER_TRANSACTION_AMM_WITHDRAW,
+  PARAMETER_TRANSACTION_AMM_VOTE,
+  PARAMETER_TRANSACTION_AMM_BID,
+  PARAMETER_TRANSACTION_AMM_CLAWBACK
 } from '../../constants/parameters';
 import { STORAGE_CURRENT_WINDOW_ID, STORAGE_STATE_TRANSACTION } from '../../constants/storage';
 import { generateKey } from '../../utils/storage';
@@ -529,6 +545,93 @@ chrome.runtime.onMessage.addListener(
         console.error(e);
       }
       /*
+       * AMM Request messages
+       */
+    } else if (type === 'REQUEST_AMM_CREATE/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_AMM_CREATE,
+          receivingMessage: 'RECEIVE_AMM_CREATE/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_AMM_DELETE/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_AMM_DELETE,
+          receivingMessage: 'RECEIVE_AMM_DELETE/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_AMM_DEPOSIT/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_AMM_DEPOSIT,
+          receivingMessage: 'RECEIVE_AMM_DEPOSIT/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_AMM_WITHDRAW/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_AMM_WITHDRAW,
+          receivingMessage: 'RECEIVE_AMM_WITHDRAW/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_AMM_VOTE/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_AMM_VOTE,
+          receivingMessage: 'RECEIVE_AMM_VOTE/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_AMM_BID/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_AMM_BID,
+          receivingMessage: 'RECEIVE_AMM_BID/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_AMM_CLAWBACK/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_AMM_CLAWBACK,
+          receivingMessage: 'RECEIVE_AMM_CLAWBACK/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+      /*
        * Receive messages
        */
     } else if (type === 'RECEIVE_SEND_PAYMENT/V3') {
@@ -815,6 +918,86 @@ chrome.runtime.onMessage.addListener(
       handleTransactionResponse<ReceiveSubmitBulkTransactionsContentMessage>(payload.id, {
         app,
         type: 'RECEIVE_SUBMIT_BULK_TRANSACTIONS/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+      /*
+       * AMM Receive messages
+       */
+    } else if (type === 'RECEIVE_AMM_CREATE/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveAMMCreateContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_AMM_CREATE/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_AMM_DELETE/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveAMMDeleteContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_AMM_DELETE/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_AMM_DEPOSIT/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveAMMDepositContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_AMM_DEPOSIT/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_AMM_WITHDRAW/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveAMMWithdrawContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_AMM_WITHDRAW/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_AMM_VOTE/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveAMMVoteContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_AMM_VOTE/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_AMM_BID/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveAMMBidContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_AMM_BID/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_AMM_CLAWBACK/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveAMMClawbackContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_AMM_CLAWBACK/V3',
         payload: {
           type: ResponseType.Response,
           result: payload.result,

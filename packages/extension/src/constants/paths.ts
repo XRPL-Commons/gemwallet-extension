@@ -39,3 +39,13 @@ export const TRANSACTION_PATH = '/transaction';
 export const TRUSTED_APPS_PATH = '/trusted-apps';
 export const WELCOME_PATH = '/welcome';
 export const NFT_VIEWER_PATH = '/nft-viewer';
+// AMM
+export const AMM_CREATE_PATH = '/amm-create';
+export const AMM_DELETE_PATH = '/amm-delete';
+export const AMM_DEPOSIT_PATH = '/amm-deposit';
+export const AMM_WITHDRAW_PATH = '/amm-withdraw';
+export const AMM_VOTE_PATH = '/amm-vote';
+export const AMM_BID_PATH = '/amm-bid';
+export const AMM_CLAWBACK_PATH = '/amm-clawback';
+// MPToken
+export const MPTOKEN_REMOVE_PATH = '/mptoken-remove';

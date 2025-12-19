@@ -11,6 +11,7 @@ import {
   AccountTxRequest,
   AccountTxTransaction,
   Client,
+  RIPPLED_API_V1,
   LedgerEntryRequest,
   LedgerEntryResponse,
   NFTInfoResponse,
@@ -29,7 +30,15 @@ import {
   TrustSet,
   TxResponse,
   validate,
-  Wallet
+  Wallet,
+  // AMM
+  AMMCreate,
+  AMMDelete,
+  AMMDeposit,
+  AMMWithdraw,
+  AMMVote,
+  AMMBid,
+  AMMClawback
 } from 'xrpl';
 
 import {
@@ -133,6 +142,39 @@ interface SetHookResponse {
   hash: string;
 }
 
+// AMM Response interfaces
+interface AMMCreateResponse {
+  hash: string;
+}
+
+interface AMMDeleteResponse {
+  hash: string;
+}
+
+interface AMMDepositResponse {
+  hash: string;
+}
+
+interface AMMWithdrawResponse {
+  hash: string;
+}
+
+interface AMMVoteResponse {
+  hash: string;
+}
+
+interface AMMBidResponse {
+  hash: string;
+}
+
+interface AMMClawbackResponse {
+  hash: string;
+}
+
+interface MPTokenAuthorizeResponse {
+  hash: string;
+}
+
 interface Props {
   children: React.ReactElement;
 }
@@ -146,7 +188,7 @@ export interface LedgerContextType {
   signMessage: (message: string, isHex: boolean) => string | undefined;
   estimateNetworkFees: (payload: Transaction) => Promise<string>;
   getNFTs: (payload?: GetNFTRequest) => Promise<AccountNFTokenResponse>;
-  getTransactions: () => Promise<AccountTxTransaction[]>;
+  getTransactions: () => Promise<AccountTxTransaction<typeof RIPPLED_API_V1>[]>;
   fundWallet: () => Promise<FundWalletResponse>;
   mintNFT: (payload: NFTokenMint) => Promise<NFTokenIDResponse>;
   createNFTOffer: (payload: NFTokenCreateOffer) => Promise<CreateNFTOfferResponse>;
@@ -168,6 +210,16 @@ export interface LedgerContextType {
   getNFTInfo: (NFTokenID: string) => Promise<NFTInfoResponse>;
   getLedgerEntry: (ID: string) => Promise<LedgerEntryResponse>;
   setHook: (payload: SetHook) => Promise<SetHookResponse>;
+  // AMM
+  ammCreate: (payload: AMMCreate) => Promise<AMMCreateResponse>;
+  ammDelete: (payload: AMMDelete) => Promise<AMMDeleteResponse>;
+  ammDeposit: (payload: AMMDeposit) => Promise<AMMDepositResponse>;
+  ammWithdraw: (payload: AMMWithdraw) => Promise<AMMWithdrawResponse>;
+  ammVote: (payload: AMMVote) => Promise<AMMVoteResponse>;
+  ammBid: (payload: AMMBid) => Promise<AMMBidResponse>;
+  ammClawback: (payload: AMMClawback) => Promise<AMMClawbackResponse>;
+  // MPToken
+  removeMPTokenAuthorization: (mptIssuanceId: string) => Promise<MPTokenAuthorizeResponse>;
 }
 
 const LedgerContext = createContext<LedgerContextType>({
@@ -198,7 +250,17 @@ const LedgerContext = createContext<LedgerContextType>({
   deleteAccount: () => new Promise(() => {}),
   getNFTInfo: () => new Promise(() => {}),
   getLedgerEntry: () => new Promise(() => {}),
-  setHook: () => new Promise(() => {})
+  setHook: () => new Promise(() => {}),
+  // AMM
+  ammCreate: () => new Promise(() => {}),
+  ammDelete: () => new Promise(() => {}),
+  ammDeposit: () => new Promise(() => {}),
+  ammWithdraw: () => new Promise(() => {}),
+  ammVote: () => new Promise(() => {}),
+  ammBid: () => new Promise(() => {}),
+  ammClawback: () => new Promise(() => {}),
+  // MPToken
+  removeMPTokenAuthorization: () => new Promise(() => {})
 });
 
 const LedgerProvider: FC<Props> = ({ children }) => {
@@ -725,6 +787,187 @@ const LedgerProvider: FC<Props> = ({ children }) => {
   );
 
   /*
+   * AMM Transactions
+   */
+  const ammCreate = useCallback(
+    async (payload: AMMCreate): Promise<AMMCreateResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't create AMM");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const ammDelete = useCallback(
+    async (payload: AMMDelete): Promise<AMMDeleteResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't delete AMM");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const ammDeposit = useCallback(
+    async (payload: AMMDeposit): Promise<AMMDepositResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't deposit to AMM");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const ammWithdraw = useCallback(
+    async (payload: AMMWithdraw): Promise<AMMWithdrawResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't withdraw from AMM");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const ammVote = useCallback(
+    async (payload: AMMVote): Promise<AMMVoteResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't vote on AMM");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const ammBid = useCallback(
+    async (payload: AMMBid): Promise<AMMBidResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't place AMM bid");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const ammClawback = useCallback(
+    async (payload: AMMClawback): Promise<AMMClawbackResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't clawback from AMM");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  /*
+   * MPToken Transactions
+   */
+  const removeMPTokenAuthorization = useCallback(
+    async (mptIssuanceId: string): Promise<MPTokenAuthorizeResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          // Build MPTokenAuthorize transaction with tfMPTUnauthorize flag
+          const transaction = {
+            TransactionType: 'MPTokenAuthorize' as const,
+            Account: wallet.publicAddress,
+            MPTokenIssuanceID: mptIssuanceId,
+            Flags: 1 // tfMPTUnauthorize
+          };
+          const { hash } = await handleTransaction({ transaction, client, wallet });
+          if (!hash) throw new Error("Couldn't remove MPToken authorization");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  /*
    * Getters
    */
   const getNFTs = useCallback(
@@ -755,22 +998,27 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     [client, getCurrentWallet]
   );
 
-  const getTransactions = useCallback(async () => {
+  const getTransactions = useCallback(async (): Promise<
+    AccountTxTransaction<typeof RIPPLED_API_V1>[]
+  > => {
     const wallet = getCurrentWallet();
     if (!client) {
       throw new Error(LEDGER_CONNECTION_ERROR);
     } else if (!wallet) {
       throw new Error('You need to have a wallet connected to make a transaction');
     } else {
-      // Prepare the transaction
+      // Prepare the transaction - use api_version 1 for backward compatibility
       const prepared = await client.request<AccountTxRequest>({
         command: 'account_tx',
-        account: wallet.publicAddress
-      });
+        account: wallet.publicAddress,
+        api_version: 1
+      } as AccountTxRequest);
       if (!prepared.result?.transactions) {
         throw new Error("Couldn't get the transaction history");
       } else {
-        return prepared.result.transactions;
+        return prepared.result.transactions as unknown as AccountTxTransaction<
+          typeof RIPPLED_API_V1
+        >[];
       }
     }
   }, [client, getCurrentWallet]);
@@ -889,7 +1137,17 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     getNFTInfo,
     getLedgerEntry,
     setRegularKey,
-    setHook
+    setHook,
+    // AMM
+    ammCreate,
+    ammDelete,
+    ammDeposit,
+    ammWithdraw,
+    ammVote,
+    ammBid,
+    ammClawback,
+    // MPToken
+    removeMPTokenAuthorization
   };
 
   return <LedgerContext.Provider value={value}>{children}</LedgerContext.Provider>;

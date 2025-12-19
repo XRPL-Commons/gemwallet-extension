@@ -8,7 +8,14 @@ import {
   OfferCreate,
   Payment,
   TrustSet,
-  SetRegularKey
+  SetRegularKey,
+  AMMCreate,
+  AMMDelete,
+  AMMDeposit,
+  AMMWithdraw,
+  AMMVote,
+  AMMBid,
+  AMMClawback
 } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { BaseTransaction } from 'xrpl/dist/npm/models/transactions/common';
@@ -26,7 +33,14 @@ import {
   SendPaymentRequest,
   SetAccountRequest,
   SetTrustlineRequest,
-  SetRegularKeyRequest
+  SetRegularKeyRequest,
+  AMMCreateRequest,
+  AMMDeleteRequest,
+  AMMDepositRequest,
+  AMMWithdrawRequest,
+  AMMVoteRequest,
+  AMMBidRequest,
+  AMMClawbackRequest
 } from '@gemwallet/constants';
 
 import { WalletLedger } from '../../../types';
@@ -186,6 +200,97 @@ export const buildSetRegularKey = (
   };
 };
 
+export const buildAMMCreate = (params: AMMCreateRequest, wallet: WalletLedger): AMMCreate => {
+  handleAmountHexCurrency(params.Amount as Amount);
+  handleAmountHexCurrency(params.Amount2 as Amount);
+
+  return {
+    ...(buildBaseTransaction(params, wallet, 'AMMCreate') as AMMCreate),
+    Amount: params.Amount,
+    Amount2: params.Amount2,
+    TradingFee: params.TradingFee
+  };
+};
+
+export const buildAMMDelete = (params: AMMDeleteRequest, wallet: WalletLedger): AMMDelete => {
+  return {
+    ...(buildBaseTransaction(params, wallet, 'AMMDelete') as AMMDelete),
+    Asset: params.Asset,
+    Asset2: params.Asset2
+  };
+};
+
+export const buildAMMDeposit = (params: AMMDepositRequest, wallet: WalletLedger): AMMDeposit => {
+  if (params.Amount) handleAmountHexCurrency(params.Amount as Amount);
+  if (params.Amount2) handleAmountHexCurrency(params.Amount2 as Amount);
+  if (params.EPrice) handleAmountHexCurrency(params.EPrice as Amount);
+
+  return {
+    ...(buildBaseTransaction(params, wallet, 'AMMDeposit') as AMMDeposit),
+    Asset: params.Asset,
+    Asset2: params.Asset2,
+    ...(params.Amount && { Amount: params.Amount }),
+    ...(params.Amount2 && { Amount2: params.Amount2 }),
+    ...(params.EPrice && { EPrice: params.EPrice }),
+    ...(params.LPTokenOut && { LPTokenOut: params.LPTokenOut }),
+    ...(params.flags !== undefined && { Flags: params.flags })
+  };
+};
+
+export const buildAMMWithdraw = (params: AMMWithdrawRequest, wallet: WalletLedger): AMMWithdraw => {
+  if (params.Amount) handleAmountHexCurrency(params.Amount as Amount);
+  if (params.Amount2) handleAmountHexCurrency(params.Amount2 as Amount);
+  if (params.EPrice) handleAmountHexCurrency(params.EPrice as Amount);
+
+  return {
+    ...(buildBaseTransaction(params, wallet, 'AMMWithdraw') as AMMWithdraw),
+    Asset: params.Asset,
+    Asset2: params.Asset2,
+    ...(params.Amount && { Amount: params.Amount }),
+    ...(params.Amount2 && { Amount2: params.Amount2 }),
+    ...(params.EPrice && { EPrice: params.EPrice }),
+    ...(params.LPTokenIn && { LPTokenIn: params.LPTokenIn }),
+    ...(params.flags !== undefined && { Flags: params.flags })
+  };
+};
+
+export const buildAMMVote = (params: AMMVoteRequest, wallet: WalletLedger): AMMVote => {
+  return {
+    ...(buildBaseTransaction(params, wallet, 'AMMVote') as AMMVote),
+    Asset: params.Asset,
+    Asset2: params.Asset2,
+    TradingFee: params.TradingFee
+  };
+};
+
+export const buildAMMBid = (params: AMMBidRequest, wallet: WalletLedger): AMMBid => {
+  // BidMin and BidMax are IssuedCurrencyAmount (LP tokens), handle hex currency
+  if (params.BidMax) handleAmountHexCurrency(params.BidMax);
+  if (params.BidMin) handleAmountHexCurrency(params.BidMin);
+
+  return {
+    ...(buildBaseTransaction(params, wallet, 'AMMBid') as AMMBid),
+    Asset: params.Asset,
+    Asset2: params.Asset2,
+    ...(params.BidMax && { BidMax: params.BidMax }),
+    ...(params.BidMin && { BidMin: params.BidMin }),
+    ...(params.AuthAccounts && { AuthAccounts: params.AuthAccounts })
+  };
+};
+
+export const buildAMMClawback = (params: AMMClawbackRequest, wallet: WalletLedger): AMMClawback => {
+  // Amount is IssuedCurrencyAmount, handle hex currency
+  if (params.Amount) handleAmountHexCurrency(params.Amount);
+
+  return {
+    ...(buildBaseTransaction(params, wallet, 'AMMClawback') as AMMClawback),
+    Asset: params.Asset,
+    Asset2: params.Asset2,
+    Holder: params.Holder,
+    ...(params.Amount && { Amount: params.Amount })
+  };
+};
+
 export const buildBaseTransaction = (
   payload: BaseTransactionRequest,
   wallet: WalletLedger,
@@ -202,6 +307,13 @@ export const buildBaseTransaction = (
     | 'OfferCancel'
     | 'AccountDelete'
     | 'SetRegularKey'
+    | 'AMMCreate'
+    | 'AMMDelete'
+    | 'AMMDeposit'
+    | 'AMMWithdraw'
+    | 'AMMVote'
+    | 'AMMBid'
+    | 'AMMClawback'
 ): BaseTransaction => ({
   TransactionType: txType,
   Account: wallet.publicAddress,

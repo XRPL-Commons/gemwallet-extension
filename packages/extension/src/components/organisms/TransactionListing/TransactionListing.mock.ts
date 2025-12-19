@@ -1,7 +1,11 @@
-import { AccountTxTransaction } from 'xrpl';
+import { AccountTxTransaction, RIPPLED_API_V1 } from 'xrpl';
 
-export const mockTransactions = [
+// Use V1 API type for backward compatibility (uses `tx` field instead of `tx_json`)
+type AccountTxTransactionV1 = AccountTxTransaction<typeof RIPPLED_API_V1>;
+
+export const mockTransactions: AccountTxTransactionV1[] = [
   {
+    ledger_index: 45473744,
     meta: {
       AffectedNodes: [
         {
@@ -108,6 +112,7 @@ export const mockTransactions = [
     validated: true
   },
   {
+    ledger_index: 45473736,
     meta: {
       AffectedNodes: [
         {
@@ -182,6 +187,7 @@ export const mockTransactions = [
     validated: true
   },
   {
+    ledger_index: 45473730,
     meta: {
       AffectedNodes: [
         {
@@ -247,6 +253,7 @@ export const mockTransactions = [
     validated: true
   },
   {
+    ledger_index: 45473675,
     meta: {
       AffectedNodes: [
         {
@@ -334,5 +341,4 @@ export const mockTransactions = [
     },
     validated: true
   }
-  // Casting as AccountTxTransaction[] as there are still some wrong typing on XRPL JS.
-] as AccountTxTransaction[];
+];

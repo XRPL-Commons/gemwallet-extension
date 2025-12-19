@@ -7,6 +7,10 @@ import {
   OfferCreateFlagsInterface,
   AMMDepositFlagsInterface,
   AMMWithdrawFlagsInterface,
+  AMMClawbackFlagsInterface,
+  MPTokenIssuanceCreateFlagsInterface,
+  MPTokenIssuanceSetFlagsInterface,
+  MPTokenAuthorizeFlagsInterface,
   SubmittableTransaction as XRPLTx
 } from 'xrpl';
 
@@ -48,3 +52,13 @@ export type CreateOfferFlags = OfferCreateFlagsInterface | number;
 export type DepositAMMFlags = AMMDepositFlagsInterface | number;
 
 export type WithdrawAMMFlags = AMMWithdrawFlagsInterface | number;
+
+// MPT Flags
+export type MPTokenIssuanceCreateFlags = MPTokenIssuanceCreateFlagsInterface | number;
+
+export type MPTokenIssuanceSetFlags = MPTokenIssuanceSetFlagsInterface | number;
+
+export type MPTokenAuthorizeFlags = MPTokenAuthorizeFlagsInterface | number;
+
+// AMM Clawback Flags
+export type AMMClawbackFlags = AMMClawbackFlagsInterface | number;
