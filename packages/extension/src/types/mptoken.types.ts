@@ -33,6 +33,35 @@ export interface MPTokenIssuance {
 }
 
 /**
+ * Asset class values for MPToken metadata (XLS-89 spec)
+ */
+export type MPTokenAssetClass = 'rwa' | 'memes' | 'wrapped' | 'gaming' | 'defi' | 'other';
+
+/**
+ * Asset subclass values for MPToken metadata (only applicable when asset_class is 'rwa')
+ */
+export type MPTokenAssetSubclass =
+  | 'stablecoin'
+  | 'commodity'
+  | 'real_estate'
+  | 'private_credit'
+  | 'equity'
+  | 'treasury'
+  | 'other';
+
+/**
+ * URI object within the uris array (XLS-89 spec)
+ */
+export interface MPTokenURI {
+  // URI value
+  u?: string;
+  // URI type/category
+  c?: string;
+  // URI title
+  t?: string;
+}
+
+/**
  * Decoded MPToken metadata following XLS-89 spec
  * Short field names (t, n, d, i) and long names (ticker, name, desc, icon) are both supported
  */
@@ -51,38 +80,24 @@ export interface MPTokenMetadata {
   icon?: string;
   i?: string;
   // Asset class (short: ac, long: asset_class)
-  assetClass?: string;
-  ac?: string;
-  asset_class?: string;
-  // Asset subclass (short: as, long: asset_subclass)
-  assetSubclass?: string;
-  as?: string;
-  asset_subclass?: string;
+  assetClass?: MPTokenAssetClass;
+  ac?: MPTokenAssetClass;
+  asset_class?: MPTokenAssetClass;
+  // Asset subclass (short: as, long: asset_subclass) - only required if asset_class is 'rwa'
+  assetSubclass?: MPTokenAssetSubclass;
+  as?: MPTokenAssetSubclass;
+  asset_subclass?: MPTokenAssetSubclass;
   // Issuer name (short: in, long: issuer_name)
   issuerName?: string;
   in?: string;
   issuer_name?: string;
-  // URLs array
-  urls?: Array<{
-    url?: string;
-    u?: string;
-    type?: string;
-    c?: string;
-    title?: string;
-    t?: string;
-  }>;
-  us?: Array<{
-    url?: string;
-    u?: string;
-    type?: string;
-    c?: string;
-    title?: string;
-    t?: string;
-  }>;
-  // Additional info
-  additionalInfo?: Record<string, unknown>;
-  ai?: Record<string, unknown>;
-  additional_info?: Record<string, unknown>;
+  // URIs array (short: us, long: uris)
+  uris?: MPTokenURI[];
+  us?: MPTokenURI[];
+  // Additional info (short: ai, long: additional_info) - can be object or string
+  additionalInfo?: Record<string, unknown> | string;
+  ai?: Record<string, unknown> | string;
+  additional_info?: Record<string, unknown> | string;
 }
 
 /**
