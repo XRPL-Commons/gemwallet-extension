@@ -15,7 +15,10 @@ import {
   AMMWithdraw,
   AMMVote,
   AMMBid,
-  AMMClawback
+  AMMClawback,
+  EscrowCreate,
+  EscrowFinish,
+  EscrowCancel
 } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { BaseTransaction } from 'xrpl/dist/npm/models/transactions/common';
@@ -40,7 +43,10 @@ import {
   AMMWithdrawRequest,
   AMMVoteRequest,
   AMMBidRequest,
-  AMMClawbackRequest
+  AMMClawbackRequest,
+  EscrowCreateRequest,
+  EscrowFinishRequest,
+  EscrowCancelRequest
 } from '@gemwallet/constants';
 
 import { WalletLedger } from '../../../types';
@@ -291,6 +297,47 @@ export const buildAMMClawback = (params: AMMClawbackRequest, wallet: WalletLedge
   };
 };
 
+export const buildEscrowCreate = (
+  params: EscrowCreateRequest,
+  wallet: WalletLedger
+): EscrowCreate => {
+  handleAmountHexCurrency(params.amount);
+
+  return {
+    ...(buildBaseTransaction(params, wallet, 'EscrowCreate') as EscrowCreate),
+    Amount: params.amount,
+    Destination: params.destination,
+    ...(params.cancelAfter && { CancelAfter: params.cancelAfter }),
+    ...(params.finishAfter && { FinishAfter: params.finishAfter }),
+    ...(params.condition && { Condition: params.condition }),
+    ...(params.destinationTag && { DestinationTag: params.destinationTag })
+  };
+};
+
+export const buildEscrowFinish = (
+  params: EscrowFinishRequest,
+  wallet: WalletLedger
+): EscrowFinish => {
+  return {
+    ...(buildBaseTransaction(params, wallet, 'EscrowFinish') as EscrowFinish),
+    Owner: params.owner,
+    OfferSequence: params.offerSequence,
+    ...(params.condition && { Condition: params.condition }),
+    ...(params.fulfillment && { Fulfillment: params.fulfillment })
+  };
+};
+
+export const buildEscrowCancel = (
+  params: EscrowCancelRequest,
+  wallet: WalletLedger
+): EscrowCancel => {
+  return {
+    ...(buildBaseTransaction(params, wallet, 'EscrowCancel') as EscrowCancel),
+    Owner: params.owner,
+    OfferSequence: params.offerSequence
+  };
+};
+
 export const buildBaseTransaction = (
   payload: BaseTransactionRequest,
   wallet: WalletLedger,
@@ -314,6 +361,9 @@ export const buildBaseTransaction = (
     | 'AMMVote'
     | 'AMMBid'
     | 'AMMClawback'
+    | 'EscrowCreate'
+    | 'EscrowFinish'
+    | 'EscrowCancel'
 ): BaseTransaction => ({
   TransactionType: txType,
   Account: wallet.publicAddress,

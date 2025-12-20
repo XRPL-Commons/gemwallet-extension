@@ -585,6 +585,48 @@ export interface LedgerStateFixRequest extends BaseTransactionRequest {
   Owner?: string;
 }
 
+/*
+ * Escrow Request Payloads
+ */
+export interface EscrowCreateRequest extends BaseTransactionRequest {
+  // Amount of XRP, in drops, to deduct from the sender's balance and escrow.
+  // Once escrowed, the XRP can either go to the Destination address (after the FinishAfter time)
+  // or returned to the sender (after the CancelAfter time).
+  amount: Amount;
+  // Address to receive escrowed XRP.
+  destination: string;
+  // The time, in seconds since the Ripple Epoch, when this escrow expires.
+  // This value is immutable; the funds can only be returned to the sender after this time.
+  cancelAfter?: number;
+  // The time, in seconds since the Ripple Epoch, when the escrowed XRP can be released to the recipient.
+  // This value is immutable; the funds cannot move until this time is reached.
+  finishAfter?: number;
+  // Hex value representing a PREIMAGE-SHA-256 crypto-condition.
+  // The funds can only be delivered to the recipient if this condition is fulfilled.
+  condition?: string;
+  // Arbitrary tag to further specify the destination for this escrowed payment,
+  // such as a hosted recipient at the destination address.
+  destinationTag?: number;
+}
+
+export interface EscrowFinishRequest extends BaseTransactionRequest {
+  // Address of the source account that funded the escrow payment.
+  owner: string;
+  // Transaction sequence (or Ticket number) of EscrowCreate transaction that created the escrow to finish.
+  offerSequence: number;
+  // Hex value representing a PREIMAGE-SHA-256 crypto-condition.
+  condition?: string;
+  // Hex value of the PREIMAGE-SHA-256 crypto-condition fulfillment matching the condition.
+  fulfillment?: string;
+}
+
+export interface EscrowCancelRequest extends BaseTransactionRequest {
+  // Address of the source account that funded the escrow payment.
+  owner: string;
+  // Transaction sequence (or Ticket number) of EscrowCreate transaction that created the escrow to cancel.
+  offerSequence: number;
+}
+
 export type RequestPayload =
   | AcceptNFTOfferRequest
   | BurnNFTRequest
@@ -639,7 +681,11 @@ export type RequestPayload =
   | NFTokenModifyRequest
   | DelegateSetRequest
   | BatchRequest
-  | LedgerStateFixRequest;
+  | LedgerStateFixRequest
+  // Escrow
+  | EscrowCreateRequest
+  | EscrowFinishRequest
+  | EscrowCancelRequest;
 
 /*
  * Response Payloads
@@ -914,6 +960,22 @@ export interface LedgerStateFixResponse
     hash: string;
   }> {}
 
+// Escrow Response Interfaces
+export interface EscrowCreateResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface EscrowFinishResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface EscrowCancelResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
 export type ResponsePayload =
   | AcceptNFTOfferResponse
   | BurnNFTResponse
@@ -973,7 +1035,11 @@ export type ResponsePayload =
   | NFTokenModifyResponse
   | DelegateSetResponse
   | BatchResponse
-  | LedgerStateFixResponse;
+  | LedgerStateFixResponse
+  // Escrow
+  | EscrowCreateResponse
+  | EscrowFinishResponse
+  | EscrowCancelResponse;
 
 /*
  * Internal Messages Payloads

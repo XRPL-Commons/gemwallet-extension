@@ -49,3 +49,7 @@ export const AMM_BID_PATH = '/amm-bid';
 export const AMM_CLAWBACK_PATH = '/amm-clawback';
 // MPToken
 export const MPTOKEN_REMOVE_PATH = '/mptoken-remove';
+// Escrow
+export const ESCROW_CREATE_PATH = '/escrow-create';
+export const ESCROW_FINISH_PATH = '/escrow-finish';
+export const ESCROW_CANCEL_PATH = '/escrow-cancel';

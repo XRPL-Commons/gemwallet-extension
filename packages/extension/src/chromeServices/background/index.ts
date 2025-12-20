@@ -46,7 +46,11 @@ import {
   ReceiveAMMWithdrawContentMessage,
   ReceiveAMMVoteContentMessage,
   ReceiveAMMBidContentMessage,
-  ReceiveAMMClawbackContentMessage
+  ReceiveAMMClawbackContentMessage,
+  // Escrow
+  ReceiveEscrowCreateContentMessage,
+  ReceiveEscrowFinishContentMessage,
+  ReceiveEscrowCancelContentMessage
 } from '@gemwallet/constants';
 
 import {
@@ -77,7 +81,11 @@ import {
   PARAMETER_TRANSACTION_AMM_WITHDRAW,
   PARAMETER_TRANSACTION_AMM_VOTE,
   PARAMETER_TRANSACTION_AMM_BID,
-  PARAMETER_TRANSACTION_AMM_CLAWBACK
+  PARAMETER_TRANSACTION_AMM_CLAWBACK,
+  // Escrow
+  PARAMETER_TRANSACTION_ESCROW_CREATE,
+  PARAMETER_TRANSACTION_ESCROW_FINISH,
+  PARAMETER_TRANSACTION_ESCROW_CANCEL
 } from '../../constants/parameters';
 import { STORAGE_CURRENT_WINDOW_ID, STORAGE_STATE_TRANSACTION } from '../../constants/storage';
 import { generateKey } from '../../utils/storage';
@@ -632,6 +640,45 @@ chrome.runtime.onMessage.addListener(
         console.error(e);
       }
       /*
+       * Escrow Request messages
+       */
+    } else if (type === 'REQUEST_ESCROW_CREATE/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_ESCROW_CREATE,
+          receivingMessage: 'RECEIVE_ESCROW_CREATE/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_ESCROW_FINISH/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_ESCROW_FINISH,
+          receivingMessage: 'RECEIVE_ESCROW_FINISH/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_ESCROW_CANCEL/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_ESCROW_CANCEL,
+          receivingMessage: 'RECEIVE_ESCROW_CANCEL/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+      /*
        * Receive messages
        */
     } else if (type === 'RECEIVE_SEND_PAYMENT/V3') {
@@ -998,6 +1045,42 @@ chrome.runtime.onMessage.addListener(
       handleTransactionResponse<ReceiveAMMClawbackContentMessage>(payload.id, {
         app,
         type: 'RECEIVE_AMM_CLAWBACK/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+      /*
+       * Escrow Receive messages
+       */
+    } else if (type === 'RECEIVE_ESCROW_CREATE/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveEscrowCreateContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_ESCROW_CREATE/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_ESCROW_FINISH/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveEscrowFinishContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_ESCROW_FINISH/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_ESCROW_CANCEL/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveEscrowCancelContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_ESCROW_CANCEL/V3',
         payload: {
           type: ResponseType.Response,
           result: payload.result,

@@ -27,3 +27,7 @@ export const PARAMETER_TRANSACTION_AMM_WITHDRAW = 'transaction=ammWithdraw';
 export const PARAMETER_TRANSACTION_AMM_VOTE = 'transaction=ammVote';
 export const PARAMETER_TRANSACTION_AMM_BID = 'transaction=ammBid';
 export const PARAMETER_TRANSACTION_AMM_CLAWBACK = 'transaction=ammClawback';
+// Escrow
+export const PARAMETER_TRANSACTION_ESCROW_CREATE = 'transaction=escrowCreate';
+export const PARAMETER_TRANSACTION_ESCROW_FINISH = 'transaction=escrowFinish';
+export const PARAMETER_TRANSACTION_ESCROW_CANCEL = 'transaction=escrowCancel';

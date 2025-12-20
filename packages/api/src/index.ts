@@ -11,6 +11,9 @@ export * from './cancelNFTOffer';
 export * from './cancelOffer';
 export * from './createNFTOffer';
 export * from './createOffer';
+export * from './escrowCancel';
+export * from './escrowCreate';
+export * from './escrowFinish';
 export * from './on';
 export * from './getAddress';
 export * from './getNetwork';
@@ -55,6 +58,9 @@ export type {
   CancelOfferRequest,
   CreateNFTOfferRequest,
   CreateOfferRequest,
+  EscrowCancelRequest,
+  EscrowCreateRequest,
+  EscrowFinishRequest,
   GetNetworkRequest,
   GetNFTRequest,
   MintNFTRequest,
@@ -84,6 +90,9 @@ export type {
   CancelOfferResponse,
   CreateNFTOfferResponse,
   CreateOfferResponse,
+  EscrowCancelResponse,
+  EscrowCreateResponse,
+  EscrowFinishResponse,
   GetAddressResponse,
   GetNetworkResponse,
   GetNFTResponse,

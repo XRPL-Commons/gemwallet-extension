@@ -38,7 +38,11 @@ import {
   AMMWithdraw,
   AMMVote,
   AMMBid,
-  AMMClawback
+  AMMClawback,
+  // Escrow
+  EscrowCreate,
+  EscrowFinish,
+  EscrowCancel
 } from 'xrpl';
 
 import {
@@ -175,6 +179,19 @@ interface MPTokenAuthorizeResponse {
   hash: string;
 }
 
+// Escrow Response interfaces
+interface EscrowCreateResponse {
+  hash: string;
+}
+
+interface EscrowFinishResponse {
+  hash: string;
+}
+
+interface EscrowCancelResponse {
+  hash: string;
+}
+
 interface Props {
   children: React.ReactElement;
 }
@@ -220,6 +237,10 @@ export interface LedgerContextType {
   ammClawback: (payload: AMMClawback) => Promise<AMMClawbackResponse>;
   // MPToken
   removeMPTokenAuthorization: (mptIssuanceId: string) => Promise<MPTokenAuthorizeResponse>;
+  // Escrow
+  escrowCreate: (payload: EscrowCreate) => Promise<EscrowCreateResponse>;
+  escrowFinish: (payload: EscrowFinish) => Promise<EscrowFinishResponse>;
+  escrowCancel: (payload: EscrowCancel) => Promise<EscrowCancelResponse>;
 }
 
 const LedgerContext = createContext<LedgerContextType>({
@@ -260,7 +281,11 @@ const LedgerContext = createContext<LedgerContextType>({
   ammBid: () => new Promise(() => {}),
   ammClawback: () => new Promise(() => {}),
   // MPToken
-  removeMPTokenAuthorization: () => new Promise(() => {})
+  removeMPTokenAuthorization: () => new Promise(() => {}),
+  // Escrow
+  escrowCreate: () => new Promise(() => {}),
+  escrowFinish: () => new Promise(() => {}),
+  escrowCancel: () => new Promise(() => {})
 });
 
 const LedgerProvider: FC<Props> = ({ children }) => {
@@ -968,6 +993,72 @@ const LedgerProvider: FC<Props> = ({ children }) => {
   );
 
   /*
+   * Escrow Transactions
+   */
+  const escrowCreate = useCallback(
+    async (payload: EscrowCreate): Promise<EscrowCreateResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't create escrow");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const escrowFinish = useCallback(
+    async (payload: EscrowFinish): Promise<EscrowFinishResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't finish escrow");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const escrowCancel = useCallback(
+    async (payload: EscrowCancel): Promise<EscrowCancelResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't cancel escrow");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  /*
    * Getters
    */
   const getNFTs = useCallback(
@@ -1147,7 +1238,11 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     ammBid,
     ammClawback,
     // MPToken
-    removeMPTokenAuthorization
+    removeMPTokenAuthorization,
+    // Escrow
+    escrowCreate,
+    escrowFinish,
+    escrowCancel
   };
 
   return <LedgerContext.Provider value={value}>{children}</LedgerContext.Provider>;

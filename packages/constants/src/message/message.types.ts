@@ -72,7 +72,14 @@ import {
   AMMBidRequest,
   AMMBidResponse,
   AMMClawbackRequest,
-  AMMClawbackResponse
+  AMMClawbackResponse,
+  // Escrow
+  EscrowCreateRequest,
+  EscrowCreateResponse,
+  EscrowFinishRequest,
+  EscrowFinishResponse,
+  EscrowCancelRequest,
+  EscrowCancelResponse
 } from '../payload/payload.types';
 
 export type RequestMessage =
@@ -111,7 +118,11 @@ export type RequestMessage =
   | 'REQUEST_AMM_WITHDRAW/V3'
   | 'REQUEST_AMM_VOTE/V3'
   | 'REQUEST_AMM_BID/V3'
-  | 'REQUEST_AMM_CLAWBACK/V3';
+  | 'REQUEST_AMM_CLAWBACK/V3'
+  // Escrow
+  | 'REQUEST_ESCROW_CREATE/V3'
+  | 'REQUEST_ESCROW_FINISH/V3'
+  | 'REQUEST_ESCROW_CANCEL/V3';
 
 export type ReceiveMessage =
   | 'RECEIVE_ACCEPT_NFT_OFFER/V3'
@@ -148,7 +159,11 @@ export type ReceiveMessage =
   | 'RECEIVE_AMM_WITHDRAW/V3'
   | 'RECEIVE_AMM_VOTE/V3'
   | 'RECEIVE_AMM_BID/V3'
-  | 'RECEIVE_AMM_CLAWBACK/V3';
+  | 'RECEIVE_AMM_CLAWBACK/V3'
+  // Escrow
+  | 'RECEIVE_ESCROW_CREATE/V3'
+  | 'RECEIVE_ESCROW_FINISH/V3'
+  | 'RECEIVE_ESCROW_CANCEL/V3';
 
 export type EventMessage =
   | 'EVENT_NETWORK_CHANGED'
@@ -362,6 +377,25 @@ export interface RequestAMMClawbackMessage {
   payload: AMMClawbackRequest;
 }
 
+// Escrow Request Messages
+export interface RequestEscrowCreateMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_ESCROW_CREATE/V3';
+  payload: EscrowCreateRequest;
+}
+
+export interface RequestEscrowFinishMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_ESCROW_FINISH/V3';
+  payload: EscrowFinishRequest;
+}
+
+export interface RequestEscrowCancelMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_ESCROW_CANCEL/V3';
+  payload: EscrowCancelRequest;
+}
+
 // Internal
 export interface InternalRequestPasswordMessage {
   app: typeof GEM_WALLET;
@@ -435,6 +469,11 @@ export type AMMWithdrawMessagingResponse = MessagingResponse & AMMWithdrawRespon
 export type AMMVoteMessagingResponse = MessagingResponse & AMMVoteResponse;
 export type AMMBidMessagingResponse = MessagingResponse & AMMBidResponse;
 export type AMMClawbackMessagingResponse = MessagingResponse & AMMClawbackResponse;
+
+// Escrow Messaging Responses
+export type EscrowCreateMessagingResponse = MessagingResponse & EscrowCreateResponse;
+export type EscrowFinishMessagingResponse = MessagingResponse & EscrowFinishResponse;
+export type EscrowCancelMessagingResponse = MessagingResponse & EscrowCancelResponse;
 
 // Internal
 export type PasswordInternalMessagingResponse = InternalMessagingResponse &
@@ -654,6 +693,25 @@ export interface ReceiveAMMClawbackContentMessage {
   payload: AMMClawbackMessagingResponse;
 }
 
+// Escrow Content Messages
+export interface ReceiveEscrowCreateContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_ESCROW_CREATE/V3';
+  payload: EscrowCreateMessagingResponse;
+}
+
+export interface ReceiveEscrowFinishContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_ESCROW_FINISH/V3';
+  payload: EscrowFinishMessagingResponse;
+}
+
+export interface ReceiveEscrowCancelContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_ESCROW_CANCEL/V3';
+  payload: EscrowCancelMessagingResponse;
+}
+
 // Internal
 export interface InternalReceivePasswordContentMessage {
   app: typeof GEM_WALLET;
@@ -811,6 +869,16 @@ export type ReceiveAMMBidBackgroundMessage = ReceiveAMMBidContentMessage & Backg
 export type ReceiveAMMClawbackBackgroundMessage = ReceiveAMMClawbackContentMessage &
   BackgroundMessagePayload;
 
+// Escrow Background Messages
+export type ReceiveEscrowCreateBackgroundMessage = ReceiveEscrowCreateContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveEscrowFinishBackgroundMessage = ReceiveEscrowFinishContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveEscrowCancelBackgroundMessage = ReceiveEscrowCancelContentMessage &
+  BackgroundMessagePayload;
+
 export type InternalReceivePasswordBackgroundMessage = InternalReceivePasswordContentMessage &
   BackgroundMessagePayload;
 
@@ -867,6 +935,10 @@ export type BackgroundMessage =
   | RequestAMMVoteMessage
   | RequestAMMBidMessage
   | RequestAMMClawbackMessage
+  // Escrow Requests
+  | RequestEscrowCreateMessage
+  | RequestEscrowFinishMessage
+  | RequestEscrowCancelMessage
   // Outputted Messages - DO contain ID within the payloads
   | EventLoginBackgroundMessage
   | EventLogoutBackgroundMessage
@@ -907,6 +979,10 @@ export type BackgroundMessage =
   | ReceiveAMMVoteBackgroundMessage
   | ReceiveAMMBidBackgroundMessage
   | ReceiveAMMClawbackBackgroundMessage
+  // Escrow Responses
+  | ReceiveEscrowCreateBackgroundMessage
+  | ReceiveEscrowFinishBackgroundMessage
+  | ReceiveEscrowCancelBackgroundMessage
   //
   // Internal message - Messages between the extension and the background script
   //
@@ -951,4 +1027,8 @@ export type APIMessages =
   | RequestAMMWithdrawMessage
   | RequestAMMVoteMessage
   | RequestAMMBidMessage
-  | RequestAMMClawbackMessage;
+  | RequestAMMClawbackMessage
+  // Escrow
+  | RequestEscrowCreateMessage
+  | RequestEscrowFinishMessage
+  | RequestEscrowCancelMessage;

@@ -18,6 +18,9 @@ import {
   CREATE_OFFER_PATH,
   DELETE_ACCOUNT_PATH,
   EDIT_WALLET_PATH,
+  ESCROW_CANCEL_PATH,
+  ESCROW_CREATE_PATH,
+  ESCROW_FINISH_PATH,
   HISTORY_PATH,
   HOME_PATH,
   LIST_WALLETS_PATH,
@@ -59,6 +62,9 @@ import { CreateNFTOffer } from '../CreateNFTOffer';
 import { CreateOffer } from '../CreateOffer';
 import { DeleteAccount } from '../DeleteAccount';
 import { EditWallet } from '../EditWallet';
+import { EscrowCancel } from '../EscrowCancel';
+import { EscrowCreate } from '../EscrowCreate';
+import { EscrowFinish } from '../EscrowFinish';
 import { History } from '../History';
 import { Home } from '../Home';
 import { ListWallets } from '../ListWallets';
@@ -108,6 +114,10 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: CREATE_OFFER_PATH, element: CreateOffer },
   { path: DELETE_ACCOUNT_PATH, element: DeleteAccount },
   { path: EDIT_WALLET_PATH, element: EditWallet },
+  // Escrow Routes
+  { path: ESCROW_CANCEL_PATH, element: EscrowCancel },
+  { path: ESCROW_CREATE_PATH, element: EscrowCreate },
+  { path: ESCROW_FINISH_PATH, element: EscrowFinish },
   { path: HISTORY_PATH, element: History },
   { path: HOME_PATH, element: Home },
   { path: LIST_WALLETS_PATH, element: ListWallets },
