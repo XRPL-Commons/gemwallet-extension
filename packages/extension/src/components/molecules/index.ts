@@ -1,6 +1,7 @@
 export * from './ActionButtons';
 export * from './AMMPoolInfo';
 export * from './ChainIndicator';
+export * from './EscrowCard';
 export * from './TransactionHeader';
 export * from './DataCard';
 export * from './InformationMessage';
