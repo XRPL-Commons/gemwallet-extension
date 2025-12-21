@@ -1,22 +1,26 @@
 import { FC } from 'react';
 
 import { Divider, List, ListItem, ListItemText } from '@mui/material';
-import { AccountTxTransaction, convertHexToString, dropsToXrp } from 'xrpl';
+import { AccountTxTransaction, convertHexToString, dropsToXrp, RIPPLED_API_V1 } from 'xrpl';
 
 import { useMainToken } from '../../../hooks';
 import { formatFlagsToNumber } from '../../../utils';
 import { formatDate, formatTransaction } from './format.util';
 
+// Use V1 API type for backward compatibility (uses `tx` field instead of `tx_json`)
+type AccountTxTransactionV1 = AccountTxTransaction<typeof RIPPLED_API_V1>;
+
 export interface TransactionDetailsProps {
-  transaction: AccountTxTransaction | null;
+  transaction: AccountTxTransactionV1 | null;
   publicAddress: string;
 }
 
-const renderDestinationField = (transaction: AccountTxTransaction): JSX.Element | null => {
+const renderDestinationField = (transaction: AccountTxTransactionV1): JSX.Element | null => {
   if (transaction.tx && 'Destination' in transaction.tx) {
     return (
       <ListItem style={{ padding: '8px 24px' }}>
-        <ListItemText primary="Destination" secondary={transaction.tx?.Destination} />
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <ListItemText primary="Destination" secondary={(transaction.tx as any).Destination} />
       </ListItem>
     );
   }
@@ -91,14 +95,21 @@ export const TransactionDetails: FC<TransactionDetailsProps> = ({ transaction, p
         <ListItemText primary="Transaction Hash" secondary={transaction.tx?.hash} />
       </ListItem>
       <Divider light />
-      {transaction.tx && 'DestinationTag' in transaction.tx && transaction.tx?.DestinationTag ? (
+      {/* eslint-disable @typescript-eslint/no-explicit-any */}
+      {transaction.tx &&
+      'DestinationTag' in transaction.tx &&
+      (transaction.tx as any).DestinationTag ? (
         <>
           <ListItem style={{ padding: '8px 24px' }}>
-            <ListItemText primary="Destination Tag" secondary={transaction.tx?.DestinationTag} />
+            <ListItemText
+              primary="Destination Tag"
+              secondary={(transaction.tx as any).DestinationTag}
+            />
           </ListItem>
           <Divider light />
         </>
       ) : null}
+      {/* eslint-enable @typescript-eslint/no-explicit-any */}
       {transaction.tx && 'Flags' in transaction.tx && transaction.tx?.Flags ? (
         <>
           <ListItem style={{ padding: '8px 24px' }}>

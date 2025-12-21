@@ -1,3 +1,8 @@
+import {
+  MSG_INTERNAL_RECEIVE_PASSWORD,
+  MSG_INTERNAL_RECEIVE_SIGN_OUT,
+  MSG_INTERNAL_REQUEST_PASSWORD
+} from './message.constant';
 import { GEM_WALLET } from '../global/global.constant';
 import {
   AcceptNFTOfferResponse,
@@ -52,13 +57,30 @@ import {
   SubmitTransactionRequest,
   SubmitBulkTransactionsWithKeysRequest,
   SubmitBulkTransactionsResponse,
-  WebsiteRequest
+  WebsiteRequest,
+  // AMM
+  AMMCreateRequest,
+  AMMCreateResponse,
+  AMMDeleteRequest,
+  AMMDeleteResponse,
+  AMMDepositRequest,
+  AMMDepositResponse,
+  AMMWithdrawRequest,
+  AMMWithdrawResponse,
+  AMMVoteRequest,
+  AMMVoteResponse,
+  AMMBidRequest,
+  AMMBidResponse,
+  AMMClawbackRequest,
+  AMMClawbackResponse,
+  // Escrow
+  EscrowCreateRequest,
+  EscrowCreateResponse,
+  EscrowFinishRequest,
+  EscrowFinishResponse,
+  EscrowCancelRequest,
+  EscrowCancelResponse
 } from '../payload/payload.types';
-import {
-  MSG_INTERNAL_RECEIVE_PASSWORD,
-  MSG_INTERNAL_RECEIVE_SIGN_OUT,
-  MSG_INTERNAL_REQUEST_PASSWORD
-} from './message.constant';
 
 export type RequestMessage =
   | 'REQUEST_ACCEPT_NFT_OFFER/V3'
@@ -88,7 +110,19 @@ export type RequestMessage =
   | 'REQUEST_SIGN_TRANSACTION/V3'
   | 'REQUEST_SUBMIT_TRANSACTION/V3'
   | 'REQUEST_SUBMIT_BULK_TRANSACTIONS/V3'
-  | 'SEND_PAYMENT';
+  | 'SEND_PAYMENT'
+  // AMM
+  | 'REQUEST_AMM_CREATE/V3'
+  | 'REQUEST_AMM_DELETE/V3'
+  | 'REQUEST_AMM_DEPOSIT/V3'
+  | 'REQUEST_AMM_WITHDRAW/V3'
+  | 'REQUEST_AMM_VOTE/V3'
+  | 'REQUEST_AMM_BID/V3'
+  | 'REQUEST_AMM_CLAWBACK/V3'
+  // Escrow
+  | 'REQUEST_ESCROW_CREATE/V3'
+  | 'REQUEST_ESCROW_FINISH/V3'
+  | 'REQUEST_ESCROW_CANCEL/V3';
 
 export type ReceiveMessage =
   | 'RECEIVE_ACCEPT_NFT_OFFER/V3'
@@ -117,7 +151,19 @@ export type ReceiveMessage =
   | 'RECEIVE_SIGN_MESSAGE/V3'
   | 'RECEIVE_SIGN_TRANSACTION/V3'
   | 'RECEIVE_SUBMIT_TRANSACTION/V3'
-  | 'RECEIVE_SUBMIT_BULK_TRANSACTIONS/V3';
+  | 'RECEIVE_SUBMIT_BULK_TRANSACTIONS/V3'
+  // AMM
+  | 'RECEIVE_AMM_CREATE/V3'
+  | 'RECEIVE_AMM_DELETE/V3'
+  | 'RECEIVE_AMM_DEPOSIT/V3'
+  | 'RECEIVE_AMM_WITHDRAW/V3'
+  | 'RECEIVE_AMM_VOTE/V3'
+  | 'RECEIVE_AMM_BID/V3'
+  | 'RECEIVE_AMM_CLAWBACK/V3'
+  // Escrow
+  | 'RECEIVE_ESCROW_CREATE/V3'
+  | 'RECEIVE_ESCROW_FINISH/V3'
+  | 'RECEIVE_ESCROW_CANCEL/V3';
 
 export type EventMessage =
   | 'EVENT_NETWORK_CHANGED'
@@ -288,6 +334,68 @@ export interface RequestSetHookMessage {
   payload: SetHookRequest;
 }
 
+// AMM Request Messages
+export interface RequestAMMCreateMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_AMM_CREATE/V3';
+  payload: AMMCreateRequest;
+}
+
+export interface RequestAMMDeleteMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_AMM_DELETE/V3';
+  payload: AMMDeleteRequest;
+}
+
+export interface RequestAMMDepositMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_AMM_DEPOSIT/V3';
+  payload: AMMDepositRequest;
+}
+
+export interface RequestAMMWithdrawMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_AMM_WITHDRAW/V3';
+  payload: AMMWithdrawRequest;
+}
+
+export interface RequestAMMVoteMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_AMM_VOTE/V3';
+  payload: AMMVoteRequest;
+}
+
+export interface RequestAMMBidMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_AMM_BID/V3';
+  payload: AMMBidRequest;
+}
+
+export interface RequestAMMClawbackMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_AMM_CLAWBACK/V3';
+  payload: AMMClawbackRequest;
+}
+
+// Escrow Request Messages
+export interface RequestEscrowCreateMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_ESCROW_CREATE/V3';
+  payload: EscrowCreateRequest;
+}
+
+export interface RequestEscrowFinishMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_ESCROW_FINISH/V3';
+  payload: EscrowFinishRequest;
+}
+
+export interface RequestEscrowCancelMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_ESCROW_CANCEL/V3';
+  payload: EscrowCancelRequest;
+}
+
 // Internal
 export interface InternalRequestPasswordMessage {
   app: typeof GEM_WALLET;
@@ -352,6 +460,20 @@ export type SetRegularKeyMessagingResponse = MessagingResponse & SetRegularKeyRe
 export type SetTrustlineMessagingResponse = MessagingResponse & SetTrustlineResponse;
 export type SetTrustlineMessagingResponseDeprecated = MessagingResponse &
   SetTrustlineResponseDeprecated;
+
+// AMM Messaging Responses
+export type AMMCreateMessagingResponse = MessagingResponse & AMMCreateResponse;
+export type AMMDeleteMessagingResponse = MessagingResponse & AMMDeleteResponse;
+export type AMMDepositMessagingResponse = MessagingResponse & AMMDepositResponse;
+export type AMMWithdrawMessagingResponse = MessagingResponse & AMMWithdrawResponse;
+export type AMMVoteMessagingResponse = MessagingResponse & AMMVoteResponse;
+export type AMMBidMessagingResponse = MessagingResponse & AMMBidResponse;
+export type AMMClawbackMessagingResponse = MessagingResponse & AMMClawbackResponse;
+
+// Escrow Messaging Responses
+export type EscrowCreateMessagingResponse = MessagingResponse & EscrowCreateResponse;
+export type EscrowFinishMessagingResponse = MessagingResponse & EscrowFinishResponse;
+export type EscrowCancelMessagingResponse = MessagingResponse & EscrowCancelResponse;
 
 // Internal
 export type PasswordInternalMessagingResponse = InternalMessagingResponse &
@@ -528,6 +650,68 @@ export interface ReceiveSetHookContentMessage {
   payload: SetHookMessagingResponse;
 }
 
+// AMM Content Messages
+export interface ReceiveAMMCreateContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_AMM_CREATE/V3';
+  payload: AMMCreateMessagingResponse;
+}
+
+export interface ReceiveAMMDeleteContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_AMM_DELETE/V3';
+  payload: AMMDeleteMessagingResponse;
+}
+
+export interface ReceiveAMMDepositContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_AMM_DEPOSIT/V3';
+  payload: AMMDepositMessagingResponse;
+}
+
+export interface ReceiveAMMWithdrawContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_AMM_WITHDRAW/V3';
+  payload: AMMWithdrawMessagingResponse;
+}
+
+export interface ReceiveAMMVoteContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_AMM_VOTE/V3';
+  payload: AMMVoteMessagingResponse;
+}
+
+export interface ReceiveAMMBidContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_AMM_BID/V3';
+  payload: AMMBidMessagingResponse;
+}
+
+export interface ReceiveAMMClawbackContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_AMM_CLAWBACK/V3';
+  payload: AMMClawbackMessagingResponse;
+}
+
+// Escrow Content Messages
+export interface ReceiveEscrowCreateContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_ESCROW_CREATE/V3';
+  payload: EscrowCreateMessagingResponse;
+}
+
+export interface ReceiveEscrowFinishContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_ESCROW_FINISH/V3';
+  payload: EscrowFinishMessagingResponse;
+}
+
+export interface ReceiveEscrowCancelContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_ESCROW_CANCEL/V3';
+  payload: EscrowCancelMessagingResponse;
+}
+
 // Internal
 export interface InternalReceivePasswordContentMessage {
   app: typeof GEM_WALLET;
@@ -664,6 +848,37 @@ export type ReceiveSubmitBulkTransactionsBackgroundMessage =
 export type ReceiveSetHookBackgroundMessage = ReceiveSetHookContentMessage &
   BackgroundMessagePayload;
 
+// AMM Background Messages
+export type ReceiveAMMCreateBackgroundMessage = ReceiveAMMCreateContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveAMMDeleteBackgroundMessage = ReceiveAMMDeleteContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveAMMDepositBackgroundMessage = ReceiveAMMDepositContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveAMMWithdrawBackgroundMessage = ReceiveAMMWithdrawContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveAMMVoteBackgroundMessage = ReceiveAMMVoteContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveAMMBidBackgroundMessage = ReceiveAMMBidContentMessage & BackgroundMessagePayload;
+
+export type ReceiveAMMClawbackBackgroundMessage = ReceiveAMMClawbackContentMessage &
+  BackgroundMessagePayload;
+
+// Escrow Background Messages
+export type ReceiveEscrowCreateBackgroundMessage = ReceiveEscrowCreateContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveEscrowFinishBackgroundMessage = ReceiveEscrowFinishContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveEscrowCancelBackgroundMessage = ReceiveEscrowCancelContentMessage &
+  BackgroundMessagePayload;
+
 export type InternalReceivePasswordBackgroundMessage = InternalReceivePasswordContentMessage &
   BackgroundMessagePayload;
 
@@ -712,6 +927,18 @@ export type BackgroundMessage =
   | RequestSignTransactionMessage
   | RequestSubmitTransactionMessage
   | RequestSubmitBulkTransactionsMessage
+  // AMM Requests
+  | RequestAMMCreateMessage
+  | RequestAMMDeleteMessage
+  | RequestAMMDepositMessage
+  | RequestAMMWithdrawMessage
+  | RequestAMMVoteMessage
+  | RequestAMMBidMessage
+  | RequestAMMClawbackMessage
+  // Escrow Requests
+  | RequestEscrowCreateMessage
+  | RequestEscrowFinishMessage
+  | RequestEscrowCancelMessage
   // Outputted Messages - DO contain ID within the payloads
   | EventLoginBackgroundMessage
   | EventLogoutBackgroundMessage
@@ -744,6 +971,18 @@ export type BackgroundMessage =
   | ReceiveSignTransactionBackgroundMessage
   | ReceiveSubmitTransactionBackgroundMessage
   | ReceiveSubmitBulkTransactionsBackgroundMessage
+  // AMM Responses
+  | ReceiveAMMCreateBackgroundMessage
+  | ReceiveAMMDeleteBackgroundMessage
+  | ReceiveAMMDepositBackgroundMessage
+  | ReceiveAMMWithdrawBackgroundMessage
+  | ReceiveAMMVoteBackgroundMessage
+  | ReceiveAMMBidBackgroundMessage
+  | ReceiveAMMClawbackBackgroundMessage
+  // Escrow Responses
+  | ReceiveEscrowCreateBackgroundMessage
+  | ReceiveEscrowFinishBackgroundMessage
+  | ReceiveEscrowCancelBackgroundMessage
   //
   // Internal message - Messages between the extension and the background script
   //
@@ -780,4 +1019,16 @@ export type APIMessages =
   | RequestSignMessageMessage
   | RequestSignTransactionMessage
   | RequestSubmitTransactionMessage
-  | RequestSubmitBulkTransactionsMessage;
+  | RequestSubmitBulkTransactionsMessage
+  // AMM
+  | RequestAMMCreateMessage
+  | RequestAMMDeleteMessage
+  | RequestAMMDepositMessage
+  | RequestAMMWithdrawMessage
+  | RequestAMMVoteMessage
+  | RequestAMMBidMessage
+  | RequestAMMClawbackMessage
+  // Escrow
+  | RequestEscrowCreateMessage
+  | RequestEscrowFinishMessage
+  | RequestEscrowCancelMessage;

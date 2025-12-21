@@ -39,3 +39,27 @@ export const TRANSACTION_PATH = '/transaction';
 export const TRUSTED_APPS_PATH = '/trusted-apps';
 export const WELCOME_PATH = '/welcome';
 export const NFT_VIEWER_PATH = '/nft-viewer';
+// AMM
+export const AMM_CREATE_PATH = '/amm-create';
+export const AMM_DELETE_PATH = '/amm-delete';
+export const AMM_DEPOSIT_PATH = '/amm-deposit';
+export const AMM_WITHDRAW_PATH = '/amm-withdraw';
+export const AMM_VOTE_PATH = '/amm-vote';
+export const AMM_BID_PATH = '/amm-bid';
+export const AMM_CLAWBACK_PATH = '/amm-clawback';
+// MPToken
+export const MPTOKEN_REMOVE_PATH = '/mptoken-remove';
+// Escrow
+export const ESCROW_PATH = '/escrow';
+export const ESCROW_CREATE_PATH = '/escrow-create';
+export const ESCROW_CREATE_FORM_PATH = '/escrow-create-form';
+export const ESCROW_FINISH_PATH = '/escrow-finish';
+export const ESCROW_CANCEL_PATH = '/escrow-cancel';
+// Checks
+export const CHECK_CREATE_PATH = '/check-create';
+export const CHECK_CASH_PATH = '/check-cash';
+export const CHECK_CANCEL_PATH = '/check-cancel';
+// Payment Channels
+export const PAYMENT_CHANNEL_CREATE_PATH = '/payment-channel-create';
+export const PAYMENT_CHANNEL_CLAIM_PATH = '/payment-channel-claim';
+export const PAYMENT_CHANNEL_FUND_PATH = '/payment-channel-fund';

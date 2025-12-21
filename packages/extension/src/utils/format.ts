@@ -11,7 +11,7 @@ import {
   AMMDepositFlags as AMMDepositFlagsBitmask,
   AMMWithdrawFlags as AMMWithdrawFlagsBitmask
 } from 'xrpl';
-import { Amount, IssuedCurrencyAmount } from 'xrpl/dist/npm/models/common';
+import { Amount, IssuedCurrencyAmount, MPTAmount } from 'xrpl/dist/npm/models/common';
 import { GlobalFlags } from 'xrpl/dist/npm/models/transactions/common';
 
 import {
@@ -52,13 +52,16 @@ export const formatCurrencyName = (currency: string) => {
   return currency.toUpperCase();
 };
 
-export const formatAmount = (amount: Amount | IssuedCurrencyAmount, mainToken?: string) => {
+export const formatAmount = (
+  amount: Amount | IssuedCurrencyAmount | MPTAmount,
+  mainToken?: string
+) => {
   const res = parseAmountObject(amount, mainToken);
   return `${res.amount} ${res.currency}`;
 };
 
 export const parseAmountObject = (
-  amount: Amount | IssuedCurrencyAmount,
+  amount: Amount | IssuedCurrencyAmount | MPTAmount,
   mainToken?: string
 ): {
   amount: string;
@@ -73,6 +76,15 @@ export const parseAmountObject = (
     return {
       amount: formatValue(value),
       currency: mainToken ?? XRP_TOKEN
+    };
+  }
+
+  // Handle MPTAmount (Multi-Purpose Token)
+  if ('mpt_issuance_id' in amount) {
+    value = Number(amount.value);
+    return {
+      amount: formatValue(value),
+      currency: `MPT:${amount.mpt_issuance_id.slice(0, 8)}...`
     };
   }
 

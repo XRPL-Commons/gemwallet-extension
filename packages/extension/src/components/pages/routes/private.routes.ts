@@ -3,19 +3,38 @@ import {
   ACCEPT_NFT_OFFER_PATH,
   ADD_NEW_TRUSTLINE_PATH,
   ADD_NEW_WALLET_PATH,
+  AMM_BID_PATH,
+  AMM_CLAWBACK_PATH,
+  AMM_CREATE_PATH,
+  AMM_DELETE_PATH,
+  AMM_DEPOSIT_PATH,
+  AMM_VOTE_PATH,
+  AMM_WITHDRAW_PATH,
   SUBMIT_RAW_TRANSACTION_PATH,
   BURN_NFT_PATH,
   CANCEL_NFT_OFFER_PATH,
   CANCEL_OFFER_PATH,
+  CHECK_CANCEL_PATH,
+  CHECK_CASH_PATH,
+  CHECK_CREATE_PATH,
   CREATE_NFT_OFFER_PATH,
   CREATE_OFFER_PATH,
   DELETE_ACCOUNT_PATH,
   EDIT_WALLET_PATH,
+  ESCROW_CANCEL_PATH,
+  ESCROW_CREATE_FORM_PATH,
+  ESCROW_CREATE_PATH,
+  ESCROW_FINISH_PATH,
+  ESCROW_PATH,
   HISTORY_PATH,
   HOME_PATH,
   LIST_WALLETS_PATH,
   MINT_NFT_PATH,
+  MPTOKEN_REMOVE_PATH,
   NFT_VIEWER_PATH,
+  PAYMENT_CHANNEL_CLAIM_PATH,
+  PAYMENT_CHANNEL_CREATE_PATH,
+  PAYMENT_CHANNEL_FUND_PATH,
   PERMISSIONS_PATH,
   RECEIVE_PATH,
   SEND_PATH,
@@ -37,18 +56,37 @@ import { About } from '../About';
 import { AcceptNFTOffer } from '../AcceptNFTOffer';
 import { AddNewTrustline } from '../AddNewTrustline';
 import { AddNewWallet } from '../AddNewWallet';
+import { AMMBid } from '../AMMBid';
+import { AMMClawback } from '../AMMClawback';
+import { AMMCreate } from '../AMMCreate';
+import { AMMDelete } from '../AMMDelete';
+import { AMMDeposit } from '../AMMDeposit';
+import { AMMVote } from '../AMMVote';
+import { AMMWithdraw } from '../AMMWithdraw';
 import { BurnNFT } from '../BurnNFT';
 import { CancelNFTOffer } from '../CancelNFTOffer';
 import { CancelOffer } from '../CancelOffer';
+import { CheckCancel } from '../CheckCancel';
+import { CheckCash } from '../CheckCash';
+import { CheckCreate } from '../CheckCreate';
 import { CreateNFTOffer } from '../CreateNFTOffer';
 import { CreateOffer } from '../CreateOffer';
 import { DeleteAccount } from '../DeleteAccount';
 import { EditWallet } from '../EditWallet';
+import { Escrow } from '../Escrow';
+import { EscrowCancel } from '../EscrowCancel';
+import { EscrowCreate } from '../EscrowCreate';
+import { EscrowCreateForm } from '../EscrowCreateForm';
+import { EscrowFinish } from '../EscrowFinish';
 import { History } from '../History';
 import { Home } from '../Home';
 import { ListWallets } from '../ListWallets';
 import { MintNFT } from '../MintNFT';
+import { MPTokenRemove } from '../MPTokenRemove';
 import { NFTViewer } from '../NFTViewer';
+import { PaymentChannelClaim } from '../PaymentChannelClaim';
+import { PaymentChannelCreate } from '../PaymentChannelCreate';
+import { PaymentChannelFund } from '../PaymentChannelFund';
 import { Permissions } from '../Permissions';
 import { ReceivePayment } from '../ReceivePayment';
 import { SendPayment } from '../SendPayment';
@@ -77,6 +115,14 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: ACCEPT_NFT_OFFER_PATH, element: AcceptNFTOffer },
   { path: ADD_NEW_TRUSTLINE_PATH, element: AddNewTrustline },
   { path: ADD_NEW_WALLET_PATH, element: AddNewWallet },
+  // AMM Routes
+  { path: AMM_BID_PATH, element: AMMBid },
+  { path: AMM_CLAWBACK_PATH, element: AMMClawback },
+  { path: AMM_CREATE_PATH, element: AMMCreate },
+  { path: AMM_DELETE_PATH, element: AMMDelete },
+  { path: AMM_DEPOSIT_PATH, element: AMMDeposit },
+  { path: AMM_VOTE_PATH, element: AMMVote },
+  { path: AMM_WITHDRAW_PATH, element: AMMWithdraw },
   { path: BURN_NFT_PATH, element: BurnNFT },
   { path: CANCEL_NFT_OFFER_PATH, element: CancelNFTOffer },
   { path: CANCEL_OFFER_PATH, element: CancelOffer },
@@ -84,11 +130,27 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: CREATE_OFFER_PATH, element: CreateOffer },
   { path: DELETE_ACCOUNT_PATH, element: DeleteAccount },
   { path: EDIT_WALLET_PATH, element: EditWallet },
+  // Check Routes
+  { path: CHECK_CANCEL_PATH, element: CheckCancel },
+  { path: CHECK_CASH_PATH, element: CheckCash },
+  { path: CHECK_CREATE_PATH, element: CheckCreate },
+  // Escrow Routes
+  { path: ESCROW_PATH, element: Escrow },
+  { path: ESCROW_CANCEL_PATH, element: EscrowCancel },
+  { path: ESCROW_CREATE_PATH, element: EscrowCreate },
+  { path: ESCROW_CREATE_FORM_PATH, element: EscrowCreateForm },
+  { path: ESCROW_FINISH_PATH, element: EscrowFinish },
   { path: HISTORY_PATH, element: History },
   { path: HOME_PATH, element: Home },
   { path: LIST_WALLETS_PATH, element: ListWallets },
   { path: MINT_NFT_PATH, element: MintNFT },
+  // MPToken Routes
+  { path: MPTOKEN_REMOVE_PATH, element: MPTokenRemove },
   { path: NFT_VIEWER_PATH, element: NFTViewer },
+  // Payment Channel Routes
+  { path: PAYMENT_CHANNEL_CLAIM_PATH, element: PaymentChannelClaim },
+  { path: PAYMENT_CHANNEL_CREATE_PATH, element: PaymentChannelCreate },
+  { path: PAYMENT_CHANNEL_FUND_PATH, element: PaymentChannelFund },
   { path: PERMISSIONS_PATH, element: Permissions },
   { path: RECEIVE_PATH, element: ReceivePayment },
   { path: SEND_PATH, element: SendPayment },

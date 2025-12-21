@@ -104,7 +104,20 @@ import {
   SubmitBulkTransactionsEventListener,
   RequestSubmitBulkTransactionsMessage,
   ReceiveSubmitBulkTransactionsContentMessage,
-  SubmitBulkTransactionsMessagingResponse
+  SubmitBulkTransactionsMessagingResponse,
+  // Escrow
+  EscrowCreateEventListener,
+  EscrowFinishEventListener,
+  EscrowCancelEventListener,
+  EscrowCreateMessagingResponse,
+  EscrowFinishMessagingResponse,
+  EscrowCancelMessagingResponse,
+  RequestEscrowCreateMessage,
+  RequestEscrowFinishMessage,
+  RequestEscrowCancelMessage,
+  ReceiveEscrowCreateContentMessage,
+  ReceiveEscrowFinishContentMessage,
+  ReceiveEscrowCancelContentMessage
 } from '@gemwallet/constants';
 
 /**
@@ -1051,6 +1064,111 @@ setTimeout(() => {
                       result,
                       error
                     } as SetHookMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_ESCROW_CREATE/V3') {
+        const {
+          data: { payload }
+        } = event as EscrowCreateEventListener;
+        chrome.runtime
+          .sendMessage<RequestEscrowCreateMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceiveEscrowCreateContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_ESCROW_CREATE/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as EscrowCreateMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_ESCROW_FINISH/V3') {
+        const {
+          data: { payload }
+        } = event as EscrowFinishEventListener;
+        chrome.runtime
+          .sendMessage<RequestEscrowFinishMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceiveEscrowFinishContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_ESCROW_FINISH/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as EscrowFinishMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_ESCROW_CANCEL/V3') {
+        const {
+          data: { payload }
+        } = event as EscrowCancelEventListener;
+        chrome.runtime
+          .sendMessage<RequestEscrowCancelMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceiveEscrowCancelContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_ESCROW_CANCEL/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as EscrowCancelMessagingResponse,
                     window.location.origin
                   );
                   chrome.runtime.onMessage.removeListener(messageListener);

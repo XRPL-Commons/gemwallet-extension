@@ -1,4 +1,12 @@
-import { AccountSetAsfFlags, Path, SubmittableTransaction } from 'xrpl';
+import {
+  AccountSetAsfFlags,
+  Path,
+  SubmittableTransaction,
+  Currency,
+  AuthAccount,
+  PriceData,
+  IssuedCurrency
+} from 'xrpl';
 import { Amount, IssuedCurrencyAmount } from 'xrpl/dist/npm/models/common';
 
 import { Network } from '../network/network.constant';
@@ -10,7 +18,12 @@ import {
   TrustSetFlags,
   CreateNFTOfferFlags,
   SetAccountFlags,
-  CreateOfferFlags
+  CreateOfferFlags,
+  DepositAMMFlags,
+  WithdrawAMMFlags,
+  MPTokenIssuanceCreateFlags,
+  MPTokenIssuanceSetFlags,
+  MPTokenAuthorizeFlags
 } from '../xrpl/basic.types';
 import { Hook } from '../xrpl/hooks.types';
 import { AccountNFToken, AccountNFTokenResponse, NFTokenIDResponse } from '../xrpl/nft.types';
@@ -312,6 +325,308 @@ export interface SetHookRequest extends BaseTransactionRequest {
   hooks: Hook[];
 }
 
+/*
+ * Multi-Purpose Tokens (MPT) Request Payloads
+ */
+export interface MPTokenIssuanceCreateRequest extends BaseTransactionRequest {
+  // The maximum number of tokens that can ever be issued by this issuance.
+  MaximumAmount?: string;
+  // An arbitrary 256-bit hash or identifier for the asset.
+  AssetScale?: number;
+  // The fee, in tenths of a basis point, charged to transfer MPTs between non-issuer accounts.
+  TransferFee?: number;
+  // A URI pointing to metadata about this issuance.
+  MPTokenMetadata?: string;
+  // Flags to set on the transaction.
+  flags?: MPTokenIssuanceCreateFlags;
+}
+
+export interface MPTokenIssuanceDestroyRequest extends BaseTransactionRequest {
+  // The ID of the MPToken issuance to destroy.
+  MPTokenIssuanceID: string;
+}
+
+export interface MPTokenIssuanceSetRequest extends BaseTransactionRequest {
+  // The ID of the MPToken issuance to modify.
+  MPTokenIssuanceID: string;
+  // The account to modify MPT holder status for.
+  Holder?: string;
+  // Flags to set on the transaction.
+  flags?: MPTokenIssuanceSetFlags;
+}
+
+export interface MPTokenAuthorizeRequest extends BaseTransactionRequest {
+  // The ID of the MPToken issuance.
+  MPTokenIssuanceID: string;
+  // The account to authorize or unauthorize.
+  Holder?: string;
+  // Flags to set on the transaction.
+  flags?: MPTokenAuthorizeFlags;
+}
+
+/*
+ * Automated Market Maker (AMM) Request Payloads
+ */
+export interface AMMCreateRequest extends BaseTransactionRequest {
+  // The first asset in the AMM pool.
+  Amount: Amount;
+  // The second asset in the AMM pool.
+  Amount2: Amount;
+  // The trading fee for the AMM, in basis points (1/100th of a percent).
+  TradingFee: number;
+}
+
+export interface AMMDeleteRequest extends BaseTransactionRequest {
+  // The definition for one of the assets in the AMM pool.
+  Asset: Currency;
+  // The definition for the other asset in the AMM pool.
+  Asset2: Currency;
+}
+
+export interface AMMDepositRequest extends BaseTransactionRequest {
+  // The definition for one of the assets in the AMM pool.
+  Asset: Currency;
+  // The definition for the other asset in the AMM pool.
+  Asset2: Currency;
+  // The amount of one asset to deposit.
+  Amount?: Amount;
+  // The amount of the other asset to deposit.
+  Amount2?: Amount;
+  // The maximum effective price to pay.
+  EPrice?: Amount;
+  // The amount of LP tokens to receive.
+  LPTokenOut?: IssuedCurrencyAmount;
+  // Flags to set on the transaction.
+  flags?: DepositAMMFlags;
+}
+
+export interface AMMWithdrawRequest extends BaseTransactionRequest {
+  // The definition for one of the assets in the AMM pool.
+  Asset: Currency;
+  // The definition for the other asset in the AMM pool.
+  Asset2: Currency;
+  // The amount of one asset to withdraw.
+  Amount?: Amount;
+  // The amount of the other asset to withdraw.
+  Amount2?: Amount;
+  // The minimum effective price to receive.
+  EPrice?: Amount;
+  // The amount of LP tokens to redeem.
+  LPTokenIn?: IssuedCurrencyAmount;
+  // Flags to set on the transaction.
+  flags?: WithdrawAMMFlags;
+}
+
+export interface AMMVoteRequest extends BaseTransactionRequest {
+  // The definition for one of the assets in the AMM pool.
+  Asset: Currency;
+  // The definition for the other asset in the AMM pool.
+  Asset2: Currency;
+  // The proposed trading fee, in basis points (1/100th of a percent).
+  TradingFee: number;
+}
+
+export interface AMMBidRequest extends BaseTransactionRequest {
+  // The definition for one of the assets in the AMM pool.
+  Asset: Currency;
+  // The definition for the other asset in the AMM pool.
+  Asset2: Currency;
+  // The maximum bid price (LP tokens to pay).
+  BidMax?: IssuedCurrencyAmount;
+  // The minimum bid price (LP tokens to pay).
+  BidMin?: IssuedCurrencyAmount;
+  // A list of accounts to add to the auction slot's authorized accounts list.
+  AuthAccounts?: AuthAccount[];
+}
+
+export interface AMMClawbackRequest extends BaseTransactionRequest {
+  // The definition for the asset in the AMM pool (must be issued by this account).
+  Asset: IssuedCurrency;
+  // The definition for the other asset in the AMM pool.
+  Asset2: Currency;
+  // The account that holds the AMM LP tokens to clawback from.
+  Holder: string;
+  // The amount of the asset to clawback.
+  Amount?: IssuedCurrencyAmount;
+}
+
+/*
+ * Decentralized Identifiers (DID) Request Payloads
+ */
+export interface DIDSetRequest extends BaseTransactionRequest {
+  // The DID document associated with this account.
+  DIDDocument?: string;
+  // The URI pointing to the DID document.
+  URI?: string;
+  // Additional data associated with the DID.
+  Data?: string;
+}
+
+export interface DIDDeleteRequest extends BaseTransactionRequest {
+  // No additional fields required - deletes DID associated with sending account.
+}
+
+/*
+ * Credentials Request Payloads
+ */
+export interface CredentialCreateRequest extends BaseTransactionRequest {
+  // The account that will hold the credential.
+  Subject: string;
+  // The type of credential.
+  CredentialType: string;
+  // The expiration time of the credential.
+  Expiration?: number;
+  // The URI pointing to the credential data.
+  URI?: string;
+}
+
+export interface CredentialAcceptRequest extends BaseTransactionRequest {
+  // The account that issued the credential.
+  Issuer: string;
+  // The type of credential to accept.
+  CredentialType: string;
+}
+
+export interface CredentialDeleteRequest extends BaseTransactionRequest {
+  // The account that holds the credential (for issuer-initiated delete) or the issuer (for holder-initiated delete).
+  Subject?: string;
+  // The account that issued the credential.
+  Issuer?: string;
+  // The type of credential to delete.
+  CredentialType: string;
+}
+
+/*
+ * Oracle Request Payloads
+ */
+export interface OracleSetRequest extends BaseTransactionRequest {
+  // The Oracle Document ID.
+  OracleDocumentID: number;
+  // The provider of the oracle data.
+  Provider?: string;
+  // The URI pointing to the oracle data.
+  URI?: string;
+  // The asset class of the oracle.
+  AssetClass?: string;
+  // The time the oracle data was last updated.
+  LastUpdateTime: number;
+  // The price data entries.
+  PriceDataSeries: PriceData[];
+}
+
+export interface OracleDeleteRequest extends BaseTransactionRequest {
+  // The Oracle Document ID to delete.
+  OracleDocumentID: number;
+}
+
+/*
+ * Permissioned Domains Request Payloads
+ */
+export interface PermissionedDomainSetRequest extends BaseTransactionRequest {
+  // The domain's unique identifier.
+  DomainID?: string;
+  // The credentials accepted by this domain.
+  AcceptedCredentials?: Array<{
+    Credential: {
+      Issuer: string;
+      CredentialType: string;
+    };
+  }>;
+}
+
+export interface PermissionedDomainDeleteRequest extends BaseTransactionRequest {
+  // The domain's unique identifier.
+  DomainID: string;
+}
+
+/*
+ * Other Transaction Request Payloads
+ */
+export interface ClawbackRequest extends BaseTransactionRequest {
+  // The amount to claw back.
+  Amount: Amount;
+  // The holder to claw back from.
+  Holder?: string;
+}
+
+export interface NFTokenModifyRequest extends BaseTransactionRequest {
+  // The NFToken ID to modify.
+  NFTokenID: string;
+  // The new owner of the NFToken.
+  Owner?: string;
+  // The new URI for the NFToken.
+  URI?: string;
+}
+
+export interface DelegateSetRequest extends BaseTransactionRequest {
+  // The account to delegate to.
+  Authorize?: string;
+  // Granular permissions to delegate.
+  Permissions?: Array<{
+    Permission: {
+      PermissionValue: string;
+    };
+  }>;
+}
+
+export interface BatchRequest extends BaseTransactionRequest {
+  // The raw transactions to batch.
+  RawTransactions: Array<{
+    RawTransaction: SubmittableTransaction;
+  }>;
+  // Flags to set on the batch transaction.
+  flags?: number;
+}
+
+export interface LedgerStateFixRequest extends BaseTransactionRequest {
+  // The type of fix to apply.
+  LedgerFixType: number;
+  // The owner of the ledger entry to fix.
+  Owner?: string;
+}
+
+/*
+ * Escrow Request Payloads
+ */
+export interface EscrowCreateRequest extends BaseTransactionRequest {
+  // Amount of XRP, in drops, to deduct from the sender's balance and escrow.
+  // Once escrowed, the XRP can either go to the Destination address (after the FinishAfter time)
+  // or returned to the sender (after the CancelAfter time).
+  amount: Amount;
+  // Address to receive escrowed XRP.
+  destination: string;
+  // The time, in seconds since the Ripple Epoch, when this escrow expires.
+  // This value is immutable; the funds can only be returned to the sender after this time.
+  cancelAfter?: number;
+  // The time, in seconds since the Ripple Epoch, when the escrowed XRP can be released to the recipient.
+  // This value is immutable; the funds cannot move until this time is reached.
+  finishAfter?: number;
+  // Hex value representing a PREIMAGE-SHA-256 crypto-condition.
+  // The funds can only be delivered to the recipient if this condition is fulfilled.
+  condition?: string;
+  // Arbitrary tag to further specify the destination for this escrowed payment,
+  // such as a hosted recipient at the destination address.
+  destinationTag?: number;
+}
+
+export interface EscrowFinishRequest extends BaseTransactionRequest {
+  // Address of the source account that funded the escrow payment.
+  owner: string;
+  // Transaction sequence (or Ticket number) of EscrowCreate transaction that created the escrow to finish.
+  offerSequence: number;
+  // Hex value representing a PREIMAGE-SHA-256 crypto-condition.
+  condition?: string;
+  // Hex value of the PREIMAGE-SHA-256 crypto-condition fulfillment matching the condition.
+  fulfillment?: string;
+}
+
+export interface EscrowCancelRequest extends BaseTransactionRequest {
+  // Address of the source account that funded the escrow payment.
+  owner: string;
+  // Transaction sequence (or Ticket number) of EscrowCreate transaction that created the escrow to cancel.
+  offerSequence: number;
+}
+
 export type RequestPayload =
   | AcceptNFTOfferRequest
   | BurnNFTRequest
@@ -334,7 +649,43 @@ export type RequestPayload =
   | SignTransactionRequest
   | SubmitStorageKeyRequest
   | SubmitTransactionRequest
-  | SubmitBulkTransactionsWithKeysRequest;
+  | SubmitBulkTransactionsWithKeysRequest
+  // MPT
+  | MPTokenIssuanceCreateRequest
+  | MPTokenIssuanceDestroyRequest
+  | MPTokenIssuanceSetRequest
+  | MPTokenAuthorizeRequest
+  // AMM
+  | AMMCreateRequest
+  | AMMDeleteRequest
+  | AMMDepositRequest
+  | AMMWithdrawRequest
+  | AMMVoteRequest
+  | AMMBidRequest
+  | AMMClawbackRequest
+  // DID
+  | DIDSetRequest
+  | DIDDeleteRequest
+  // Credentials
+  | CredentialCreateRequest
+  | CredentialAcceptRequest
+  | CredentialDeleteRequest
+  // Oracle
+  | OracleSetRequest
+  | OracleDeleteRequest
+  // Permissioned Domains
+  | PermissionedDomainSetRequest
+  | PermissionedDomainDeleteRequest
+  // Other
+  | ClawbackRequest
+  | NFTokenModifyRequest
+  | DelegateSetRequest
+  | BatchRequest
+  | LedgerStateFixRequest
+  // Escrow
+  | EscrowCreateRequest
+  | EscrowFinishRequest
+  | EscrowCancelRequest;
 
 /*
  * Response Payloads
@@ -475,6 +826,156 @@ export interface SetHookResponse
     hash: string;
   }> {}
 
+// MPT Response Interfaces
+export interface MPTokenIssuanceCreateResponse
+  extends BaseResponse<{
+    hash: string;
+    MPTokenIssuanceID?: string;
+  }> {}
+
+export interface MPTokenIssuanceDestroyResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface MPTokenIssuanceSetResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface MPTokenAuthorizeResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+// AMM Response Interfaces
+export interface AMMCreateResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface AMMDeleteResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface AMMDepositResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface AMMWithdrawResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface AMMVoteResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface AMMBidResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface AMMClawbackResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+// DID Response Interfaces
+export interface DIDSetResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface DIDDeleteResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+// Credential Response Interfaces
+export interface CredentialCreateResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface CredentialAcceptResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface CredentialDeleteResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+// Oracle Response Interfaces
+export interface OracleSetResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface OracleDeleteResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+// Permissioned Domain Response Interfaces
+export interface PermissionedDomainSetResponse
+  extends BaseResponse<{
+    hash: string;
+    DomainID?: string;
+  }> {}
+
+export interface PermissionedDomainDeleteResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+// Other Response Interfaces
+export interface ClawbackResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface NFTokenModifyResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface DelegateSetResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface BatchResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface LedgerStateFixResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+// Escrow Response Interfaces
+export interface EscrowCreateResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface EscrowFinishResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface EscrowCancelResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
 export type ResponsePayload =
   | AcceptNFTOfferResponse
   | BurnNFTResponse
@@ -502,7 +1003,43 @@ export type ResponsePayload =
   | SignMessageResponse
   | SignMessageResponseDeprecated
   | SubmitTransactionResponse
-  | SubmitBulkTransactionsResponse;
+  | SubmitBulkTransactionsResponse
+  // MPT
+  | MPTokenIssuanceCreateResponse
+  | MPTokenIssuanceDestroyResponse
+  | MPTokenIssuanceSetResponse
+  | MPTokenAuthorizeResponse
+  // AMM
+  | AMMCreateResponse
+  | AMMDeleteResponse
+  | AMMDepositResponse
+  | AMMWithdrawResponse
+  | AMMVoteResponse
+  | AMMBidResponse
+  | AMMClawbackResponse
+  // DID
+  | DIDSetResponse
+  | DIDDeleteResponse
+  // Credentials
+  | CredentialCreateResponse
+  | CredentialAcceptResponse
+  | CredentialDeleteResponse
+  // Oracle
+  | OracleSetResponse
+  | OracleDeleteResponse
+  // Permissioned Domains
+  | PermissionedDomainSetResponse
+  | PermissionedDomainDeleteResponse
+  // Other
+  | ClawbackResponse
+  | NFTokenModifyResponse
+  | DelegateSetResponse
+  | BatchResponse
+  | LedgerStateFixResponse
+  // Escrow
+  | EscrowCreateResponse
+  | EscrowFinishResponse
+  | EscrowCancelResponse;
 
 /*
  * Internal Messages Payloads

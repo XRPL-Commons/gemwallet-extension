@@ -1,9 +1,10 @@
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import HistoryIcon from '@mui/icons-material/History';
+import LockClockIcon from '@mui/icons-material/LockClock';
 import PhotoCameraBackIcon from '@mui/icons-material/PhotoCameraBack';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-import { HISTORY_PATH, HOME_PATH, NFT_VIEWER_PATH, SETTINGS_PATH } from './paths';
+import { ESCROW_PATH, HISTORY_PATH, HOME_PATH, NFT_VIEWER_PATH, SETTINGS_PATH } from './paths';
 
 export const navigation = [
   {
@@ -20,6 +21,11 @@ export const navigation = [
     label: 'NFTs',
     pathname: NFT_VIEWER_PATH,
     icon: <PhotoCameraBackIcon />
+  },
+  {
+    label: 'Escrow',
+    pathname: ESCROW_PATH,
+    icon: <LockClockIcon />
   },
   {
     label: 'Settings',

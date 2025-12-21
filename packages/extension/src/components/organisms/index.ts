@@ -1,4 +1,5 @@
 export * from './BaseTransaction';
+export * from './EscrowListing';
 export * from './Header';
 export * from './NavMenu';
 export * from './NFTDetails';

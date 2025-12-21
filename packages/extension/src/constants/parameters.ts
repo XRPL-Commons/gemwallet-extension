@@ -19,3 +19,15 @@ export const PARAMETER_TRANSACTION_CREATE_OFFER = 'transaction=createOffer';
 export const PARAMETER_TRANSACTION_SET_ACCOUNT = 'transaction=setAccount';
 export const PARAMETER_TRANSACTION_SET_HOOK = 'transaction=setHook';
 export const PARAMETER_TRANSACTION_SET_REGULAR_KEY = 'transaction=setRegularKey';
+// AMM
+export const PARAMETER_TRANSACTION_AMM_CREATE = 'transaction=ammCreate';
+export const PARAMETER_TRANSACTION_AMM_DELETE = 'transaction=ammDelete';
+export const PARAMETER_TRANSACTION_AMM_DEPOSIT = 'transaction=ammDeposit';
+export const PARAMETER_TRANSACTION_AMM_WITHDRAW = 'transaction=ammWithdraw';
+export const PARAMETER_TRANSACTION_AMM_VOTE = 'transaction=ammVote';
+export const PARAMETER_TRANSACTION_AMM_BID = 'transaction=ammBid';
+export const PARAMETER_TRANSACTION_AMM_CLAWBACK = 'transaction=ammClawback';
+// Escrow
+export const PARAMETER_TRANSACTION_ESCROW_CREATE = 'transaction=escrowCreate';
+export const PARAMETER_TRANSACTION_ESCROW_FINISH = 'transaction=escrowFinish';
+export const PARAMETER_TRANSACTION_ESCROW_CANCEL = 'transaction=escrowCancel';

@@ -23,7 +23,11 @@ import {
   SignTransactionRequest,
   SubmitTransactionRequest,
   SubmitBulkTransactionsWithKeysRequest,
-  WebsiteRequest
+  WebsiteRequest,
+  // Escrow
+  EscrowCreateRequest,
+  EscrowFinishRequest,
+  EscrowCancelRequest
 } from '../payload/payload.types';
 
 // Event listeners
@@ -51,7 +55,11 @@ interface MessageEventData {
     | SignMessageRequest
     | SubmitTransactionRequest
     | SubmitBulkTransactionsWithKeysRequest
-    | WebsiteRequest;
+    | WebsiteRequest
+    // Escrow
+    | EscrowCreateRequest
+    | EscrowFinishRequest
+    | EscrowCancelRequest;
 }
 
 export interface NetworkEventListener extends MessageEvent<MessageEventData> {
@@ -322,6 +330,37 @@ export interface SetHookEventListener extends MessageEvent<MessageEventData> {
   };
 }
 
+// Escrow Event Listeners
+export interface EscrowCreateEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_ESCROW_CREATE/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: EscrowCreateRequest;
+  };
+}
+
+export interface EscrowFinishEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_ESCROW_FINISH/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: EscrowFinishRequest;
+  };
+}
+
+export interface EscrowCancelEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_ESCROW_CANCEL/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: EscrowCancelRequest;
+  };
+}
+
 export type EventListener =
   | AcceptNFTOfferEventListener
   | AddressEventListener
@@ -349,7 +388,11 @@ export type EventListener =
   | SignMessageListenerDeprecated
   | SignTransactionEventListener
   | SubmitTransactionEventListener
-  | SubmitBulkTransactionsEventListener;
+  | SubmitBulkTransactionsEventListener
+  // Escrow
+  | EscrowCreateEventListener
+  | EscrowFinishEventListener
+  | EscrowCancelEventListener;
 
 // Events
 export interface EventEventData {

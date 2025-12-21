@@ -1,20 +1,23 @@
 import { unix } from 'dayjs';
-import { AccountTxTransaction, DepositPreauth, Payment, SetRegularKey } from 'xrpl';
+import { AccountTxTransaction, DepositPreauth, Payment, SetRegularKey, RIPPLED_API_V1 } from 'xrpl';
 
 import { TransactionTypes } from '../../../types';
 import { formatAmount } from '../../../utils';
+
+// Use V1 API type for backward compatibility (uses `tx` field instead of `tx_json`)
+type AccountTxTransactionV1 = AccountTxTransaction<typeof RIPPLED_API_V1>;
 
 export const formatDate = (unixTimestamp: number): string => {
   return unix(946684800 + unixTimestamp).format('MMM DD, YYYY - HH:mm');
 };
 
 type TransactionFormatter = (
-  transaction: AccountTxTransaction,
+  transaction: AccountTxTransactionV1,
   publicAddress: string,
   mainToken: string
 ) => string;
 
-const transactionMappers: Record<TransactionTypes, TransactionFormatter> = {
+const transactionMappers: Partial<Record<TransactionTypes, TransactionFormatter>> = {
   [TransactionTypes.Payment]: (transaction, publicAddress, mainToken) => {
     const amount = formatAmount((transaction.tx as Payment).Amount, mainToken);
     return (transaction.tx as Payment).Destination === publicAddress
@@ -54,11 +57,43 @@ const transactionMappers: Record<TransactionTypes, TransactionFormatter> = {
   [TransactionTypes.NFTokenBurn]: () => 'Burn NFT',
   [TransactionTypes.NFTokenCreateOffer]: () => 'Create NFT offer',
   [TransactionTypes.NFTokenCancelOffer]: () => 'Cancel NFT offer',
-  [TransactionTypes.NFTokenAcceptOffer]: () => 'Accept NFT offer'
+  [TransactionTypes.NFTokenAcceptOffer]: () => 'Accept NFT offer',
+  [TransactionTypes.NFTokenModify]: () => 'Modify NFT',
+  // Multi-Purpose Tokens (MPT)
+  [TransactionTypes.MPTokenIssuanceCreate]: () => 'Create MPT issuance',
+  [TransactionTypes.MPTokenIssuanceDestroy]: () => 'Destroy MPT issuance',
+  [TransactionTypes.MPTokenIssuanceSet]: () => 'Set MPT issuance',
+  [TransactionTypes.MPTokenAuthorize]: () => 'Authorize MPT',
+  // Automated Market Makers (AMM)
+  [TransactionTypes.AMMCreate]: () => 'Create AMM',
+  [TransactionTypes.AMMDelete]: () => 'Delete AMM',
+  [TransactionTypes.AMMDeposit]: () => 'AMM deposit',
+  [TransactionTypes.AMMWithdraw]: () => 'AMM withdraw',
+  [TransactionTypes.AMMVote]: () => 'AMM vote',
+  [TransactionTypes.AMMBid]: () => 'AMM bid',
+  [TransactionTypes.AMMClawback]: () => 'AMM clawback',
+  // Decentralized Identifiers (DID)
+  [TransactionTypes.DIDSet]: () => 'Set DID',
+  [TransactionTypes.DIDDelete]: () => 'Delete DID',
+  // Credentials
+  [TransactionTypes.CredentialCreate]: () => 'Create credential',
+  [TransactionTypes.CredentialAccept]: () => 'Accept credential',
+  [TransactionTypes.CredentialDelete]: () => 'Delete credential',
+  // Price Oracles
+  [TransactionTypes.OracleSet]: () => 'Set oracle',
+  [TransactionTypes.OracleDelete]: () => 'Delete oracle',
+  // Permissioned Domains
+  [TransactionTypes.PermissionedDomainSet]: () => 'Set permissioned domain',
+  [TransactionTypes.PermissionedDomainDelete]: () => 'Delete permissioned domain',
+  // Other
+  [TransactionTypes.Clawback]: () => 'Clawback',
+  [TransactionTypes.DelegateSet]: () => 'Set delegate',
+  [TransactionTypes.Batch]: () => 'Batch transaction',
+  [TransactionTypes.LedgerStateFix]: () => 'Ledger state fix'
 };
 
 export const formatTransaction = (
-  transaction: AccountTxTransaction,
+  transaction: AccountTxTransactionV1,
   publicAddress: string,
   mainToken: string
 ): string => {
