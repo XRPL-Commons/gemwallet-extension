@@ -31,3 +31,11 @@ export const PARAMETER_TRANSACTION_AMM_CLAWBACK = 'transaction=ammClawback';
 export const PARAMETER_TRANSACTION_ESCROW_CREATE = 'transaction=escrowCreate';
 export const PARAMETER_TRANSACTION_ESCROW_FINISH = 'transaction=escrowFinish';
 export const PARAMETER_TRANSACTION_ESCROW_CANCEL = 'transaction=escrowCancel';
+// Checks
+export const PARAMETER_TRANSACTION_CHECK_CREATE = 'transaction=checkCreate';
+export const PARAMETER_TRANSACTION_CHECK_CASH = 'transaction=checkCash';
+export const PARAMETER_TRANSACTION_CHECK_CANCEL = 'transaction=checkCancel';
+// Payment Channels
+export const PARAMETER_TRANSACTION_PAYMENT_CHANNEL_CREATE = 'transaction=paymentChannelCreate';
+export const PARAMETER_TRANSACTION_PAYMENT_CHANNEL_CLAIM = 'transaction=paymentChannelClaim';
+export const PARAMETER_TRANSACTION_PAYMENT_CHANNEL_FUND = 'transaction=paymentChannelFund';

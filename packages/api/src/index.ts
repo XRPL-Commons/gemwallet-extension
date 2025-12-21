@@ -9,12 +9,18 @@ export * from './ammWithdraw';
 export * from './burnNFT';
 export * from './cancelNFTOffer';
 export * from './cancelOffer';
+export * from './checkCancel';
+export * from './checkCash';
+export * from './checkCreate';
 export * from './createNFTOffer';
 export * from './createOffer';
 export * from './escrowCancel';
 export * from './escrowCreate';
 export * from './escrowFinish';
 export * from './on';
+export * from './paymentChannelClaim';
+export * from './paymentChannelCreate';
+export * from './paymentChannelFund';
 export * from './getAddress';
 export * from './getNetwork';
 export * from './getNFT';
@@ -56,6 +62,9 @@ export type {
   BurnNFTRequest,
   CancelNFTOfferRequest,
   CancelOfferRequest,
+  CheckCancelRequest,
+  CheckCashRequest,
+  CheckCreateRequest,
   CreateNFTOfferRequest,
   CreateOfferRequest,
   EscrowCancelRequest,
@@ -64,6 +73,9 @@ export type {
   GetNetworkRequest,
   GetNFTRequest,
   MintNFTRequest,
+  PaymentChannelClaimRequest,
+  PaymentChannelCreateRequest,
+  PaymentChannelFundRequest,
   SendPaymentRequest,
   SetAccountRequest,
   SetHookRequest,
@@ -88,6 +100,9 @@ export type {
   BurnNFTResponse,
   CancelNFTOfferResponse,
   CancelOfferResponse,
+  CheckCancelResponse,
+  CheckCashResponse,
+  CheckCreateResponse,
   CreateNFTOfferResponse,
   CreateOfferResponse,
   EscrowCancelResponse,
@@ -99,6 +114,9 @@ export type {
   GetPublicKeyResponse,
   IsInstalledResponse,
   MintNFTResponse,
+  PaymentChannelClaimResponse,
+  PaymentChannelCreateResponse,
+  PaymentChannelFundResponse,
   SendPaymentResponse,
   SetAccountResponse,
   SetHookResponse,

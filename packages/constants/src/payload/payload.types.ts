@@ -627,6 +627,106 @@ export interface EscrowCancelRequest extends BaseTransactionRequest {
   offerSequence: number;
 }
 
+/*
+ * Check Request Payloads
+ */
+export interface CheckCreateRequest extends BaseTransactionRequest {
+  // The unique address of the account that can cash the Check.
+  destination: string;
+  // Maximum amount of source currency the Check is allowed to debit the sender,
+  // including transfer fees on non-XRP currencies.
+  sendMax: Amount;
+  // Arbitrary tag that identifies the reason for the Check, or a hosted recipient to pay.
+  destinationTag?: number;
+  // Time after which the Check is no longer valid, in seconds since the Ripple Epoch.
+  expiration?: number;
+  // Arbitrary 256-bit hash representing a specific reason or identifier for this Check.
+  invoiceID?: string;
+}
+
+export interface CheckCashRequest extends BaseTransactionRequest {
+  // The ID of the Check ledger object to cash, as a 64-character hexadecimal string.
+  checkID: string;
+  // Redeem the Check for exactly this amount, if possible.
+  // The currency must match that of the SendMax of the corresponding CheckCreate transaction.
+  // You must provide either this field or deliverMin.
+  amount?: Amount;
+  // Redeem the Check for at least this amount and for as much as possible.
+  // The currency must match that of the SendMax of the corresponding CheckCreate transaction.
+  // You must provide either this field or amount.
+  deliverMin?: Amount;
+}
+
+export interface CheckCancelRequest extends BaseTransactionRequest {
+  // The ID of the Check ledger object to cancel, as a 64-character hexadecimal string.
+  checkID: string;
+}
+
+/*
+ * Payment Channel Request Payloads
+ */
+export interface PaymentChannelCreateRequest extends BaseTransactionRequest {
+  // Amount of XRP, in drops, to deduct from the sender's balance and set aside in this channel.
+  // While the channel is open, the XRP can only go to the Destination address.
+  // Note: Payment Channels only support XRP, not IOUs.
+  amount: string;
+  // Address to receive XRP claims against this channel.
+  destination: string;
+  // Amount of time the source address must wait before closing the channel if it has unclaimed XRP.
+  settleDelay: number;
+  // The 33-byte public key of the key pair the source will use to sign claims against this channel,
+  // in hexadecimal. This can be any secp256k1 or Ed25519 public key.
+  publicKey: string;
+  // The time, in seconds since the Ripple Epoch, when this channel expires.
+  // Any transaction that would modify the channel after this time closes the channel without otherwise affecting it.
+  cancelAfter?: number;
+  // Arbitrary tag to further specify the destination for this payment channel.
+  destinationTag?: number;
+}
+
+export interface PaymentChannelClaimRequest extends BaseTransactionRequest {
+  // The unique ID of the channel, as a 64-character hexadecimal string.
+  channel: string;
+  // Total amount of XRP, in drops, delivered by this channel after processing this claim.
+  // Required to deliver XRP. Must be more than the total amount delivered by the channel so far,
+  // but not greater than the Amount of the signed claim.
+  // Note: Payment Channels only support XRP, not IOUs.
+  balance?: string;
+  // The amount of XRP, in drops, authorized by the Signature.
+  // This must match the amount in the signed message.
+  // Note: Payment Channels only support XRP, not IOUs.
+  amount?: string;
+  // The signature of this claim, as hexadecimal.
+  // The signed message contains the channel ID and the amount of the claim.
+  signature?: string;
+  // The public key used for the signature, as hexadecimal.
+  // This must match the PublicKey stored in the ledger for the channel.
+  publicKey?: string;
+  // (Optional) Bit-mask of flags for this transaction.
+  flags?: PaymentChannelClaimFlags;
+}
+
+export interface PaymentChannelFundRequest extends BaseTransactionRequest {
+  // The unique ID of the channel to fund, as a 64-character hexadecimal string.
+  channel: string;
+  // Amount of XRP, in drops, to add to the channel.
+  // Note: Payment Channels only support XRP, not IOUs.
+  amount: string;
+  // New Expiration time to set for the channel, in seconds since the Ripple Epoch.
+  // This must be later than either the current time plus the SettleDelay of the channel,
+  // or the existing Expiration of the channel.
+  expiration?: number;
+}
+
+export type PaymentChannelClaimFlags =
+  | number
+  | {
+      // Request to close the channel.
+      tfClose?: boolean;
+      // Request to renew the channel by resetting the expiration.
+      tfRenew?: boolean;
+    };
+
 export type RequestPayload =
   | AcceptNFTOfferRequest
   | BurnNFTRequest
@@ -685,7 +785,15 @@ export type RequestPayload =
   // Escrow
   | EscrowCreateRequest
   | EscrowFinishRequest
-  | EscrowCancelRequest;
+  | EscrowCancelRequest
+  // Check
+  | CheckCreateRequest
+  | CheckCashRequest
+  | CheckCancelRequest
+  // Payment Channel
+  | PaymentChannelCreateRequest
+  | PaymentChannelClaimRequest
+  | PaymentChannelFundRequest;
 
 /*
  * Response Payloads
@@ -976,6 +1084,38 @@ export interface EscrowCancelResponse
     hash: string;
   }> {}
 
+// Check Response Interfaces
+export interface CheckCreateResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface CheckCashResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface CheckCancelResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+// Payment Channel Response Interfaces
+export interface PaymentChannelCreateResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface PaymentChannelClaimResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
+export interface PaymentChannelFundResponse
+  extends BaseResponse<{
+    hash: string;
+  }> {}
+
 export type ResponsePayload =
   | AcceptNFTOfferResponse
   | BurnNFTResponse
@@ -1039,7 +1179,15 @@ export type ResponsePayload =
   // Escrow
   | EscrowCreateResponse
   | EscrowFinishResponse
-  | EscrowCancelResponse;
+  | EscrowCancelResponse
+  // Check
+  | CheckCreateResponse
+  | CheckCashResponse
+  | CheckCancelResponse
+  // Payment Channel
+  | PaymentChannelCreateResponse
+  | PaymentChannelClaimResponse
+  | PaymentChannelFundResponse;
 
 /*
  * Internal Messages Payloads

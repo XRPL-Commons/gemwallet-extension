@@ -117,7 +117,33 @@ import {
   RequestEscrowCancelMessage,
   ReceiveEscrowCreateContentMessage,
   ReceiveEscrowFinishContentMessage,
-  ReceiveEscrowCancelContentMessage
+  ReceiveEscrowCancelContentMessage,
+  // Checks
+  CheckCreateEventListener,
+  CheckCashEventListener,
+  CheckCancelEventListener,
+  CheckCreateMessagingResponse,
+  CheckCashMessagingResponse,
+  CheckCancelMessagingResponse,
+  RequestCheckCreateMessage,
+  RequestCheckCashMessage,
+  RequestCheckCancelMessage,
+  ReceiveCheckCreateContentMessage,
+  ReceiveCheckCashContentMessage,
+  ReceiveCheckCancelContentMessage,
+  // Payment Channels
+  PaymentChannelCreateEventListener,
+  PaymentChannelClaimEventListener,
+  PaymentChannelFundEventListener,
+  PaymentChannelCreateMessagingResponse,
+  PaymentChannelClaimMessagingResponse,
+  PaymentChannelFundMessagingResponse,
+  RequestPaymentChannelCreateMessage,
+  RequestPaymentChannelClaimMessage,
+  RequestPaymentChannelFundMessage,
+  ReceivePaymentChannelCreateContentMessage,
+  ReceivePaymentChannelClaimContentMessage,
+  ReceivePaymentChannelFundContentMessage
 } from '@gemwallet/constants';
 
 /**
@@ -1169,6 +1195,216 @@ setTimeout(() => {
                       result,
                       error
                     } as EscrowCancelMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_CHECK_CREATE/V3') {
+        const {
+          data: { payload }
+        } = event as CheckCreateEventListener;
+        chrome.runtime
+          .sendMessage<RequestCheckCreateMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceiveCheckCreateContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_CHECK_CREATE/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as CheckCreateMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_CHECK_CASH/V3') {
+        const {
+          data: { payload }
+        } = event as CheckCashEventListener;
+        chrome.runtime
+          .sendMessage<RequestCheckCashMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceiveCheckCashContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_CHECK_CASH/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as CheckCashMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_CHECK_CANCEL/V3') {
+        const {
+          data: { payload }
+        } = event as CheckCancelEventListener;
+        chrome.runtime
+          .sendMessage<RequestCheckCancelMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceiveCheckCancelContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_CHECK_CANCEL/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as CheckCancelMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_PAYMENT_CHANNEL_CREATE/V3') {
+        const {
+          data: { payload }
+        } = event as PaymentChannelCreateEventListener;
+        chrome.runtime
+          .sendMessage<RequestPaymentChannelCreateMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceivePaymentChannelCreateContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_PAYMENT_CHANNEL_CREATE/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as PaymentChannelCreateMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_PAYMENT_CHANNEL_CLAIM/V3') {
+        const {
+          data: { payload }
+        } = event as PaymentChannelClaimEventListener;
+        chrome.runtime
+          .sendMessage<RequestPaymentChannelClaimMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceivePaymentChannelClaimContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_PAYMENT_CHANNEL_CLAIM/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as PaymentChannelClaimMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_PAYMENT_CHANNEL_FUND/V3') {
+        const {
+          data: { payload }
+        } = event as PaymentChannelFundEventListener;
+        chrome.runtime
+          .sendMessage<RequestPaymentChannelFundMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceivePaymentChannelFundContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_PAYMENT_CHANNEL_FUND/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as PaymentChannelFundMessagingResponse,
                     window.location.origin
                   );
                   chrome.runtime.onMessage.removeListener(messageListener);

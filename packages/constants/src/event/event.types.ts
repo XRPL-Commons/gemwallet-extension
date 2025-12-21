@@ -27,7 +27,15 @@ import {
   // Escrow
   EscrowCreateRequest,
   EscrowFinishRequest,
-  EscrowCancelRequest
+  EscrowCancelRequest,
+  // Check
+  CheckCreateRequest,
+  CheckCashRequest,
+  CheckCancelRequest,
+  // Payment Channel
+  PaymentChannelCreateRequest,
+  PaymentChannelClaimRequest,
+  PaymentChannelFundRequest
 } from '../payload/payload.types';
 
 // Event listeners
@@ -59,7 +67,15 @@ interface MessageEventData {
     // Escrow
     | EscrowCreateRequest
     | EscrowFinishRequest
-    | EscrowCancelRequest;
+    | EscrowCancelRequest
+    // Check
+    | CheckCreateRequest
+    | CheckCashRequest
+    | CheckCancelRequest
+    // Payment Channel
+    | PaymentChannelCreateRequest
+    | PaymentChannelClaimRequest
+    | PaymentChannelFundRequest;
 }
 
 export interface NetworkEventListener extends MessageEvent<MessageEventData> {
@@ -361,6 +377,68 @@ export interface EscrowCancelEventListener extends MessageEvent<MessageEventData
   };
 }
 
+// Check Event Listeners
+export interface CheckCreateEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_CHECK_CREATE/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: CheckCreateRequest;
+  };
+}
+
+export interface CheckCashEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_CHECK_CASH/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: CheckCashRequest;
+  };
+}
+
+export interface CheckCancelEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_CHECK_CANCEL/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: CheckCancelRequest;
+  };
+}
+
+// Payment Channel Event Listeners
+export interface PaymentChannelCreateEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_PAYMENT_CHANNEL_CREATE/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: PaymentChannelCreateRequest;
+  };
+}
+
+export interface PaymentChannelClaimEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_PAYMENT_CHANNEL_CLAIM/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: PaymentChannelClaimRequest;
+  };
+}
+
+export interface PaymentChannelFundEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_PAYMENT_CHANNEL_FUND/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: PaymentChannelFundRequest;
+  };
+}
+
 export type EventListener =
   | AcceptNFTOfferEventListener
   | AddressEventListener
@@ -392,7 +470,15 @@ export type EventListener =
   // Escrow
   | EscrowCreateEventListener
   | EscrowFinishEventListener
-  | EscrowCancelEventListener;
+  | EscrowCancelEventListener
+  // Check
+  | CheckCreateEventListener
+  | CheckCashEventListener
+  | CheckCancelEventListener
+  // Payment Channel
+  | PaymentChannelCreateEventListener
+  | PaymentChannelClaimEventListener
+  | PaymentChannelFundEventListener;
 
 // Events
 export interface EventEventData {

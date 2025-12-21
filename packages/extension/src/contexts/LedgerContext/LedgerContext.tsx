@@ -42,7 +42,15 @@ import {
   // Escrow
   EscrowCreate,
   EscrowFinish,
-  EscrowCancel
+  EscrowCancel,
+  // Checks
+  CheckCreate,
+  CheckCash,
+  CheckCancel,
+  // Payment Channels
+  PaymentChannelCreate,
+  PaymentChannelClaim,
+  PaymentChannelFund
 } from 'xrpl';
 
 import {
@@ -192,6 +200,32 @@ interface EscrowCancelResponse {
   hash: string;
 }
 
+// Check Response interfaces
+interface CheckCreateResponse {
+  hash: string;
+}
+
+interface CheckCashResponse {
+  hash: string;
+}
+
+interface CheckCancelResponse {
+  hash: string;
+}
+
+// Payment Channel Response interfaces
+interface PaymentChannelCreateResponse {
+  hash: string;
+}
+
+interface PaymentChannelClaimResponse {
+  hash: string;
+}
+
+interface PaymentChannelFundResponse {
+  hash: string;
+}
+
 interface Props {
   children: React.ReactElement;
 }
@@ -241,6 +275,14 @@ export interface LedgerContextType {
   escrowCreate: (payload: EscrowCreate) => Promise<EscrowCreateResponse>;
   escrowFinish: (payload: EscrowFinish) => Promise<EscrowFinishResponse>;
   escrowCancel: (payload: EscrowCancel) => Promise<EscrowCancelResponse>;
+  // Checks
+  checkCreate: (payload: CheckCreate) => Promise<CheckCreateResponse>;
+  checkCash: (payload: CheckCash) => Promise<CheckCashResponse>;
+  checkCancel: (payload: CheckCancel) => Promise<CheckCancelResponse>;
+  // Payment Channels
+  paymentChannelCreate: (payload: PaymentChannelCreate) => Promise<PaymentChannelCreateResponse>;
+  paymentChannelClaim: (payload: PaymentChannelClaim) => Promise<PaymentChannelClaimResponse>;
+  paymentChannelFund: (payload: PaymentChannelFund) => Promise<PaymentChannelFundResponse>;
 }
 
 const LedgerContext = createContext<LedgerContextType>({
@@ -285,7 +327,15 @@ const LedgerContext = createContext<LedgerContextType>({
   // Escrow
   escrowCreate: () => new Promise(() => {}),
   escrowFinish: () => new Promise(() => {}),
-  escrowCancel: () => new Promise(() => {})
+  escrowCancel: () => new Promise(() => {}),
+  // Checks
+  checkCreate: () => new Promise(() => {}),
+  checkCash: () => new Promise(() => {}),
+  checkCancel: () => new Promise(() => {}),
+  // Payment Channels
+  paymentChannelCreate: () => new Promise(() => {}),
+  paymentChannelClaim: () => new Promise(() => {}),
+  paymentChannelFund: () => new Promise(() => {})
 });
 
 const LedgerProvider: FC<Props> = ({ children }) => {
@@ -1059,6 +1109,138 @@ const LedgerProvider: FC<Props> = ({ children }) => {
   );
 
   /*
+   * Check Transactions
+   */
+  const checkCreate = useCallback(
+    async (payload: CheckCreate): Promise<CheckCreateResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't create check");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const checkCash = useCallback(
+    async (payload: CheckCash): Promise<CheckCashResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't cash check");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const checkCancel = useCallback(
+    async (payload: CheckCancel): Promise<CheckCancelResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't cancel check");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  /*
+   * Payment Channel Transactions
+   */
+  const paymentChannelCreate = useCallback(
+    async (payload: PaymentChannelCreate): Promise<PaymentChannelCreateResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't create payment channel");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const paymentChannelClaim = useCallback(
+    async (payload: PaymentChannelClaim): Promise<PaymentChannelClaimResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't claim from payment channel");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const paymentChannelFund = useCallback(
+    async (payload: PaymentChannelFund): Promise<PaymentChannelFundResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't fund payment channel");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  /*
    * Getters
    */
   const getNFTs = useCallback(
@@ -1242,7 +1424,15 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     // Escrow
     escrowCreate,
     escrowFinish,
-    escrowCancel
+    escrowCancel,
+    // Checks
+    checkCreate,
+    checkCash,
+    checkCancel,
+    // Payment Channels
+    paymentChannelCreate,
+    paymentChannelClaim,
+    paymentChannelFund
   };
 
   return <LedgerContext.Provider value={value}>{children}</LedgerContext.Provider>;
