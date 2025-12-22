@@ -63,3 +63,5 @@ export const CHECK_CANCEL_PATH = '/check-cancel';
 export const PAYMENT_CHANNEL_CREATE_PATH = '/payment-channel-create';
 export const PAYMENT_CHANNEL_CLAIM_PATH = '/payment-channel-claim';
 export const PAYMENT_CHANNEL_FUND_PATH = '/payment-channel-fund';
+// Passkey
+export const PASSKEY_SETUP_PATH = '/passkey-setup';

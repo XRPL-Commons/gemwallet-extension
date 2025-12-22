@@ -1,11 +1,14 @@
 import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from 'react';
 
+import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {
   Button,
   Checkbox,
+  CircularProgress,
   Container,
+  Divider,
   FormControlLabel,
   TextField,
   Typography
@@ -65,7 +68,7 @@ import {
 } from '../../../constants';
 import { useWallet } from '../../../contexts';
 import { useKeyUp } from '../../../hooks/useKeyUp';
-import { loadData } from '../../../utils';
+import { authenticateWithPasskey, isPasskeyEnabled, loadData } from '../../../utils';
 import { loadRememberSessionState, saveRememberSessionState } from '../../../utils/login';
 import {
   loadFromChromeLocalStorage,
@@ -82,6 +85,9 @@ export const Login: FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [disableLogin, setDisableLogin] = useState(false);
   const [currentAttempts, setCurrentAttempts] = useState(0);
+  const [passkeyEnabled, setPasskeyEnabled] = useState(false);
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
+  const [passkeyError, setPasskeyError] = useState('');
   const navigate = useNavigate();
   const { search } = useLocation();
   const { signIn, wallets, selectedWallet } = useWallet();
@@ -164,6 +170,14 @@ export const Login: FC = () => {
     loadTimerData();
   }, []);
 
+  useEffect(() => {
+    const checkPasskeyStatus = async () => {
+      const enabled = await isPasskeyEnabled();
+      setPasskeyEnabled(enabled);
+    };
+    checkPasskeyStatus();
+  }, []);
+
   const handleUnlock = useCallback(() => {
     const passwordValue = passwordRef.current?.value;
     if (passwordValue && signIn(passwordValue, rememberSession)) {
@@ -199,6 +213,45 @@ export const Login: FC = () => {
       }
     }
   }, [signIn, rememberSession, navigateToPath, currentAttempts]);
+
+  const handlePasskeyUnlock = useCallback(async () => {
+    setPasskeyLoading(true);
+    setPasskeyError('');
+    setPasswordError('');
+
+    try {
+      const password = await authenticateWithPasskey();
+      if (password && signIn(password, rememberSession)) {
+        saveRememberSessionState(rememberSession);
+        navigateToPath();
+
+        if (process.env.NODE_ENV === 'production') {
+          chrome.runtime
+            .sendMessage<EventLoginBackgroundMessage>({
+              app: GEM_WALLET,
+              type: 'EVENT_LOGIN',
+              source: 'GEM_WALLET_MSG_REQUEST',
+              payload: {
+                id: 0,
+                result: {
+                  loggedIn: true
+                }
+              }
+            })
+            .catch((e) => {
+              Sentry.captureException(e);
+            });
+        }
+      } else {
+        setPasskeyError('Failed to unlock with passkey');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Passkey authentication failed';
+      setPasskeyError(errorMessage);
+    } finally {
+      setPasskeyLoading(false);
+    }
+  }, [signIn, rememberSession, navigateToPath]);
 
   // Handle Login step button by pressing 'Enter'
   useKeyUp('Enter', handleUnlock);
@@ -288,6 +341,40 @@ export const Login: FC = () => {
         <Button variant="contained" onClick={handleUnlock} disabled={disableLogin}>
           Unlock
         </Button>
+        {passkeyEnabled && (
+          <>
+            <Divider style={{ margin: '15px 0' }}>
+              <Typography variant="caption" color="textSecondary">
+                or
+              </Typography>
+            </Divider>
+            <Button
+              variant="outlined"
+              onClick={handlePasskeyUnlock}
+              disabled={disableLogin || passkeyLoading}
+              startIcon={
+                passkeyLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  <FingerprintIcon />
+                )
+              }
+            >
+              {passkeyLoading ? 'Authenticating...' : 'Unlock with Passkey'}
+            </Button>
+            {passkeyError && (
+              <Typography
+                variant="caption"
+                color="error"
+                display="block"
+                align="center"
+                style={{ marginTop: '8px' }}
+              >
+                {passkeyError}
+              </Typography>
+            )}
+          </>
+        )}
         <Typography
           variant="caption"
           display="block"

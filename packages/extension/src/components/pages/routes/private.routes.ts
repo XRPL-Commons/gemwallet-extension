@@ -32,6 +32,7 @@ import {
   MINT_NFT_PATH,
   MPTOKEN_REMOVE_PATH,
   NFT_VIEWER_PATH,
+  PASSKEY_SETUP_PATH,
   PAYMENT_CHANNEL_CLAIM_PATH,
   PAYMENT_CHANNEL_CREATE_PATH,
   PAYMENT_CHANNEL_FUND_PATH,
@@ -84,6 +85,7 @@ import { ListWallets } from '../ListWallets';
 import { MintNFT } from '../MintNFT';
 import { MPTokenRemove } from '../MPTokenRemove';
 import { NFTViewer } from '../NFTViewer';
+import { PasskeySetup } from '../PasskeySetup';
 import { PaymentChannelClaim } from '../PaymentChannelClaim';
 import { PaymentChannelCreate } from '../PaymentChannelCreate';
 import { PaymentChannelFund } from '../PaymentChannelFund';
@@ -147,6 +149,8 @@ export const privateRoutes: PrivateRouteConfig[] = [
   // MPToken Routes
   { path: MPTOKEN_REMOVE_PATH, element: MPTokenRemove },
   { path: NFT_VIEWER_PATH, element: NFTViewer },
+  // Passkey Route
+  { path: PASSKEY_SETUP_PATH, element: PasskeySetup },
   // Payment Channel Routes
   { path: PAYMENT_CHANNEL_CLAIM_PATH, element: PaymentChannelClaim },
   { path: PAYMENT_CHANNEL_CREATE_PATH, element: PaymentChannelCreate },

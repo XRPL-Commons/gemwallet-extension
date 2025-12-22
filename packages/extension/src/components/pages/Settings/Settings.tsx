@@ -10,6 +10,7 @@ import {
   FAQ_LINK,
   FEEDBACK_LINK,
   NAV_MENU_HEIGHT,
+  PASSKEY_SETUP_PATH,
   PERMISSIONS_PATH,
   RESET_PASSWORD_PATH,
   SET_REGULAR_KEY_PATH,
@@ -18,7 +19,12 @@ import {
   TRUSTED_APPS_PATH
 } from '../../../constants';
 import { useWallet } from '../../../contexts';
-import { loadFromChromeLocalStorage, openExternalLink } from '../../../utils';
+import {
+  isPasskeyEnabled,
+  isPlatformAuthenticatorAvailable,
+  loadFromChromeLocalStorage,
+  openExternalLink
+} from '../../../utils';
 import { PageWithHeader } from '../../templates';
 import { ItemMenuGroup, MenuGroup } from './MenuGroup';
 
@@ -27,6 +33,8 @@ export const Settings: FC = () => {
   const { signOut } = useWallet();
 
   const [advancedModeEnabled, setAdvancedModeEnabled] = useState<boolean>(false);
+  const [passkeyAvailable, setPasskeyAvailable] = useState<boolean>(false);
+  const [passkeyEnabled, setPasskeyEnabled] = useState<boolean>(false);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -37,6 +45,19 @@ export const Settings: FC = () => {
     };
 
     loadInitialData();
+  }, []);
+
+  useEffect(() => {
+    const checkPasskeyStatus = async () => {
+      const [available, enabled] = await Promise.all([
+        isPlatformAuthenticatorAvailable(),
+        isPasskeyEnabled()
+      ]);
+      setPasskeyAvailable(available);
+      setPasskeyEnabled(enabled);
+    };
+
+    checkPasskeyStatus();
   }, []);
 
   const handleLock = useCallback(() => {
@@ -58,6 +79,20 @@ export const Settings: FC = () => {
     ],
     [navigate]
   );
+
+  const securityItems = useMemo<ItemMenuGroup[]>(() => {
+    const items: ItemMenuGroup[] = [];
+
+    if (passkeyAvailable) {
+      items.push({
+        name: passkeyEnabled ? 'Manage Passkey' : 'Enable Passkey',
+        type: 'button',
+        onClick: () => navigate(PASSKEY_SETUP_PATH)
+      });
+    }
+
+    return items;
+  }, [navigate, passkeyAvailable, passkeyEnabled]);
 
   const infoItems = useMemo<ItemMenuGroup[]>(
     () => [
@@ -124,6 +159,9 @@ export const Settings: FC = () => {
       >
         <div style={{ paddingBottom: '0.75rem' }}>
           <MenuGroup sectionName={'Account settings'} items={accountParamsItems} />
+          {securityItems.length > 0 ? (
+            <MenuGroup sectionName={'Security'} items={securityItems} />
+          ) : null}
           <MenuGroup sectionName={'Informations'} items={infoItems} />
           {advancedModeEnabled ? (
             <MenuGroup sectionName={'Advanced'} items={advancedItems} />
