@@ -1,4 +1,5 @@
 export * from './ActionButtons';
+export * from './ActionGrid';
 export * from './AMMPoolInfo';
 export * from './ChainIndicator';
 export * from './CheckCard';
@@ -11,6 +12,7 @@ export * from './InsufficientFundsWarning';
 export * from './MPTokenDisplay';
 export * from './NetworkIndicator';
 export * from './NFTCard';
+export * from './PortfolioChart';
 export * from './RawTransaction';
 export * from './TextCopy';
 export * from './TokenDisplay';

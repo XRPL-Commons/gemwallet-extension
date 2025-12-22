@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { WELCOME_PATH } from '../../../constants';
 import { useWallet } from '../../../contexts';
-import { TokenListing } from '../../organisms';
+import { Dashboard } from '../../organisms';
 import { PageWithHeader, PageWithSpinner } from '../../templates';
 
 export const Home: FC = () => {
@@ -16,8 +16,8 @@ export const Home: FC = () => {
     return <PageWithSpinner />;
   }
   return (
-    <PageWithHeader>
-      <TokenListing address={wallets?.[selectedWallet]?.publicAddress} />
+    <PageWithHeader isHome>
+      <Dashboard address={wallets?.[selectedWallet]?.publicAddress} />
     </PageWithHeader>
   );
 };

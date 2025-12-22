@@ -14,7 +14,8 @@ import { useNetwork, useWallet } from '../../../contexts';
 import { Header, NavMenu } from '../../organisms';
 
 const MARGIN_TOP_CONTAINER = 20;
-const CONTAINER_HEIGHT_TAKEN = HEADER_HEIGHT + NAV_MENU_HEIGHT + MARGIN_TOP_CONTAINER;
+const CONTAINER_HEIGHT_WITH_NAV = HEADER_HEIGHT + NAV_MENU_HEIGHT + MARGIN_TOP_CONTAINER;
+const CONTAINER_HEIGHT_WITHOUT_NAV = HEADER_HEIGHT + MARGIN_TOP_CONTAINER;
 
 export interface PageWithHeaderProps {
   title?: string;
@@ -23,9 +24,15 @@ export interface PageWithHeaderProps {
     container?: CSSProperties;
   };
   children: React.ReactNode;
+  isHome?: boolean;
 }
 
-export const PageWithHeader: FC<PageWithHeaderProps> = ({ children, styles, title }) => {
+export const PageWithHeader: FC<PageWithHeaderProps> = ({
+  children,
+  styles,
+  title,
+  isHome = false
+}) => {
   const { wallets, selectedWallet } = useWallet();
   const { hasOfflineBanner } = useNetwork();
   const location = useLocation();
@@ -33,6 +40,12 @@ export const PageWithHeader: FC<PageWithHeaderProps> = ({ children, styles, titl
     () => navigation.findIndex((item) => item.pathname === location.pathname),
     [location.pathname]
   );
+
+  // Hide nav menu on home page (dashboard has action grid instead)
+  const showNavMenu = !isHome;
+  const containerHeightTaken = showNavMenu
+    ? CONTAINER_HEIGHT_WITH_NAV
+    : CONTAINER_HEIGHT_WITHOUT_NAV;
 
   if (!wallets?.[selectedWallet]) {
     return null;
@@ -56,7 +69,7 @@ export const PageWithHeader: FC<PageWithHeaderProps> = ({ children, styles, titl
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: `calc(100vh - ${CONTAINER_HEIGHT_TAKEN}px${
+          height: `calc(100vh - ${containerHeightTaken}px${
             hasOfflineBanner ? ` - ${NETWORK_BANNER_HEIGHT}px` : ''
           })`,
           margin: `${MARGIN_TOP_CONTAINER}px auto 0 auto`,
@@ -71,7 +84,7 @@ export const PageWithHeader: FC<PageWithHeaderProps> = ({ children, styles, titl
         )}
         {children}
       </Container>
-      <NavMenu indexDefaultNav={indexDefaultNav} />
+      {showNavMenu && <NavMenu indexDefaultNav={indexDefaultNav} />}
     </div>
   );
 };
