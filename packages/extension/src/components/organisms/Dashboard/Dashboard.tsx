@@ -1,15 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  Link,
-  Typography
-} from '@mui/material';
+import { Box, Button, Link, Typography } from '@mui/material';
 import * as Sentry from '@sentry/react';
 import { useNavigate } from 'react-router-dom';
 import { AccountLinesTrustline, TrustSetFlags as TrustSetFlagsBitmask } from 'xrpl';
@@ -68,12 +59,18 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
   const [trustLineBalances, setTrustLineBalances] = useState<TrustLineBalance[]>([]);
   const [explanationOpen, setExplanationOpen] = useState(false);
   const [portfolioHistory, setPortfolioHistory] = useState<PortfolioSnapshot[]>([]);
-  const [tokensExpanded, setTokensExpanded] = useState(true);
+  const [showTokens, setShowTokens] = useState(false);
   const { client, reconnectToNetwork, networkName, chainName } = useNetwork();
   const { serverInfo } = useServer();
   const { fundWallet, getAccountInfo } = useLedger();
   const mainToken = useMainToken();
   const navigate = useNavigate();
+
+  const baseReserve = serverInfo?.info.validated_ledger?.reserve_base_xrp || DEFAULT_RESERVE;
+  const ownerReserveBase =
+    chainName === Chain.XAHAU
+      ? serverInfo?.info.validated_ledger?.reserve_inc_xrp || XAHAU_RESERVE_PER_OWNER
+      : serverInfo?.info.validated_ledger?.reserve_inc_xrp || RESERVE_PER_OWNER;
 
   // Calculate total portfolio value in USD
   const portfolioValue = useMemo(() => {
@@ -81,7 +78,6 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
       return 0;
     }
     const xrpValue = (Number(mainTokenBalance) - reserve) * MOCK_XRP_PRICE;
-    // In the future, add trustline token values here
     return Math.max(0, xrpValue);
   }, [mainTokenBalance, reserve]);
 
@@ -94,7 +90,7 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
     loadHistory();
   }, [address]);
 
-  // Save portfolio snapshot when balance changes
+  // Save portfolio snapshot when balance changes (only if value > 0)
   useEffect(() => {
     if (
       mainTokenBalance !== LOADING_STATE &&
@@ -103,13 +99,13 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
     ) {
       addPortfolioSnapshot(address, portfolioValue, Number(mainTokenBalance), MOCK_XRP_PRICE).then(
         () => {
-          // Refresh history
           getWalletPortfolioHistory(address).then(setPortfolioHistory);
         }
       );
     }
   }, [address, mainTokenBalance, portfolioValue]);
 
+  // Fetch balances - moved getAccountInfo into useEffect to fix performance
   useEffect(() => {
     async function fetchBalance() {
       try {
@@ -156,17 +152,26 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
         if (trustLineBalances) {
           setTrustLineBalances(trustLineBalances);
         }
+
+        // Fetch account info for reserve calculation
+        const accountInfo = await getAccountInfo();
+        const calculatedOwnerReserve =
+          accountInfo.result.account_data.OwnerCount * ownerReserveBase;
+        setOwnerReserve(calculatedOwnerReserve);
+        setReserve(calculatedOwnerReserve + baseReserve);
       } catch (e: unknown) {
         const error = e as { data?: { error?: string } };
         if (error?.data?.error !== 'actNotFound') {
           Sentry.captureException(e);
         }
         setMainTokenBalance(ERROR_STATE);
+        setOwnerReserve(0);
+        setReserve(DEFAULT_RESERVE);
       }
     }
 
     fetchBalance();
-  }, [address, client]);
+  }, [address, client, getAccountInfo, baseReserve, ownerReserveBase]);
 
   const handleOpen = useCallback(() => {
     setExplanationOpen(true);
@@ -174,6 +179,10 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
 
   const handleClose = useCallback(() => {
     setExplanationOpen(false);
+  }, []);
+
+  const handleChartClick = useCallback(() => {
+    setShowTokens((prev) => !prev);
   }, []);
 
   const hasFundWallet = useMemo(() => {
@@ -224,23 +233,6 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
     return <TokenLoader />;
   }
 
-  const baseReserve = serverInfo?.info.validated_ledger?.reserve_base_xrp || DEFAULT_RESERVE;
-  const ownerReserveBase =
-    chainName === Chain.XAHAU
-      ? serverInfo?.info.validated_ledger?.reserve_inc_xrp || XAHAU_RESERVE_PER_OWNER
-      : serverInfo?.info.validated_ledger?.reserve_inc_xrp || RESERVE_PER_OWNER;
-
-  getAccountInfo()
-    .then((accountInfo) => {
-      const ownerReserve = accountInfo.result.account_data.OwnerCount * ownerReserveBase;
-      setOwnerReserve(ownerReserve);
-      setReserve(ownerReserve + baseReserve);
-    })
-    .catch(() => {
-      setOwnerReserve(0);
-      setReserve(DEFAULT_RESERVE);
-    });
-
   if (mainTokenBalance === ERROR_STATE) {
     return (
       <InformationMessage title="Account not activated">
@@ -273,39 +265,16 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
 
   return (
     <Box sx={{ pb: 2 }}>
-      {/* Portfolio Chart */}
-      <PortfolioChart totalValue={portfolioValue} snapshots={portfolioHistory} />
+      {/* Portfolio Chart - Clickable to show/hide tokens */}
+      <PortfolioChart
+        totalValue={portfolioValue}
+        snapshots={portfolioHistory}
+        onClick={handleChartClick}
+      />
 
-      {/* Action Grid */}
-      <ActionGrid excludeItems={['Tokens']} />
-
-      {/* Token List Accordion */}
-      <Accordion
-        expanded={tokensExpanded}
-        onChange={() => setTokensExpanded(!tokensExpanded)}
-        sx={{
-          backgroundColor: 'transparent',
-          boxShadow: 'none',
-          '&:before': { display: 'none' },
-          mt: 2
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: 1,
-            minHeight: '40px',
-            '& .MuiAccordionSummary-content': {
-              margin: '8px 0'
-            }
-          }}
-        >
-          <Typography variant="subtitle2" fontWeight={600}>
-            Tokens
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails sx={{ padding: '8px 0' }}>
+      {/* Token List - shown when chart is clicked */}
+      {showTokens && (
+        <Box sx={{ mb: 2 }}>
           <TokenDisplay
             balance={Number(mainTokenBalance) - reserve}
             token={mainToken}
@@ -366,8 +335,11 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
               Add trustline
             </Button>
           </Box>
-        </AccordionDetails>
-      </Accordion>
+        </Box>
+      )}
+
+      {/* Action Grid */}
+      <ActionGrid excludeItems={['Tokens']} />
 
       {/* Balance Explanation Dialog */}
       <DialogPage title="Account balance" onClose={handleClose} open={explanationOpen}>

@@ -16,7 +16,7 @@ export const Home: FC = () => {
     return <PageWithSpinner />;
   }
   return (
-    <PageWithHeader isHome>
+    <PageWithHeader>
       <Dashboard address={wallets?.[selectedWallet]?.publicAddress} />
     </PageWithHeader>
   );

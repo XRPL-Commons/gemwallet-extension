@@ -7,7 +7,7 @@ import { useNetwork } from '../../../contexts';
 export interface WalletIconProps {
   onClick?: MouseEventHandler<HTMLDivElement>;
   publicAddress: string;
-  size?: 'md' | 'xl';
+  size?: 'sm' | 'md' | 'xl';
   isConnectedInformation?: boolean;
 }
 
@@ -21,13 +21,27 @@ export const WalletIcon: FC<WalletIconProps> = ({
 
   const borderColor = client ? 'green' : 'red';
 
+  const getSizeValues = () => {
+    switch (size) {
+      case 'sm':
+        return { outer: 32, inner: 29, icon: 24 };
+      case 'xl':
+        return { outer: 60, inner: 60, icon: 50 };
+      case 'md':
+      default:
+        return { outer: 45, inner: 42, icon: 35 };
+    }
+  };
+
+  const { outer, inner, icon } = getSizeValues();
+
   return (
     <div
       role={onClick ? 'button' : undefined}
       aria-label={isConnectedInformation ? `Wallet icon with ${borderColor} border` : 'Wallet icon'}
       style={{
-        width: size === 'md' ? '45px' : '60px',
-        height: size === 'md' ? '45px' : '60px',
+        width: `${outer}px`,
+        height: `${outer}px`,
         border: isConnectedInformation ? `solid 2px ${borderColor}` : 'none',
         borderRadius: '50%',
         display: 'flex',
@@ -41,14 +55,14 @@ export const WalletIcon: FC<WalletIconProps> = ({
         style={{
           borderRadius: '50%',
           backgroundColor: 'white',
-          width: size === 'md' ? '42px' : '60px',
-          height: size === 'md' ? '42px' : '60px',
+          width: `${inner}px`,
+          height: `${inner}px`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
         }}
       >
-        <Hashicon value={publicAddress} size={size === 'md' ? 35 : 50} />
+        <Hashicon value={publicAddress} size={icon} />
       </div>
     </div>
   );

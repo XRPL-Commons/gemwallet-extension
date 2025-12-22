@@ -1,11 +1,12 @@
 import { FC, useMemo } from 'react';
 
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Box, Typography } from '@mui/material';
-import { Area, AreaChart, ResponsiveContainer, Tooltip, YAxis } from 'recharts';
+import { Area, AreaChart, ResponsiveContainer, YAxis } from 'recharts';
 
 import { PortfolioSnapshot, formatPortfolioDataForChart, getPortfolioChange } from '../../../utils';
 
-const CHART_HEIGHT = 120;
+const CHART_HEIGHT = 100;
 const POSITIVE_COLOR = '#4CAF50';
 const NEGATIVE_COLOR = '#F44336';
 const NEUTRAL_COLOR = '#9E9E9E';
@@ -14,12 +15,14 @@ interface PortfolioChartProps {
   totalValue: number;
   snapshots: PortfolioSnapshot[];
   currency?: string;
+  onClick?: () => void;
 }
 
 export const PortfolioChart: FC<PortfolioChartProps> = ({
   totalValue,
   snapshots,
-  currency = 'USD'
+  currency = 'USD',
+  onClick
 }) => {
   const chartData = useMemo(() => formatPortfolioDataForChart(snapshots), [snapshots]);
   const percentageChange = useMemo(() => getPortfolioChange(snapshots), [snapshots]);
@@ -44,30 +47,34 @@ export const PortfolioChart: FC<PortfolioChartProps> = ({
     return `${sign}${percentageChange.toFixed(2)}%`;
   }, [percentageChange]);
 
-  // Generate mock data if no real data exists
+  // No mock data - show flat line at 0 if no real data
   const displayData = useMemo(() => {
     if (chartData.length >= 2) return chartData;
 
-    // Generate flat line with current value for display purposes
+    // Show flat line at current value (or 0)
     const now = new Date();
-    return Array.from({ length: 7 }, (_, i) => {
-      const date = new Date(now);
-      date.setDate(date.getDate() - (6 - i));
-      return {
-        time: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        value: totalValue,
-        date
-      };
-    });
+    const value = totalValue || 0;
+    return [
+      { time: 'Start', value, date: new Date(now.getTime() - 86400000) },
+      { time: 'Now', value, date: now }
+    ];
   }, [chartData, totalValue]);
 
   return (
     <Box
+      onClick={onClick}
       sx={{
         background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 100%)',
         borderRadius: 2,
         padding: 2,
-        marginBottom: 2
+        marginBottom: 2,
+        cursor: onClick ? 'pointer' : 'default',
+        transition: 'transform 0.2s ease',
+        '&:hover': onClick
+          ? {
+              transform: 'scale(1.01)'
+            }
+          : {}
       }}
     >
       <Box
@@ -85,16 +92,23 @@ export const PortfolioChart: FC<PortfolioChartProps> = ({
           >
             {formattedValue}
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '0.75rem',
-              mt: 0.5
-            }}
-          >
-            Total Balance
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '0.75rem',
+                mt: 0.5
+              }}
+            >
+              Total Balance
+            </Typography>
+            {onClick && (
+              <KeyboardArrowDownIcon
+                sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1rem', mt: 0.5 }}
+              />
+            )}
+          </Box>
         </Box>
         <Box
           sx={{
@@ -128,27 +142,13 @@ export const PortfolioChart: FC<PortfolioChartProps> = ({
               </linearGradient>
             </defs>
             <YAxis domain={['dataMin', 'dataMax']} hide />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                border: 'none',
-                borderRadius: 8,
-                color: 'white',
-                fontSize: '0.75rem'
-              }}
-              formatter={(value: number | undefined) => [
-                value !== undefined ? `$${value.toFixed(2)}` : '$0.00',
-                'Value'
-              ]}
-              labelFormatter={(label) => String(label)}
-            />
             <Area
               type="monotone"
               dataKey="value"
               stroke={chartColor}
               strokeWidth={2}
               fill="url(#portfolioGradient)"
-              animationDuration={1000}
+              animationDuration={500}
             />
           </AreaChart>
         </ResponsiveContainer>

@@ -1,21 +1,14 @@
-import { CSSProperties, FC, useMemo } from 'react';
+import { CSSProperties, FC } from 'react';
 
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { useLocation } from 'react-router-dom';
 
-import {
-  HEADER_HEIGHT,
-  NAV_MENU_HEIGHT,
-  NETWORK_BANNER_HEIGHT,
-  navigation
-} from '../../../constants';
+import { HEADER_HEIGHT, NETWORK_BANNER_HEIGHT } from '../../../constants';
 import { useNetwork, useWallet } from '../../../contexts';
-import { Header, NavMenu } from '../../organisms';
+import { Header } from '../../organisms';
 
 const MARGIN_TOP_CONTAINER = 20;
-const CONTAINER_HEIGHT_WITH_NAV = HEADER_HEIGHT + NAV_MENU_HEIGHT + MARGIN_TOP_CONTAINER;
-const CONTAINER_HEIGHT_WITHOUT_NAV = HEADER_HEIGHT + MARGIN_TOP_CONTAINER;
+const CONTAINER_HEIGHT = HEADER_HEIGHT + MARGIN_TOP_CONTAINER;
 
 export interface PageWithHeaderProps {
   title?: string;
@@ -27,25 +20,9 @@ export interface PageWithHeaderProps {
   isHome?: boolean;
 }
 
-export const PageWithHeader: FC<PageWithHeaderProps> = ({
-  children,
-  styles,
-  title,
-  isHome = false
-}) => {
+export const PageWithHeader: FC<PageWithHeaderProps> = ({ children, styles, title }) => {
   const { wallets, selectedWallet } = useWallet();
   const { hasOfflineBanner } = useNetwork();
-  const location = useLocation();
-  const indexDefaultNav = useMemo(
-    () => navigation.findIndex((item) => item.pathname === location.pathname),
-    [location.pathname]
-  );
-
-  // Hide nav menu on home page (dashboard has action grid instead)
-  const showNavMenu = !isHome;
-  const containerHeightTaken = showNavMenu
-    ? CONTAINER_HEIGHT_WITH_NAV
-    : CONTAINER_HEIGHT_WITHOUT_NAV;
 
   if (!wallets?.[selectedWallet]) {
     return null;
@@ -69,7 +46,7 @@ export const PageWithHeader: FC<PageWithHeaderProps> = ({
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: `calc(100vh - ${containerHeightTaken}px${
+          height: `calc(100vh - ${CONTAINER_HEIGHT}px${
             hasOfflineBanner ? ` - ${NETWORK_BANNER_HEIGHT}px` : ''
           })`,
           margin: `${MARGIN_TOP_CONTAINER}px auto 0 auto`,
@@ -84,7 +61,6 @@ export const PageWithHeader: FC<PageWithHeaderProps> = ({
         )}
         {children}
       </Container>
-      {showNavMenu && <NavMenu indexDefaultNav={indexDefaultNav} />}
     </div>
   );
 };
