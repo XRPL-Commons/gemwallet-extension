@@ -1,3 +1,4 @@
+export * from './useAccountData';
 export * from './useAMMInfo';
 export * from './useBeforeUnload';
 export * from './useFees';
