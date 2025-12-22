@@ -177,7 +177,6 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: SHARE_NFT_PATH, element: ShareNFT },
   { path: SHARE_PUBLIC_ADDRESS_PATH, element: ShareAddress },
   { path: SHARE_PUBLIC_KEY_PATH, element: SharePublicKey },
-  { path: SHARE_NFT_PATH, element: ShareNFT },
   { path: SIGN_MESSAGE_PATH, element: SignMessage },
   { path: SIGN_TRANSACTION_PATH, element: SignTransaction },
   { path: SUBMIT_RAW_TRANSACTION_PATH, element: SubmitRawTransaction },
