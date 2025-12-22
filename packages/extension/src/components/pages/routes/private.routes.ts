@@ -14,9 +14,11 @@ import {
   BURN_NFT_PATH,
   CANCEL_NFT_OFFER_PATH,
   CANCEL_OFFER_PATH,
-  // CHECK_CANCEL_PATH,
-  // CHECK_CASH_PATH,
-  // CHECK_CREATE_PATH,
+  CHECK_CANCEL_PATH,
+  CHECK_CASH_PATH,
+  CHECK_CREATE_FORM_PATH,
+  CHECK_CREATE_PATH,
+  CHECKS_PATH,
   CREATE_NFT_OFFER_PATH,
   CREATE_OFFER_PATH,
   DELETE_ACCOUNT_PATH,
@@ -33,9 +35,11 @@ import {
   MPTOKEN_REMOVE_PATH,
   NFT_VIEWER_PATH,
   PASSKEY_SETUP_PATH,
-  // PAYMENT_CHANNEL_CLAIM_PATH,
-  // PAYMENT_CHANNEL_CREATE_PATH,
-  // PAYMENT_CHANNEL_FUND_PATH,
+  PAYMENT_CHANNEL_CLAIM_PATH,
+  PAYMENT_CHANNEL_CREATE_FORM_PATH,
+  PAYMENT_CHANNEL_CREATE_PATH,
+  PAYMENT_CHANNEL_FUND_PATH,
+  PAYMENT_CHANNELS_PATH,
   PERMISSIONS_PATH,
   RECEIVE_PATH,
   SEND_PATH,
@@ -67,10 +71,11 @@ import { AMMWithdraw } from '../AMMWithdraw';
 import { BurnNFT } from '../BurnNFT';
 import { CancelNFTOffer } from '../CancelNFTOffer';
 import { CancelOffer } from '../CancelOffer';
-// TODO: Uncomment when Check components are implemented
-// import { CheckCancel } from '../CheckCancel';
-// import { CheckCash } from '../CheckCash';
-// import { CheckCreate } from '../CheckCreate';
+import { CheckCancel } from '../CheckCancel';
+import { CheckCash } from '../CheckCash';
+import { CheckCreate } from '../CheckCreate';
+import { CheckCreateForm } from '../CheckCreateForm';
+import { Checks } from '../Checks';
 import { CreateNFTOffer } from '../CreateNFTOffer';
 import { CreateOffer } from '../CreateOffer';
 import { DeleteAccount } from '../DeleteAccount';
@@ -87,10 +92,11 @@ import { MintNFT } from '../MintNFT';
 import { MPTokenRemove } from '../MPTokenRemove';
 import { NFTViewer } from '../NFTViewer';
 import { PasskeySetup } from '../PasskeySetup';
-// TODO: Uncomment when PaymentChannel components are implemented
-// import { PaymentChannelClaim } from '../PaymentChannelClaim';
-// import { PaymentChannelCreate } from '../PaymentChannelCreate';
-// import { PaymentChannelFund } from '../PaymentChannelFund';
+import { PaymentChannelClaim } from '../PaymentChannelClaim';
+import { PaymentChannelCreate } from '../PaymentChannelCreate';
+import { PaymentChannelCreateForm } from '../PaymentChannelCreateForm';
+import { PaymentChannelFund } from '../PaymentChannelFund';
+import { PaymentChannels } from '../PaymentChannels';
 import { Permissions } from '../Permissions';
 import { ReceivePayment } from '../ReceivePayment';
 import { SendPayment } from '../SendPayment';
@@ -134,16 +140,24 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: CREATE_OFFER_PATH, element: CreateOffer },
   { path: DELETE_ACCOUNT_PATH, element: DeleteAccount },
   { path: EDIT_WALLET_PATH, element: EditWallet },
-  // Check Routes - TODO: Uncomment when Check components are implemented
-  // { path: CHECK_CANCEL_PATH, element: CheckCancel },
-  // { path: CHECK_CASH_PATH, element: CheckCash },
-  // { path: CHECK_CREATE_PATH, element: CheckCreate },
   // Escrow Routes
   { path: ESCROW_PATH, element: Escrow },
   { path: ESCROW_CANCEL_PATH, element: EscrowCancel },
   { path: ESCROW_CREATE_PATH, element: EscrowCreate },
   { path: ESCROW_CREATE_FORM_PATH, element: EscrowCreateForm },
   { path: ESCROW_FINISH_PATH, element: EscrowFinish },
+  // Check Routes
+  { path: CHECKS_PATH, element: Checks },
+  { path: CHECK_CREATE_PATH, element: CheckCreate },
+  { path: CHECK_CREATE_FORM_PATH, element: CheckCreateForm },
+  { path: CHECK_CASH_PATH, element: CheckCash },
+  { path: CHECK_CANCEL_PATH, element: CheckCancel },
+  // Payment Channel Routes
+  { path: PAYMENT_CHANNELS_PATH, element: PaymentChannels },
+  { path: PAYMENT_CHANNEL_CREATE_PATH, element: PaymentChannelCreate },
+  { path: PAYMENT_CHANNEL_CREATE_FORM_PATH, element: PaymentChannelCreateForm },
+  { path: PAYMENT_CHANNEL_CLAIM_PATH, element: PaymentChannelClaim },
+  { path: PAYMENT_CHANNEL_FUND_PATH, element: PaymentChannelFund },
   { path: HISTORY_PATH, element: History },
   { path: HOME_PATH, element: Home },
   { path: LIST_WALLETS_PATH, element: ListWallets },
@@ -153,10 +167,6 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: NFT_VIEWER_PATH, element: NFTViewer },
   // Passkey Route
   { path: PASSKEY_SETUP_PATH, element: PasskeySetup },
-  // Payment Channel Routes - TODO: Uncomment when PaymentChannel components are implemented
-  // { path: PAYMENT_CHANNEL_CLAIM_PATH, element: PaymentChannelClaim },
-  // { path: PAYMENT_CHANNEL_CREATE_PATH, element: PaymentChannelCreate },
-  // { path: PAYMENT_CHANNEL_FUND_PATH, element: PaymentChannelFund },
   { path: PERMISSIONS_PATH, element: Permissions },
   { path: RECEIVE_PATH, element: ReceivePayment },
   { path: SEND_PATH, element: SendPayment },
@@ -167,7 +177,6 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: SHARE_NFT_PATH, element: ShareNFT },
   { path: SHARE_PUBLIC_ADDRESS_PATH, element: ShareAddress },
   { path: SHARE_PUBLIC_KEY_PATH, element: SharePublicKey },
-  { path: SHARE_NFT_PATH, element: ShareNFT },
   { path: SIGN_MESSAGE_PATH, element: SignMessage },
   { path: SIGN_TRANSACTION_PATH, element: SignTransaction },
   { path: SUBMIT_RAW_TRANSACTION_PATH, element: SubmitRawTransaction },

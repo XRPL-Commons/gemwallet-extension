@@ -40,5 +40,13 @@ export const valueLedgerContext: LedgerContextType = {
   // Escrow
   escrowCreate: vi.fn(),
   escrowFinish: vi.fn(),
-  escrowCancel: vi.fn()
+  escrowCancel: vi.fn(),
+  // Checks
+  checkCreate: vi.fn(),
+  checkCash: vi.fn(),
+  checkCancel: vi.fn(),
+  // Payment Channels
+  paymentChannelCreate: vi.fn(),
+  paymentChannelClaim: vi.fn(),
+  paymentChannelFund: vi.fn()
 };

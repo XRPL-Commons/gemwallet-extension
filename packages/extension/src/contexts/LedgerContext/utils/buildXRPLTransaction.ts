@@ -18,7 +18,13 @@ import {
   AMMClawback,
   EscrowCreate,
   EscrowFinish,
-  EscrowCancel
+  EscrowCancel,
+  CheckCreate,
+  CheckCash,
+  CheckCancel,
+  PaymentChannelCreate,
+  PaymentChannelClaim,
+  PaymentChannelFund
 } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { BaseTransaction } from 'xrpl/dist/npm/models/transactions/common';
@@ -46,7 +52,13 @@ import {
   AMMClawbackRequest,
   EscrowCreateRequest,
   EscrowFinishRequest,
-  EscrowCancelRequest
+  EscrowCancelRequest,
+  CheckCreateRequest,
+  CheckCashRequest,
+  CheckCancelRequest,
+  PaymentChannelCreateRequest,
+  PaymentChannelClaimRequest,
+  PaymentChannelFundRequest
 } from '@gemwallet/constants';
 
 import { WalletLedger } from '../../../types';
@@ -338,6 +350,95 @@ export const buildEscrowCancel = (
   };
 };
 
+export const buildCheckCreate = (params: CheckCreateRequest, wallet: WalletLedger): CheckCreate => {
+  handleAmountHexCurrency(params.sendMax);
+
+  return {
+    ...(buildBaseTransaction(params, wallet, 'CheckCreate') as CheckCreate),
+    Destination: params.destination,
+    SendMax: params.sendMax,
+    ...(params.destinationTag && { DestinationTag: params.destinationTag }),
+    ...(params.expiration && { Expiration: params.expiration }),
+    ...(params.invoiceID && { InvoiceID: params.invoiceID })
+  };
+};
+
+export const buildCheckCash = (params: CheckCashRequest, wallet: WalletLedger): CheckCash => {
+  if (params.amount) handleAmountHexCurrency(params.amount);
+  if (params.deliverMin) handleAmountHexCurrency(params.deliverMin);
+
+  return {
+    ...(buildBaseTransaction(params, wallet, 'CheckCash') as CheckCash),
+    CheckID: params.checkID,
+    ...(params.amount && { Amount: params.amount }),
+    ...(params.deliverMin && { DeliverMin: params.deliverMin })
+  };
+};
+
+export const buildCheckCancel = (params: CheckCancelRequest, wallet: WalletLedger): CheckCancel => {
+  return {
+    ...(buildBaseTransaction(params, wallet, 'CheckCancel') as CheckCancel),
+    CheckID: params.checkID
+  };
+};
+
+export const buildPaymentChannelCreate = (
+  params: PaymentChannelCreateRequest,
+  wallet: WalletLedger
+): PaymentChannelCreate => {
+  // Payment Channels only support XRP amounts (string in drops)
+  return {
+    ...(buildBaseTransaction(params, wallet, 'PaymentChannelCreate') as PaymentChannelCreate),
+    Amount: params.amount,
+    Destination: params.destination,
+    SettleDelay: params.settleDelay,
+    PublicKey: params.publicKey,
+    ...(params.cancelAfter && { CancelAfter: params.cancelAfter }),
+    ...(params.destinationTag && { DestinationTag: params.destinationTag })
+  };
+};
+
+export const buildPaymentChannelClaim = (
+  params: PaymentChannelClaimRequest,
+  wallet: WalletLedger
+): PaymentChannelClaim => {
+  // Convert flags object to number if needed
+  let formattedFlags: number | undefined;
+  if (params.flags !== undefined) {
+    if (typeof params.flags === 'number') {
+      formattedFlags = params.flags;
+    } else {
+      formattedFlags = 0;
+      if (params.flags.tfClose) formattedFlags |= 0x00010000;
+      if (params.flags.tfRenew) formattedFlags |= 0x00020000;
+    }
+  }
+
+  // Payment Channels only support XRP amounts (string in drops)
+  return {
+    ...(buildBaseTransaction(params, wallet, 'PaymentChannelClaim') as PaymentChannelClaim),
+    Channel: params.channel,
+    ...(params.balance && { Balance: params.balance }),
+    ...(params.amount && { Amount: params.amount }),
+    ...(params.signature && { Signature: params.signature }),
+    ...(params.publicKey && { PublicKey: params.publicKey }),
+    ...(formattedFlags !== undefined && { Flags: formattedFlags })
+  };
+};
+
+export const buildPaymentChannelFund = (
+  params: PaymentChannelFundRequest,
+  wallet: WalletLedger
+): PaymentChannelFund => {
+  // Payment Channels only support XRP amounts (string in drops)
+  return {
+    ...(buildBaseTransaction(params, wallet, 'PaymentChannelFund') as PaymentChannelFund),
+    Channel: params.channel,
+    Amount: params.amount,
+    ...(params.expiration && { Expiration: params.expiration })
+  };
+};
+
 export const buildBaseTransaction = (
   payload: BaseTransactionRequest,
   wallet: WalletLedger,
@@ -364,6 +465,12 @@ export const buildBaseTransaction = (
     | 'EscrowCreate'
     | 'EscrowFinish'
     | 'EscrowCancel'
+    | 'CheckCreate'
+    | 'CheckCash'
+    | 'CheckCancel'
+    | 'PaymentChannelCreate'
+    | 'PaymentChannelClaim'
+    | 'PaymentChannelFund'
 ): BaseTransaction => ({
   TransactionType: txType,
   Account: wallet.publicAddress,

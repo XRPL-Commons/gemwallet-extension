@@ -56,11 +56,15 @@ export const ESCROW_CREATE_FORM_PATH = '/escrow-create-form';
 export const ESCROW_FINISH_PATH = '/escrow-finish';
 export const ESCROW_CANCEL_PATH = '/escrow-cancel';
 // Checks
+export const CHECKS_PATH = '/checks';
 export const CHECK_CREATE_PATH = '/check-create';
+export const CHECK_CREATE_FORM_PATH = '/check-create-form';
 export const CHECK_CASH_PATH = '/check-cash';
 export const CHECK_CANCEL_PATH = '/check-cancel';
 // Payment Channels
+export const PAYMENT_CHANNELS_PATH = '/payment-channels';
 export const PAYMENT_CHANNEL_CREATE_PATH = '/payment-channel-create';
+export const PAYMENT_CHANNEL_CREATE_FORM_PATH = '/payment-channel-create-form';
 export const PAYMENT_CHANNEL_CLAIM_PATH = '/payment-channel-claim';
 export const PAYMENT_CHANNEL_FUND_PATH = '/payment-channel-fund';
 // Passkey

@@ -23,3 +23,4 @@ export * from './trustedApps';
 export * from './wallet';
 export * from './typeof-fns';
 export * from './inject-path-params.helpers';
+export * from './portfolioHistory';

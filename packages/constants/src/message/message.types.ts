@@ -79,7 +79,21 @@ import {
   EscrowFinishRequest,
   EscrowFinishResponse,
   EscrowCancelRequest,
-  EscrowCancelResponse
+  EscrowCancelResponse,
+  // Check
+  CheckCreateRequest,
+  CheckCreateResponse,
+  CheckCashRequest,
+  CheckCashResponse,
+  CheckCancelRequest,
+  CheckCancelResponse,
+  // Payment Channel
+  PaymentChannelCreateRequest,
+  PaymentChannelCreateResponse,
+  PaymentChannelClaimRequest,
+  PaymentChannelClaimResponse,
+  PaymentChannelFundRequest,
+  PaymentChannelFundResponse
 } from '../payload/payload.types';
 
 export type RequestMessage =
@@ -122,7 +136,15 @@ export type RequestMessage =
   // Escrow
   | 'REQUEST_ESCROW_CREATE/V3'
   | 'REQUEST_ESCROW_FINISH/V3'
-  | 'REQUEST_ESCROW_CANCEL/V3';
+  | 'REQUEST_ESCROW_CANCEL/V3'
+  // Check
+  | 'REQUEST_CHECK_CREATE/V3'
+  | 'REQUEST_CHECK_CASH/V3'
+  | 'REQUEST_CHECK_CANCEL/V3'
+  // Payment Channel
+  | 'REQUEST_PAYMENT_CHANNEL_CREATE/V3'
+  | 'REQUEST_PAYMENT_CHANNEL_CLAIM/V3'
+  | 'REQUEST_PAYMENT_CHANNEL_FUND/V3';
 
 export type ReceiveMessage =
   | 'RECEIVE_ACCEPT_NFT_OFFER/V3'
@@ -163,7 +185,15 @@ export type ReceiveMessage =
   // Escrow
   | 'RECEIVE_ESCROW_CREATE/V3'
   | 'RECEIVE_ESCROW_FINISH/V3'
-  | 'RECEIVE_ESCROW_CANCEL/V3';
+  | 'RECEIVE_ESCROW_CANCEL/V3'
+  // Check
+  | 'RECEIVE_CHECK_CREATE/V3'
+  | 'RECEIVE_CHECK_CASH/V3'
+  | 'RECEIVE_CHECK_CANCEL/V3'
+  // Payment Channel
+  | 'RECEIVE_PAYMENT_CHANNEL_CREATE/V3'
+  | 'RECEIVE_PAYMENT_CHANNEL_CLAIM/V3'
+  | 'RECEIVE_PAYMENT_CHANNEL_FUND/V3';
 
 export type EventMessage =
   | 'EVENT_NETWORK_CHANGED'
@@ -396,6 +426,44 @@ export interface RequestEscrowCancelMessage {
   payload: EscrowCancelRequest;
 }
 
+// Check Request Messages
+export interface RequestCheckCreateMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_CHECK_CREATE/V3';
+  payload: CheckCreateRequest;
+}
+
+export interface RequestCheckCashMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_CHECK_CASH/V3';
+  payload: CheckCashRequest;
+}
+
+export interface RequestCheckCancelMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_CHECK_CANCEL/V3';
+  payload: CheckCancelRequest;
+}
+
+// Payment Channel Request Messages
+export interface RequestPaymentChannelCreateMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_PAYMENT_CHANNEL_CREATE/V3';
+  payload: PaymentChannelCreateRequest;
+}
+
+export interface RequestPaymentChannelClaimMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_PAYMENT_CHANNEL_CLAIM/V3';
+  payload: PaymentChannelClaimRequest;
+}
+
+export interface RequestPaymentChannelFundMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_PAYMENT_CHANNEL_FUND/V3';
+  payload: PaymentChannelFundRequest;
+}
+
 // Internal
 export interface InternalRequestPasswordMessage {
   app: typeof GEM_WALLET;
@@ -474,6 +542,17 @@ export type AMMClawbackMessagingResponse = MessagingResponse & AMMClawbackRespon
 export type EscrowCreateMessagingResponse = MessagingResponse & EscrowCreateResponse;
 export type EscrowFinishMessagingResponse = MessagingResponse & EscrowFinishResponse;
 export type EscrowCancelMessagingResponse = MessagingResponse & EscrowCancelResponse;
+
+// Check Messaging Responses
+export type CheckCreateMessagingResponse = MessagingResponse & CheckCreateResponse;
+export type CheckCashMessagingResponse = MessagingResponse & CheckCashResponse;
+export type CheckCancelMessagingResponse = MessagingResponse & CheckCancelResponse;
+
+// Payment Channel Messaging Responses
+export type PaymentChannelCreateMessagingResponse = MessagingResponse &
+  PaymentChannelCreateResponse;
+export type PaymentChannelClaimMessagingResponse = MessagingResponse & PaymentChannelClaimResponse;
+export type PaymentChannelFundMessagingResponse = MessagingResponse & PaymentChannelFundResponse;
 
 // Internal
 export type PasswordInternalMessagingResponse = InternalMessagingResponse &
@@ -712,6 +791,44 @@ export interface ReceiveEscrowCancelContentMessage {
   payload: EscrowCancelMessagingResponse;
 }
 
+// Check Content Messages
+export interface ReceiveCheckCreateContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_CHECK_CREATE/V3';
+  payload: CheckCreateMessagingResponse;
+}
+
+export interface ReceiveCheckCashContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_CHECK_CASH/V3';
+  payload: CheckCashMessagingResponse;
+}
+
+export interface ReceiveCheckCancelContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_CHECK_CANCEL/V3';
+  payload: CheckCancelMessagingResponse;
+}
+
+// Payment Channel Content Messages
+export interface ReceivePaymentChannelCreateContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_PAYMENT_CHANNEL_CREATE/V3';
+  payload: PaymentChannelCreateMessagingResponse;
+}
+
+export interface ReceivePaymentChannelClaimContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_PAYMENT_CHANNEL_CLAIM/V3';
+  payload: PaymentChannelClaimMessagingResponse;
+}
+
+export interface ReceivePaymentChannelFundContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_PAYMENT_CHANNEL_FUND/V3';
+  payload: PaymentChannelFundMessagingResponse;
+}
+
 // Internal
 export interface InternalReceivePasswordContentMessage {
   app: typeof GEM_WALLET;
@@ -879,6 +996,26 @@ export type ReceiveEscrowFinishBackgroundMessage = ReceiveEscrowFinishContentMes
 export type ReceiveEscrowCancelBackgroundMessage = ReceiveEscrowCancelContentMessage &
   BackgroundMessagePayload;
 
+// Check Background Messages
+export type ReceiveCheckCreateBackgroundMessage = ReceiveCheckCreateContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveCheckCashBackgroundMessage = ReceiveCheckCashContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceiveCheckCancelBackgroundMessage = ReceiveCheckCancelContentMessage &
+  BackgroundMessagePayload;
+
+// Payment Channel Background Messages
+export type ReceivePaymentChannelCreateBackgroundMessage =
+  ReceivePaymentChannelCreateContentMessage & BackgroundMessagePayload;
+
+export type ReceivePaymentChannelClaimBackgroundMessage = ReceivePaymentChannelClaimContentMessage &
+  BackgroundMessagePayload;
+
+export type ReceivePaymentChannelFundBackgroundMessage = ReceivePaymentChannelFundContentMessage &
+  BackgroundMessagePayload;
+
 export type InternalReceivePasswordBackgroundMessage = InternalReceivePasswordContentMessage &
   BackgroundMessagePayload;
 
@@ -939,6 +1076,14 @@ export type BackgroundMessage =
   | RequestEscrowCreateMessage
   | RequestEscrowFinishMessage
   | RequestEscrowCancelMessage
+  // Check Requests
+  | RequestCheckCreateMessage
+  | RequestCheckCashMessage
+  | RequestCheckCancelMessage
+  // Payment Channel Requests
+  | RequestPaymentChannelCreateMessage
+  | RequestPaymentChannelClaimMessage
+  | RequestPaymentChannelFundMessage
   // Outputted Messages - DO contain ID within the payloads
   | EventLoginBackgroundMessage
   | EventLogoutBackgroundMessage
@@ -983,6 +1128,14 @@ export type BackgroundMessage =
   | ReceiveEscrowCreateBackgroundMessage
   | ReceiveEscrowFinishBackgroundMessage
   | ReceiveEscrowCancelBackgroundMessage
+  // Check Responses
+  | ReceiveCheckCreateBackgroundMessage
+  | ReceiveCheckCashBackgroundMessage
+  | ReceiveCheckCancelBackgroundMessage
+  // Payment Channel Responses
+  | ReceivePaymentChannelCreateBackgroundMessage
+  | ReceivePaymentChannelClaimBackgroundMessage
+  | ReceivePaymentChannelFundBackgroundMessage
   //
   // Internal message - Messages between the extension and the background script
   //
@@ -1031,4 +1184,12 @@ export type APIMessages =
   // Escrow
   | RequestEscrowCreateMessage
   | RequestEscrowFinishMessage
-  | RequestEscrowCancelMessage;
+  | RequestEscrowCancelMessage
+  // Check
+  | RequestCheckCreateMessage
+  | RequestCheckCashMessage
+  | RequestCheckCancelMessage
+  // Payment Channel
+  | RequestPaymentChannelCreateMessage
+  | RequestPaymentChannelClaimMessage
+  | RequestPaymentChannelFundMessage;
