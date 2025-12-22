@@ -11,6 +11,7 @@ export const STORAGE_SELECTED_WALLET = 'selectedWallet';
 export const STORAGE_STATE_TRANSACTION = 'hasTxInProgress';
 export const STORAGE_TRUSTED_APPS = 'trustedApps';
 export const STORAGE_WALLETS = 'wallets';
+export const STORAGE_PASSKEY_CREDENTIAL = 'passkeyCredential';
 
 // TTL
 export const TTL_FEATURE_FLAGS = 60 * 60 * 1000; // 1 hour

@@ -11,6 +11,7 @@ export * from './link';
 export * from './network';
 export * from './numbersToSeed';
 export * from './parseParams';
+export * from './passkey';
 export * from './storage';
 export * from './storageChromeLocal';
 export * from './storageChromeSession';
