@@ -99,6 +99,10 @@ export const TransactionDisplay: FC<XRPLTxProps> = ({
         : null,
     NFTokenMinter: (value?: string) =>
       value !== undefined ? renderSimpleText({ title: 'Minter', value, useLegacy }) : null,
+    Owner: (value?: string) =>
+      value !== undefined
+        ? renderSimpleText({ title: 'Owner', value, hasTooltip: true, useLegacy })
+        : null,
     URI: (value?: string | null) =>
       value !== undefined
         ? renderSimpleText({
@@ -301,6 +305,7 @@ export const TransactionDisplay: FC<XRPLTxProps> = ({
       'LimitAmount',
       'Hooks',
       'NFTokenID',
+      'Owner',
       'NFTokenOffers',
       'TakerGets',
       'TakerPays',
