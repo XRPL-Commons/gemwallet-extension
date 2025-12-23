@@ -48,6 +48,7 @@ export const AMM_VOTE_PATH = '/amm-vote';
 export const AMM_BID_PATH = '/amm-bid';
 export const AMM_CLAWBACK_PATH = '/amm-clawback';
 // MPToken
+export const ADD_MPTOKEN_PATH = '/add-mptoken';
 export const MPTOKEN_REMOVE_PATH = '/mptoken-remove';
 // Escrow
 export const ESCROW_PATH = '/escrow';

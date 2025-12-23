@@ -282,6 +282,7 @@ export interface LedgerContextType {
   ammBid: (payload: AMMBid) => Promise<AMMBidResponse>;
   ammClawback: (payload: AMMClawback) => Promise<AMMClawbackResponse>;
   // MPToken
+  addMPTokenAuthorization: (mptIssuanceId: string) => Promise<MPTokenAuthorizeResponse>;
   removeMPTokenAuthorization: (mptIssuanceId: string) => Promise<MPTokenAuthorizeResponse>;
   // Escrow
   escrowCreate: (payload: EscrowCreate) => Promise<EscrowCreateResponse>;
@@ -338,6 +339,7 @@ const LedgerContext = createContext<LedgerContextType>({
   ammBid: () => new Promise(() => {}),
   ammClawback: () => new Promise(() => {}),
   // MPToken
+  addMPTokenAuthorization: () => new Promise(() => {}),
   removeMPTokenAuthorization: () => new Promise(() => {}),
   // Escrow
   escrowCreate: () => new Promise(() => {}),
@@ -1032,6 +1034,33 @@ const LedgerProvider: FC<Props> = ({ children }) => {
   /*
    * MPToken Transactions
    */
+  const addMPTokenAuthorization = useCallback(
+    async (mptIssuanceId: string): Promise<MPTokenAuthorizeResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          // Build MPTokenAuthorize transaction without flags (authorizing)
+          const transaction = {
+            TransactionType: 'MPTokenAuthorize' as const,
+            Account: wallet.publicAddress,
+            MPTokenIssuanceID: mptIssuanceId
+          };
+          const { hash } = await handleTransaction({ transaction, client, wallet });
+          if (!hash) throw new Error("Couldn't authorize MPToken");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
   const removeMPTokenAuthorization = useCallback(
     async (mptIssuanceId: string): Promise<MPTokenAuthorizeResponse> => {
       const wallet = getCurrentWallet();
@@ -1483,6 +1512,7 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     ammBid,
     ammClawback,
     // MPToken
+    addMPTokenAuthorization,
     removeMPTokenAuthorization,
     // Escrow
     escrowCreate,

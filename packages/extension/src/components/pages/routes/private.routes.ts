@@ -1,6 +1,7 @@
 import {
   ABOUT_PATH,
   ACCEPT_NFT_OFFER_PATH,
+  ADD_MPTOKEN_PATH,
   ADD_NEW_TRUSTLINE_PATH,
   ADD_NEW_WALLET_PATH,
   AMM_BID_PATH,
@@ -63,6 +64,7 @@ import {
 } from '../../../constants';
 import { About } from '../About';
 import { AcceptNFTOffer } from '../AcceptNFTOffer';
+import { AddMPToken } from '../AddMPToken';
 import { AddNewTrustline } from '../AddNewTrustline';
 import { AddNewWallet } from '../AddNewWallet';
 import { AMMBid } from '../AMMBid';
@@ -176,6 +178,7 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: LIST_WALLETS_PATH, element: ListWallets },
   { path: MINT_NFT_PATH, element: MintNFT },
   // MPToken Routes
+  { path: ADD_MPTOKEN_PATH, element: AddMPToken },
   { path: MPTOKEN_REMOVE_PATH, element: MPTokenRemove },
   { path: NFT_VIEWER_PATH, element: NFTViewer },
   // Passkey Route

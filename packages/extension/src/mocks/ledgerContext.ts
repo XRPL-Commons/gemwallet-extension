@@ -36,6 +36,7 @@ export const valueLedgerContext: LedgerContextType = {
   ammBid: vi.fn(),
   ammClawback: vi.fn(),
   // MPToken
+  addMPTokenAuthorization: vi.fn(),
   removeMPTokenAuthorization: vi.fn(),
   // Escrow
   escrowCreate: vi.fn(),
