@@ -50,7 +50,10 @@ import {
   // Payment Channels
   PaymentChannelCreate,
   PaymentChannelClaim,
-  PaymentChannelFund
+  PaymentChannelFund,
+  // DID
+  DIDSet,
+  DIDDelete
 } from 'xrpl';
 
 import {
@@ -226,6 +229,15 @@ interface PaymentChannelFundResponse {
   hash: string;
 }
 
+// DID Response interfaces
+interface DIDSetResponse {
+  hash: string;
+}
+
+interface DIDDeleteResponse {
+  hash: string;
+}
+
 interface Props {
   children: React.ReactElement;
 }
@@ -283,6 +295,9 @@ export interface LedgerContextType {
   paymentChannelCreate: (payload: PaymentChannelCreate) => Promise<PaymentChannelCreateResponse>;
   paymentChannelClaim: (payload: PaymentChannelClaim) => Promise<PaymentChannelClaimResponse>;
   paymentChannelFund: (payload: PaymentChannelFund) => Promise<PaymentChannelFundResponse>;
+  // DID
+  didSet: (payload: DIDSet) => Promise<DIDSetResponse>;
+  didDelete: (payload: DIDDelete) => Promise<DIDDeleteResponse>;
 }
 
 const LedgerContext = createContext<LedgerContextType>({
@@ -335,7 +350,10 @@ const LedgerContext = createContext<LedgerContextType>({
   // Payment Channels
   paymentChannelCreate: () => new Promise(() => {}),
   paymentChannelClaim: () => new Promise(() => {}),
-  paymentChannelFund: () => new Promise(() => {})
+  paymentChannelFund: () => new Promise(() => {}),
+  // DID
+  didSet: () => new Promise(() => {}),
+  didDelete: () => new Promise(() => {})
 });
 
 const LedgerProvider: FC<Props> = ({ children }) => {
@@ -1241,6 +1259,51 @@ const LedgerProvider: FC<Props> = ({ children }) => {
   );
 
   /*
+   * DID Transactions
+   */
+  const didSet = useCallback(
+    async (payload: DIDSet): Promise<DIDSetResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't set DID");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const didDelete = useCallback(
+    async (payload: DIDDelete): Promise<DIDDeleteResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          const { hash } = await handleTransaction({ transaction: payload, client, wallet });
+          if (!hash) throw new Error("Couldn't delete DID");
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  /*
    * Getters
    */
   const getNFTs = useCallback(
@@ -1432,7 +1495,10 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     // Payment Channels
     paymentChannelCreate,
     paymentChannelClaim,
-    paymentChannelFund
+    paymentChannelFund,
+    // DID
+    didSet,
+    didDelete
   };
 
   return <LedgerContext.Provider value={value}>{children}</LedgerContext.Provider>;

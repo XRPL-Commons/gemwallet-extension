@@ -35,7 +35,10 @@ import {
   // Payment Channel
   PaymentChannelCreateRequest,
   PaymentChannelClaimRequest,
-  PaymentChannelFundRequest
+  PaymentChannelFundRequest,
+  // DID
+  DIDSetRequest,
+  DIDDeleteRequest
 } from '../payload/payload.types';
 
 // Event listeners
@@ -75,7 +78,10 @@ interface MessageEventData {
     // Payment Channel
     | PaymentChannelCreateRequest
     | PaymentChannelClaimRequest
-    | PaymentChannelFundRequest;
+    | PaymentChannelFundRequest
+    // DID
+    | DIDSetRequest
+    | DIDDeleteRequest;
 }
 
 export interface NetworkEventListener extends MessageEvent<MessageEventData> {
@@ -439,6 +445,27 @@ export interface PaymentChannelFundEventListener extends MessageEvent<MessageEve
   };
 }
 
+// DID Event Listeners
+export interface DIDSetEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_DID_SET/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: DIDSetRequest;
+  };
+}
+
+export interface DIDDeleteEventListener extends MessageEvent<MessageEventData> {
+  data: {
+    app: typeof GEM_WALLET;
+    type: 'REQUEST_DID_DELETE/V3';
+    source: 'GEM_WALLET_MSG_REQUEST';
+    messageId: number;
+    payload: DIDDeleteRequest;
+  };
+}
+
 export type EventListener =
   | AcceptNFTOfferEventListener
   | AddressEventListener
@@ -478,7 +505,10 @@ export type EventListener =
   // Payment Channel
   | PaymentChannelCreateEventListener
   | PaymentChannelClaimEventListener
-  | PaymentChannelFundEventListener;
+  | PaymentChannelFundEventListener
+  // DID
+  | DIDSetEventListener
+  | DIDDeleteEventListener;
 
 // Events
 export interface EventEventData {

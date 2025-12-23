@@ -22,6 +22,8 @@ import {
   CREATE_NFT_OFFER_PATH,
   CREATE_OFFER_PATH,
   DELETE_ACCOUNT_PATH,
+  DID_DELETE_PATH,
+  DID_SET_PATH,
   EDIT_WALLET_PATH,
   ESCROW_CANCEL_PATH,
   ESCROW_CREATE_FORM_PATH,
@@ -79,6 +81,8 @@ import { Checks } from '../Checks';
 import { CreateNFTOffer } from '../CreateNFTOffer';
 import { CreateOffer } from '../CreateOffer';
 import { DeleteAccount } from '../DeleteAccount';
+import { DIDDelete } from '../DIDDelete';
+import { DIDSet } from '../DIDSet';
 import { EditWallet } from '../EditWallet';
 import { Escrow } from '../Escrow';
 import { EscrowCancel } from '../EscrowCancel';
@@ -139,6 +143,9 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: CREATE_NFT_OFFER_PATH, element: CreateNFTOffer },
   { path: CREATE_OFFER_PATH, element: CreateOffer },
   { path: DELETE_ACCOUNT_PATH, element: DeleteAccount },
+  // DID Routes
+  { path: DID_DELETE_PATH, element: DIDDelete },
+  { path: DID_SET_PATH, element: DIDSet },
   { path: EDIT_WALLET_PATH, element: EditWallet },
   // Escrow Routes
   { path: ESCROW_PATH, element: Escrow },

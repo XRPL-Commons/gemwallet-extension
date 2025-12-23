@@ -39,3 +39,6 @@ export const PARAMETER_TRANSACTION_CHECK_CANCEL = 'transaction=checkCancel';
 export const PARAMETER_TRANSACTION_PAYMENT_CHANNEL_CREATE = 'transaction=paymentChannelCreate';
 export const PARAMETER_TRANSACTION_PAYMENT_CHANNEL_CLAIM = 'transaction=paymentChannelClaim';
 export const PARAMETER_TRANSACTION_PAYMENT_CHANNEL_FUND = 'transaction=paymentChannelFund';
+// DID
+export const PARAMETER_TRANSACTION_DID_SET = 'transaction=didSet';
+export const PARAMETER_TRANSACTION_DID_DELETE = 'transaction=didDelete';

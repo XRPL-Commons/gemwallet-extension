@@ -14,6 +14,8 @@ export * from './checkCash';
 export * from './checkCreate';
 export * from './createNFTOffer';
 export * from './createOffer';
+export * from './didDelete';
+export * from './didSet';
 export * from './escrowCancel';
 export * from './escrowCreate';
 export * from './escrowFinish';
@@ -67,6 +69,8 @@ export type {
   CheckCreateRequest,
   CreateNFTOfferRequest,
   CreateOfferRequest,
+  DIDDeleteRequest,
+  DIDSetRequest,
   EscrowCancelRequest,
   EscrowCreateRequest,
   EscrowFinishRequest,
@@ -105,6 +109,8 @@ export type {
   CheckCreateResponse,
   CreateNFTOfferResponse,
   CreateOfferResponse,
+  DIDDeleteResponse,
+  DIDSetResponse,
   EscrowCancelResponse,
   EscrowCreateResponse,
   EscrowFinishResponse,

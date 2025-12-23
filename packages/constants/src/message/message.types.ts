@@ -93,7 +93,12 @@ import {
   PaymentChannelClaimRequest,
   PaymentChannelClaimResponse,
   PaymentChannelFundRequest,
-  PaymentChannelFundResponse
+  PaymentChannelFundResponse,
+  // DID
+  DIDSetRequest,
+  DIDSetResponse,
+  DIDDeleteRequest,
+  DIDDeleteResponse
 } from '../payload/payload.types';
 
 export type RequestMessage =
@@ -144,7 +149,10 @@ export type RequestMessage =
   // Payment Channel
   | 'REQUEST_PAYMENT_CHANNEL_CREATE/V3'
   | 'REQUEST_PAYMENT_CHANNEL_CLAIM/V3'
-  | 'REQUEST_PAYMENT_CHANNEL_FUND/V3';
+  | 'REQUEST_PAYMENT_CHANNEL_FUND/V3'
+  // DID
+  | 'REQUEST_DID_SET/V3'
+  | 'REQUEST_DID_DELETE/V3';
 
 export type ReceiveMessage =
   | 'RECEIVE_ACCEPT_NFT_OFFER/V3'
@@ -193,7 +201,10 @@ export type ReceiveMessage =
   // Payment Channel
   | 'RECEIVE_PAYMENT_CHANNEL_CREATE/V3'
   | 'RECEIVE_PAYMENT_CHANNEL_CLAIM/V3'
-  | 'RECEIVE_PAYMENT_CHANNEL_FUND/V3';
+  | 'RECEIVE_PAYMENT_CHANNEL_FUND/V3'
+  // DID
+  | 'RECEIVE_DID_SET/V3'
+  | 'RECEIVE_DID_DELETE/V3';
 
 export type EventMessage =
   | 'EVENT_NETWORK_CHANGED'
@@ -464,6 +475,19 @@ export interface RequestPaymentChannelFundMessage {
   payload: PaymentChannelFundRequest;
 }
 
+// DID Request Messages
+export interface RequestDIDSetMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_DID_SET/V3';
+  payload: DIDSetRequest;
+}
+
+export interface RequestDIDDeleteMessage {
+  app: typeof GEM_WALLET;
+  type: 'REQUEST_DID_DELETE/V3';
+  payload: DIDDeleteRequest;
+}
+
 // Internal
 export interface InternalRequestPasswordMessage {
   app: typeof GEM_WALLET;
@@ -553,6 +577,10 @@ export type PaymentChannelCreateMessagingResponse = MessagingResponse &
   PaymentChannelCreateResponse;
 export type PaymentChannelClaimMessagingResponse = MessagingResponse & PaymentChannelClaimResponse;
 export type PaymentChannelFundMessagingResponse = MessagingResponse & PaymentChannelFundResponse;
+
+// DID Messaging Responses
+export type DIDSetMessagingResponse = MessagingResponse & DIDSetResponse;
+export type DIDDeleteMessagingResponse = MessagingResponse & DIDDeleteResponse;
 
 // Internal
 export type PasswordInternalMessagingResponse = InternalMessagingResponse &
@@ -829,6 +857,19 @@ export interface ReceivePaymentChannelFundContentMessage {
   payload: PaymentChannelFundMessagingResponse;
 }
 
+// DID Content Messages
+export interface ReceiveDIDSetContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_DID_SET/V3';
+  payload: DIDSetMessagingResponse;
+}
+
+export interface ReceiveDIDDeleteContentMessage {
+  app: typeof GEM_WALLET;
+  type: 'RECEIVE_DID_DELETE/V3';
+  payload: DIDDeleteMessagingResponse;
+}
+
 // Internal
 export interface InternalReceivePasswordContentMessage {
   app: typeof GEM_WALLET;
@@ -1016,6 +1057,12 @@ export type ReceivePaymentChannelClaimBackgroundMessage = ReceivePaymentChannelC
 export type ReceivePaymentChannelFundBackgroundMessage = ReceivePaymentChannelFundContentMessage &
   BackgroundMessagePayload;
 
+// DID Background Messages
+export type ReceiveDIDSetBackgroundMessage = ReceiveDIDSetContentMessage & BackgroundMessagePayload;
+
+export type ReceiveDIDDeleteBackgroundMessage = ReceiveDIDDeleteContentMessage &
+  BackgroundMessagePayload;
+
 export type InternalReceivePasswordBackgroundMessage = InternalReceivePasswordContentMessage &
   BackgroundMessagePayload;
 
@@ -1084,6 +1131,9 @@ export type BackgroundMessage =
   | RequestPaymentChannelCreateMessage
   | RequestPaymentChannelClaimMessage
   | RequestPaymentChannelFundMessage
+  // DID Requests
+  | RequestDIDSetMessage
+  | RequestDIDDeleteMessage
   // Outputted Messages - DO contain ID within the payloads
   | EventLoginBackgroundMessage
   | EventLogoutBackgroundMessage
@@ -1136,6 +1186,9 @@ export type BackgroundMessage =
   | ReceivePaymentChannelCreateBackgroundMessage
   | ReceivePaymentChannelClaimBackgroundMessage
   | ReceivePaymentChannelFundBackgroundMessage
+  // DID Responses
+  | ReceiveDIDSetBackgroundMessage
+  | ReceiveDIDDeleteBackgroundMessage
   //
   // Internal message - Messages between the extension and the background script
   //
@@ -1192,4 +1245,7 @@ export type APIMessages =
   // Payment Channel
   | RequestPaymentChannelCreateMessage
   | RequestPaymentChannelClaimMessage
-  | RequestPaymentChannelFundMessage;
+  | RequestPaymentChannelFundMessage
+  // DID
+  | RequestDIDSetMessage
+  | RequestDIDDeleteMessage;
