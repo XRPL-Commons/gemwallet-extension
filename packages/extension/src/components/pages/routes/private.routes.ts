@@ -23,6 +23,8 @@ import {
   CREATE_OFFER_PATH,
   DELETE_ACCOUNT_PATH,
   DID_DELETE_PATH,
+  DID_PATH,
+  DID_SET_FORM_PATH,
   DID_SET_PATH,
   EDIT_WALLET_PATH,
   ESCROW_CANCEL_PATH,
@@ -81,8 +83,10 @@ import { Checks } from '../Checks';
 import { CreateNFTOffer } from '../CreateNFTOffer';
 import { CreateOffer } from '../CreateOffer';
 import { DeleteAccount } from '../DeleteAccount';
+import { DID } from '../DID';
 import { DIDDelete } from '../DIDDelete';
 import { DIDSet } from '../DIDSet';
+import { DIDSetForm } from '../DIDSetForm';
 import { EditWallet } from '../EditWallet';
 import { Escrow } from '../Escrow';
 import { EscrowCancel } from '../EscrowCancel';
@@ -144,8 +148,10 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: CREATE_OFFER_PATH, element: CreateOffer },
   { path: DELETE_ACCOUNT_PATH, element: DeleteAccount },
   // DID Routes
+  { path: DID_PATH, element: DID },
   { path: DID_DELETE_PATH, element: DIDDelete },
   { path: DID_SET_PATH, element: DIDSet },
+  { path: DID_SET_FORM_PATH, element: DIDSetForm },
   { path: EDIT_WALLET_PATH, element: EditWallet },
   // Escrow Routes
   { path: ESCROW_PATH, element: Escrow },
