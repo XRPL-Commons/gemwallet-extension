@@ -8,6 +8,7 @@ import { TrustSetFlags as TrustSetFlagsBitmask } from 'xrpl';
 import { Chain, XahauNetwork, XRPLNetwork } from '@gemwallet/constants';
 
 import {
+  ADD_MPTOKEN_PATH,
   ADD_NEW_TRUSTLINE_PATH,
   DEFAULT_RESERVE,
   ERROR_RED,
@@ -236,6 +237,7 @@ export const TokenListing: FC<TokenListingProps> = ({ address }) => {
         style={{
           display: 'flex',
           justifyContent: 'center',
+          gap: '10px',
           position: 'fixed',
           bottom: 57,
           left: 0,
@@ -249,6 +251,13 @@ export const TokenListing: FC<TokenListingProps> = ({ address }) => {
           style={{ margin: '10px 0' }}
         >
           Add trustline
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => navigate(ADD_MPTOKEN_PATH)}
+          style={{ margin: '10px 0' }}
+        >
+          Add MPToken
         </Button>
       </div>
     </div>
