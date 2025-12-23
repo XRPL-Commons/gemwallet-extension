@@ -1,12 +1,13 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import * as Sentry from '@sentry/react';
+import { useNavigate } from 'react-router-dom';
 
 import { AccountNFTokenResponse } from '@gemwallet/constants';
 
 import { useLedger } from '../../../contexts';
 import { NFTListing } from '../../organisms';
-import { PageWithHeader } from '../../templates';
+import { PageWithReturn } from '../../templates';
 
 export const MAX_FETCHED_NFTS = 20;
 
@@ -21,8 +22,13 @@ interface NFTsProps extends AccountNFTokenResponse {
 }
 
 export const NFTViewer: FC = () => {
+  const navigate = useNavigate();
   const { getNFTs } = useLedger();
   const [NFTs, setNFTs] = useState<NFTsProps>(initialState);
+
+  const handleBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
 
   const fetchNFTs = useCallback(async () => {
     try {
@@ -52,13 +58,13 @@ export const NFTViewer: FC = () => {
   }, []);
 
   return (
-    <PageWithHeader>
+    <PageWithReturn title="NFTs" onBackClick={handleBack}>
       <NFTListing
         {...{
           ...NFTs,
           onLoadMoreClick: fetchNFTs
         }}
       />
-    </PageWithHeader>
+    </PageWithReturn>
   );
 };
