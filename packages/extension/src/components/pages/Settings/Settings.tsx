@@ -9,7 +9,6 @@ import {
   DELETE_ACCOUNT_PATH,
   FAQ_LINK,
   FEEDBACK_LINK,
-  NAV_MENU_HEIGHT,
   PASSKEY_SETUP_PATH,
   PERMISSIONS_PATH,
   RESET_PASSWORD_PATH,
@@ -25,7 +24,7 @@ import {
   loadFromChromeLocalStorage,
   openExternalLink
 } from '../../../utils';
-import { PageWithHeader } from '../../templates';
+import { PageWithReturn } from '../../templates';
 import { ItemMenuGroup, MenuGroup } from './MenuGroup';
 
 export const Settings: FC = () => {
@@ -35,6 +34,10 @@ export const Settings: FC = () => {
   const [advancedModeEnabled, setAdvancedModeEnabled] = useState<boolean>(false);
   const [passkeyAvailable, setPasskeyAvailable] = useState<boolean>(false);
   const [passkeyEnabled, setPasskeyEnabled] = useState<boolean>(false);
+
+  const handleBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -148,13 +151,13 @@ export const Settings: FC = () => {
   );
 
   return (
-    <PageWithHeader>
+    <PageWithReturn title="Settings" onBackClick={handleBack}>
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          height: `calc(100% - ${NAV_MENU_HEIGHT}px)`
+          height: '100%'
         }}
       >
         <div style={{ paddingBottom: '0.75rem' }}>
@@ -178,6 +181,6 @@ export const Settings: FC = () => {
           </Button>
         </div>
       </div>
-    </PageWithHeader>
+    </PageWithReturn>
   );
 };
