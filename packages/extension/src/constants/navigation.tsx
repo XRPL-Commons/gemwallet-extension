@@ -1,5 +1,6 @@
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import HistoryIcon from '@mui/icons-material/History';
 import LockClockIcon from '@mui/icons-material/LockClock';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -8,6 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 import {
   CHECKS_PATH,
+  DID_PATH,
   ESCROW_PATH,
   HISTORY_PATH,
   HOME_PATH,
@@ -46,6 +48,11 @@ export const navigation = [
     label: 'Channels',
     pathname: PAYMENT_CHANNELS_PATH,
     icon: <AccountBalanceIcon />
+  },
+  {
+    label: 'DID',
+    pathname: DID_PATH,
+    icon: <FingerprintIcon />
   },
   {
     label: 'Settings',

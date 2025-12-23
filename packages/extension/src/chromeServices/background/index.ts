@@ -58,7 +58,10 @@ import {
   // Payment Channels
   ReceivePaymentChannelCreateContentMessage,
   ReceivePaymentChannelClaimContentMessage,
-  ReceivePaymentChannelFundContentMessage
+  ReceivePaymentChannelFundContentMessage,
+  // DID
+  ReceiveDIDSetContentMessage,
+  ReceiveDIDDeleteContentMessage
 } from '@gemwallet/constants';
 
 import {
@@ -101,7 +104,10 @@ import {
   // Payment Channels
   PARAMETER_TRANSACTION_PAYMENT_CHANNEL_CREATE,
   PARAMETER_TRANSACTION_PAYMENT_CHANNEL_CLAIM,
-  PARAMETER_TRANSACTION_PAYMENT_CHANNEL_FUND
+  PARAMETER_TRANSACTION_PAYMENT_CHANNEL_FUND,
+  // DID
+  PARAMETER_TRANSACTION_DID_SET,
+  PARAMETER_TRANSACTION_DID_DELETE
 } from '../../constants/parameters';
 import { STORAGE_CURRENT_WINDOW_ID, STORAGE_STATE_TRANSACTION } from '../../constants/storage';
 import { generateKey } from '../../utils/storage';
@@ -773,6 +779,33 @@ chrome.runtime.onMessage.addListener(
         console.error(e);
       }
       /*
+       * DID Request messages
+       */
+    } else if (type === 'REQUEST_DID_SET/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_DID_SET,
+          receivingMessage: 'RECEIVE_DID_SET/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    } else if (type === 'REQUEST_DID_DELETE/V3') {
+      const { payload } = message;
+      try {
+        sendMessageInMemory({
+          payload,
+          parameter: PARAMETER_TRANSACTION_DID_DELETE,
+          receivingMessage: 'RECEIVE_DID_DELETE/V3',
+          sender
+        });
+      } catch (e) {
+        console.error(e);
+      }
+      /*
        * Receive messages
        */
     } else if (type === 'RECEIVE_SEND_PAYMENT/V3') {
@@ -1247,6 +1280,29 @@ chrome.runtime.onMessage.addListener(
       handleTransactionResponse<ReceivePaymentChannelFundContentMessage>(payload.id, {
         app,
         type: 'RECEIVE_PAYMENT_CHANNEL_FUND/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+      // DID Receive messages
+    } else if (type === 'RECEIVE_DID_SET/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveDIDSetContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_DID_SET/V3',
+        payload: {
+          type: ResponseType.Response,
+          result: payload.result,
+          error: payload.error
+        }
+      });
+    } else if (type === 'RECEIVE_DID_DELETE/V3') {
+      const { payload } = message;
+      handleTransactionResponse<ReceiveDIDDeleteContentMessage>(payload.id, {
+        app,
+        type: 'RECEIVE_DID_DELETE/V3',
         payload: {
           type: ResponseType.Response,
           result: payload.result,

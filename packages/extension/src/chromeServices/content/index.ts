@@ -143,7 +143,16 @@ import {
   RequestPaymentChannelFundMessage,
   ReceivePaymentChannelCreateContentMessage,
   ReceivePaymentChannelClaimContentMessage,
-  ReceivePaymentChannelFundContentMessage
+  ReceivePaymentChannelFundContentMessage,
+  // DID
+  DIDSetEventListener,
+  DIDDeleteEventListener,
+  DIDSetMessagingResponse,
+  DIDDeleteMessagingResponse,
+  RequestDIDSetMessage,
+  RequestDIDDeleteMessage,
+  ReceiveDIDSetContentMessage,
+  ReceiveDIDDeleteContentMessage
 } from '@gemwallet/constants';
 
 /**
@@ -1405,6 +1414,76 @@ setTimeout(() => {
                       result,
                       error
                     } as PaymentChannelFundMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_DID_SET/V3') {
+        const {
+          data: { payload }
+        } = event as DIDSetEventListener;
+        chrome.runtime
+          .sendMessage<RequestDIDSetMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceiveDIDSetContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_DID_SET/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as DIDSetMessagingResponse,
+                    window.location.origin
+                  );
+                  chrome.runtime.onMessage.removeListener(messageListener);
+                }
+              }
+            };
+            chrome.runtime.onMessage.addListener(messageListener);
+          });
+      } else if (type === 'REQUEST_DID_DELETE/V3') {
+        const {
+          data: { payload }
+        } = event as DIDDeleteEventListener;
+        chrome.runtime
+          .sendMessage<RequestDIDDeleteMessage>({
+            app,
+            type,
+            payload
+          })
+          .then(() => {
+            const messageListener = (
+              message: ReceiveDIDDeleteContentMessage,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              const { app, type, payload } = message;
+              // We make sure that the message comes from GemWallet
+              if (app === GEM_WALLET && sender.id === chrome.runtime.id) {
+                if (type === 'RECEIVE_DID_DELETE/V3') {
+                  const { result, error } = payload;
+                  window.postMessage(
+                    {
+                      source: 'GEM_WALLET_MSG_RESPONSE',
+                      messagedId,
+                      result,
+                      error
+                    } as DIDDeleteMessagingResponse,
                     window.location.origin
                   );
                   chrome.runtime.onMessage.removeListener(messageListener);

@@ -48,5 +48,8 @@ export const valueLedgerContext: LedgerContextType = {
   // Payment Channels
   paymentChannelCreate: vi.fn(),
   paymentChannelClaim: vi.fn(),
-  paymentChannelFund: vi.fn()
+  paymentChannelFund: vi.fn(),
+  // DID
+  didSet: vi.fn(),
+  didDelete: vi.fn()
 };

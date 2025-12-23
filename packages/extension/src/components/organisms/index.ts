@@ -1,6 +1,7 @@
 export * from './BaseTransaction';
 export * from './CheckListing';
 export * from './Dashboard';
+export * from './DIDListing';
 export * from './EscrowListing';
 export * from './PaymentChannelListing';
 export * from './Header';

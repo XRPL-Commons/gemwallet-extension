@@ -24,7 +24,9 @@ import {
   CheckCancel,
   PaymentChannelCreate,
   PaymentChannelClaim,
-  PaymentChannelFund
+  PaymentChannelFund,
+  DIDSet,
+  DIDDelete
 } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { BaseTransaction } from 'xrpl/dist/npm/models/transactions/common';
@@ -58,7 +60,9 @@ import {
   CheckCancelRequest,
   PaymentChannelCreateRequest,
   PaymentChannelClaimRequest,
-  PaymentChannelFundRequest
+  PaymentChannelFundRequest,
+  DIDSetRequest,
+  DIDDeleteRequest
 } from '@gemwallet/constants';
 
 import { WalletLedger } from '../../../types';
@@ -439,6 +443,21 @@ export const buildPaymentChannelFund = (
   };
 };
 
+export const buildDIDSet = (params: DIDSetRequest, wallet: WalletLedger): DIDSet => {
+  return {
+    ...(buildBaseTransaction(params, wallet, 'DIDSet') as DIDSet),
+    ...(params.DIDDocument && { DIDDocument: params.DIDDocument }),
+    ...(params.URI && { URI: params.URI }),
+    ...(params.Data && { Data: params.Data })
+  };
+};
+
+export const buildDIDDelete = (params: DIDDeleteRequest, wallet: WalletLedger): DIDDelete => {
+  return {
+    ...(buildBaseTransaction(params, wallet, 'DIDDelete') as DIDDelete)
+  };
+};
+
 export const buildBaseTransaction = (
   payload: BaseTransactionRequest,
   wallet: WalletLedger,
@@ -471,6 +490,8 @@ export const buildBaseTransaction = (
     | 'PaymentChannelCreate'
     | 'PaymentChannelClaim'
     | 'PaymentChannelFund'
+    | 'DIDSet'
+    | 'DIDDelete'
 ): BaseTransaction => ({
   TransactionType: txType,
   Account: wallet.publicAddress,
