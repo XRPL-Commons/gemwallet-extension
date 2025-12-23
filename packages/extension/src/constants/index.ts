@@ -8,4 +8,5 @@ export * from './parameters';
 export * from './paths';
 export * from './server';
 export * from './sizes';
+export * from './swap';
 export * from './xrplmeta';
