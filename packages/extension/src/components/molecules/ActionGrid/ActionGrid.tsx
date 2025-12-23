@@ -2,6 +2,7 @@ import { FC, useCallback } from 'react';
 
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import HistoryIcon from '@mui/icons-material/History';
 import LockClockIcon from '@mui/icons-material/LockClock';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -14,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 
 import {
   CHECKS_PATH,
+  DID_PATH,
   ESCROW_PATH,
   HISTORY_PATH,
   HOME_PATH,
@@ -79,6 +81,12 @@ const ACTION_ITEMS: ActionItem[] = [
     icon: <AccountBalanceIcon />,
     path: PAYMENT_CHANNELS_PATH,
     color: '#3F51B5'
+  },
+  {
+    label: 'DID',
+    icon: <FingerprintIcon />,
+    path: DID_PATH,
+    color: '#9575CD'
   },
   {
     label: 'Tokens',
