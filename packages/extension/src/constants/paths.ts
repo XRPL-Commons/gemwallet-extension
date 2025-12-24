@@ -75,3 +75,5 @@ export const DID_PATH = '/did';
 export const DID_SET_PATH = '/did-set';
 export const DID_SET_FORM_PATH = '/did-set-form';
 export const DID_DELETE_PATH = '/did-delete';
+// Swap
+export const SWAP_PATH = '/swap';

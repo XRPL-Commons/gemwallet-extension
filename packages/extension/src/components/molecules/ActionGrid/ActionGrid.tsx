@@ -23,7 +23,8 @@ import {
   PAYMENT_CHANNELS_PATH,
   RECEIVE_PATH,
   SEND_PATH,
-  SETTINGS_PATH
+  SETTINGS_PATH,
+  SWAP_PATH
 } from '../../../constants';
 
 interface ActionItem {
@@ -49,7 +50,7 @@ const ACTION_ITEMS: ActionItem[] = [
   {
     label: 'Swap',
     icon: <SwapHorizIcon />,
-    path: HOME_PATH, // TODO: Add swap path when available
+    path: SWAP_PATH,
     color: '#9C27B0'
   },
   {
