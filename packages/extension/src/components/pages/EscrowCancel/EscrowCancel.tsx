@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 
+import { useNavigate } from 'react-router-dom';
 import { EscrowCancel as EscrowCancelTransaction } from 'xrpl';
 
 import {
@@ -10,7 +11,7 @@ import {
   ResponseType
 } from '@gemwallet/constants';
 
-import { STORAGE_MESSAGING_KEY } from '../../../constants';
+import { HOME_PATH, STORAGE_MESSAGING_KEY } from '../../../constants';
 import {
   buildEscrowCancel,
   TransactionProgressStatus,
@@ -32,6 +33,10 @@ interface Params {
 }
 
 export const EscrowCancel: FC = () => {
+  const navigate = useNavigate();
+  const urlParams = new URLSearchParams(window.location.search);
+  const inAppCall = urlParams.get('inAppCall') === 'true';
+
   const [params, setParams] = useState<Params>({
     id: 0,
     transaction: null
@@ -47,8 +52,6 @@ export const EscrowCancel: FC = () => {
     params.transaction ?? [],
     params.transaction?.Fee
   );
-
-  const urlParams = new URLSearchParams(window.location.search);
   const { fetchedData } = useFetchFromSessionStorage(
     urlParams.get(STORAGE_MESSAGING_KEY) ?? undefined
   ) as {
@@ -104,7 +107,8 @@ export const EscrowCancel: FC = () => {
     difference,
     transaction,
     errorRequestRejection,
-    badRequestCallback
+    badRequestCallback,
+    onClick: inAppCall ? () => navigate(HOME_PATH) : undefined
   });
 
   useEffect(() => {
