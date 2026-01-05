@@ -26,14 +26,10 @@ export enum LedgerOffscreenAction {
 
 // Initialize Ledger HID event listeners
 function initLedgerHIDListeners() {
-  console.log('[Offscreen] Initializing Ledger HID listeners...');
-
   // Listen for device connections
   if (navigator.hid) {
     navigator.hid.addEventListener('connect', ({ device }) => {
       if (device.vendorId === LEDGER_USB_VENDOR_ID) {
-        console.log('[Offscreen] Ledger device connected:', device);
-
         // Notify background script
         chrome.runtime.sendMessage({
           action: LedgerOffscreenAction.DEVICE_CONNECT,
@@ -51,8 +47,6 @@ function initLedgerHIDListeners() {
     // Listen for device disconnections
     navigator.hid.addEventListener('disconnect', ({ device }) => {
       if (device.vendorId === LEDGER_USB_VENDOR_ID) {
-        console.log('[Offscreen] Ledger device disconnected:', device);
-
         // Notify background script
         chrome.runtime.sendMessage({
           action: LedgerOffscreenAction.DEVICE_DISCONNECT,
@@ -66,8 +60,6 @@ function initLedgerHIDListeners() {
         });
       }
     });
-
-    console.log('[Offscreen] Ledger HID listeners initialized');
   } else {
     console.warn('[Offscreen] navigator.hid not available');
   }
@@ -75,8 +67,6 @@ function initLedgerHIDListeners() {
 
 // Handle messages from background script
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  console.log('[Offscreen] Received message:', message);
-
   switch (message.action) {
     case 'ledger:check-device':
       // Check if Ledger device is connected
@@ -100,5 +90,3 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
 // Initialize Ledger listeners on load
 initLedgerHIDListeners();
-
-console.log('[Offscreen] Document ready');

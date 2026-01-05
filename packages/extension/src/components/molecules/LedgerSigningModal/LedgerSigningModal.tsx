@@ -5,22 +5,22 @@ import { LedgerSigningStatus, type LedgerSigningStep } from '../../organisms';
 export interface LedgerSigningModalProps {
   open: boolean;
   step: LedgerSigningStep;
-  error?: string;
-  txHash?: string;
   onClose?: () => void;
+  onCancel?: () => void;
 }
 
 /**
- * Modal dialog that shows Ledger transaction signing progress
+ * Modal dialog that shows Ledger device interaction progress
+ * Note: For final states (success/error), use AsyncTransaction instead
  */
 export const LedgerSigningModal: FC<LedgerSigningModalProps> = ({
   open,
   step,
-  error,
-  txHash,
-  onClose
+  onClose,
+  onCancel
 }) => {
-  const canClose = step === 'success' || step === 'error';
+  // Only allow closing during device interaction steps
+  const canClose = step === 'preparing' || step === 'waiting' || step === 'signing';
 
   return (
     <Dialog
@@ -31,7 +31,7 @@ export const LedgerSigningModal: FC<LedgerSigningModalProps> = ({
       disableEscapeKeyDown={!canClose}
     >
       <DialogContent>
-        <LedgerSigningStatus step={step} error={error} txHash={txHash} />
+        <LedgerSigningStatus step={step} onCancel={onCancel} />
       </DialogContent>
     </Dialog>
   );

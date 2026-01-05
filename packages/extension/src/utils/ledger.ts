@@ -180,8 +180,6 @@ export function isBrowserSupported(): {
 export async function createLedgerTransport(): Promise<Transport> {
   const browserSupport = isBrowserSupported();
 
-  console.log('Browser support:', browserSupport);
-
   if (!browserSupport.supported) {
     throw new Error(
       browserSupport.message || 'Browser does not support Ledger hardware wallets'
@@ -190,27 +188,20 @@ export async function createLedgerTransport(): Promise<Transport> {
 
   // Try WebHID first (better compatibility with Chrome extensions)
   if (browserSupport.webHID) {
-    console.log('Attempting WebHID connection...');
     try {
       const transport = await TransportWebHID.create();
-      console.log('WebHID transport created successfully');
       return transport;
     } catch (error: any) {
-      console.error('WebHID transport error:', error);
-      console.warn('WebHID transport failed, trying WebUSB:', error);
       // Don't throw - fall through to WebUSB
     }
   }
 
   // Fallback to WebUSB if WebHID not available or failed
   if (browserSupport.webUSB) {
-    console.log('Attempting WebUSB connection...');
     try {
       const transport = await TransportWebUSB.create();
-      console.log('WebUSB transport created successfully');
       return transport;
     } catch (error: any) {
-      console.error('WebUSB transport error:', error);
       throw error;
     }
   }

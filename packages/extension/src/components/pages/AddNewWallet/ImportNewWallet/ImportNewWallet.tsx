@@ -62,8 +62,8 @@ export const ImportNewWallet: FC<ImportNewWalletProps> = ({ password }) => {
         setActiveStep(1);
         return;
       }
-    } catch (error) {
-      console.log('WebHID not available or permission not granted:', error);
+    } catch {
+      // WebHID not available or permission not granted
     }
 
     // No permission yet - open permission request page in a new tab

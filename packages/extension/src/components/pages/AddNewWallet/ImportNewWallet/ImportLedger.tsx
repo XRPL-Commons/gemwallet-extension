@@ -2,16 +2,18 @@ import { FC, useState, useCallback, useEffect } from 'react';
 import {
   Typography,
   TextField,
-  CircularProgress,
   Alert,
   Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText
+  Paper,
+  keyframes
 } from '@mui/material';
+import UsbIcon from '@mui/icons-material/Usb';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { useNavigate } from 'react-router-dom';
+import Lottie from 'lottie-react';
 
+import loadingAnimation from '../../../../assets/loading.json';
 import { LIST_WALLETS_PATH } from '../../../../constants';
 import { PageWithStepper } from '../../../templates';
 import { useWallet } from '../../../../contexts';
@@ -23,6 +25,17 @@ import {
   parseLedgerError,
   type LedgerAccount
 } from '../../../../utils/ledger';
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 export interface ImportLedgerProps {
   activeStep: number;
@@ -53,15 +66,12 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
   }, []);
 
   const loadAccounts = useCallback(async () => {
-    console.log('loadAccounts called - starting connection process...');
     setLoading(true);
     setError(null);
     setDeviceState(null);
 
     try {
-      console.log('Calling getLedgerAccounts...');
       const ledgerAccounts = await getLedgerAccounts(accountCount, 0);
-      console.log('Received accounts:', ledgerAccounts);
 
       if (ledgerAccounts.length === 0) {
         setError('No accounts found on Ledger device');
@@ -123,6 +133,7 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
     }
   }, [step, handleBack]);
 
+  // Naming step
   if (step === 'name') {
     return (
       <PageWithStepper
@@ -133,20 +144,35 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
         disabledNext={!walletName.trim() || loading}
       >
         <Typography variant="h4" component="h1" style={{ marginTop: '30px' }}>
-          Name Your Ledger Wallet
+          Name Your Wallet
         </Typography>
 
         {selectedAccount && (
-          <Box sx={{ mt: 3, mb: 2 }}>
-            <Alert severity="info">
-              <Typography variant="body2">
-                <strong>Address:</strong> {selectedAccount.address}
+          <Paper
+            elevation={0}
+            sx={{
+              mt: 3,
+              p: 2,
+              borderRadius: 1,
+              backgroundColor: 'rgba(255, 255, 255, 0.05)'
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+              <CheckCircleIcon sx={{ color: 'success.main', fontSize: 20 }} />
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'success.main' }}>
+                Selected Account
               </Typography>
-              <Typography variant="body2">
-                <strong>Path:</strong> {selectedAccount.path}
-              </Typography>
-            </Alert>
-          </Box>
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{ fontFamily: 'monospace', wordBreak: 'break-all', mb: 0.5 }}
+            >
+              {selectedAccount.address}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Path: {selectedAccount.path}
+            </Typography>
+          </Paper>
         )}
 
         <TextField
@@ -159,11 +185,13 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
           error={!!error}
           helperText={error}
           disabled={loading}
+          sx={{ mt: 3 }}
         />
       </PageWithStepper>
     );
   }
 
+  // Account selection step
   return (
     <PageWithStepper
       steps={2}
@@ -177,14 +205,41 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
         Import Ledger Wallet
       </Typography>
 
-      <Typography variant="body2" style={{ marginTop: '20px', marginBottom: '20px' }}>
-        Connect your Ledger device and select an account to import.
-      </Typography>
+      {/* Ledger Icon Header */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          mt: 3,
+          mb: 3
+        }}
+      >
+        <Box
+          sx={{
+            width: 80,
+            height: 80,
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mb: 2
+          }}
+        >
+          <UsbIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+        </Box>
+        <Typography variant="body2" color="text.secondary" textAlign="center">
+          Connect your Ledger device and select an account to import.
+        </Typography>
+      </Box>
 
+      {/* Device Status */}
       {deviceState && deviceState !== LedgerDeviceState.READY && (
         <LedgerDeviceStatus
           state={deviceState}
           customMessage={error || undefined}
+          onConnect={loadAccounts}
         />
       )}
 
@@ -194,46 +249,113 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
         </Alert>
       )}
 
+      {/* Loading State */}
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-          <CircularProgress />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            py: 3
+          }}
+        >
+          <Lottie
+            animationData={loadingAnimation}
+            loop
+            style={{ width: 100, height: 100 }}
+          />
+          <Typography variant="body1" sx={{ mt: 1 }}>
+            Connecting to Ledger...
+          </Typography>
+          <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 1 }}>
+            Please make sure your device is connected and unlocked
+          </Typography>
         </Box>
       )}
 
+      {/* Account List */}
       {!loading && accounts.length > 0 && (
-        <>
-          <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
-            Select an account:
+        <Box sx={{ animation: `${fadeIn} 0.4s ease-out` }}>
+          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
+            Select an account
           </Typography>
-          <List sx={{ bgcolor: 'background.paper', borderRadius: 1 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             {accounts.map((account) => (
-              <ListItem key={account.path} disablePadding>
-                <ListItemButton onClick={() => handleAccountSelect(account)}>
-                  <ListItemText
-                    primary={`Account ${account.index}`}
-                    secondary={
-                      <>
-                        <Typography component="span" variant="body2" color="text.secondary">
-                          {account.address}
-                        </Typography>
-                        <br />
-                        <Typography component="span" variant="caption" color="text.secondary">
-                          {account.path}
-                        </Typography>
-                      </>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
+              <Paper
+                key={account.path}
+                elevation={0}
+                onClick={() => handleAccountSelect(account)}
+                sx={{
+                  p: 2,
+                  borderRadius: 1,
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  }
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}
+                  >
+                    <AccountBalanceWalletIcon
+                      sx={{ fontSize: 20, color: 'text.secondary' }}
+                    />
+                  </Box>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      Account {account.index}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        fontFamily: 'monospace',
+                        fontSize: '0.75rem',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {account.address}
+                    </Typography>
+                    <Typography variant="caption" color="text.disabled">
+                      {account.path}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Paper>
             ))}
-          </List>
-        </>
+          </Box>
+        </Box>
       )}
 
-      {!loading && accounts.length === 0 && !error && (
-        <Alert severity="info" sx={{ mt: 2 }}>
-          Click "Connect to Ledger" to search for accounts on your Ledger device.
-        </Alert>
+      {/* Initial State */}
+      {!loading && accounts.length === 0 && !error && !deviceState && (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            borderRadius: 1,
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            textAlign: 'center'
+          }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            Click "Connect to Ledger" to search for accounts on your device.
+          </Typography>
+        </Paper>
       )}
     </PageWithStepper>
   );

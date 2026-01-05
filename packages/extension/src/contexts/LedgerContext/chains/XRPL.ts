@@ -48,10 +48,8 @@ export const handleTransaction = async (param: {
       if (!wallet.derivationPath) {
         throw new Error('Ledger wallet missing derivation path');
       }
-      console.log("wallet", wallet)
 
       const txForSigning = { ...prepared };
-      console.log(txForSigning)
       delete (txForSigning as any).TxnSignature;
       delete (txForSigning as any).Signers;
 
@@ -78,7 +76,6 @@ export const handleTransaction = async (param: {
         120000, // 2 minute timeout
         onLedgerProgress
       );
-      console.log("SIGNATURE: ", signature)
 
       // Build the signed transaction blob with signature
       const signedTx = {
@@ -175,11 +172,9 @@ const submit = async (param: {
     if (!wallet.derivationPath) {
       throw new Error('Ledger wallet missing derivation path');
     }
-    console.log("wallet", wallet)
 
     // Remove fields that shouldn't be in the signing blob
     const txForSigning = { ...prepared };
-    console.log(txForSigning)
     delete (txForSigning as any).TxnSignature;
     delete (txForSigning as any).Signers;
 
@@ -205,17 +200,19 @@ const submit = async (param: {
       120000, // 2 minute timeout
       onLedgerProgress
     );
-    console.log("SIGNATURE", signature)
 
     // Build the signed transaction blob with signature
     const signedTx = {
       ...txForSigning,
       TxnSignature: signature.toUpperCase()
     };
-    console.log("SIGNED TX", signedTx)
 
     tx_blob = encode(signedTx as any).toUpperCase();
-    console.log("TX BLOB", tx_blob)
+
+    // Notify that we're now submitting the transaction
+    if (onLedgerProgress) {
+      onLedgerProgress('submitting');
+    }
   } else {
     // Software wallet signing
     const signed = wallet.wallet.sign(prepared);

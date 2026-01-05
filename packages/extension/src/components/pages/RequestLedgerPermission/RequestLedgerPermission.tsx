@@ -42,13 +42,9 @@ export const RequestLedgerPermission: FC = () => {
     setStep('requesting');
 
     try {
-      console.log('[RequestPermission] Requesting WebHID permission...');
-
       // This will trigger the browser's HID device picker
       // ONLY works when called from a tab (not popup)
       const transport = await TransportWebHID.create();
-
-      console.log('[RequestPermission] Permission granted, transport created');
 
       // Close the transport immediately (we just needed permission)
       await transport.close();

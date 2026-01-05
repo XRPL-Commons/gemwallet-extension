@@ -1,97 +1,82 @@
 import { FC } from 'react';
-import { Box, Typography, CircularProgress, Alert, Button } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
+import { Box, Typography, Button, Paper, keyframes } from '@mui/material';
+import Lottie from 'lottie-react';
+
+import loadingAnimation from '../../../assets/loading.json';
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 export type LedgerSigningStep =
-  | 'preparing'      // Preparing transaction
-  | 'waiting'        // Waiting for user to sign on device
-  | 'signing'        // Device is signing
-  | 'submitting'     // Submitting to network
-  | 'success'        // Transaction successful
-  | 'error';         // Error occurred
+  | 'preparing'
+  | 'waiting'
+  | 'signing'
+  | 'submitting'
+  | 'success'
+  | 'error';
 
 export interface LedgerSigningStatusProps {
   step: LedgerSigningStep;
-  error?: string;
-  txHash?: string;
   onCancel?: () => void;
-  onRetry?: () => void;
+}
+
+interface StepContent {
+  title: string;
+  description: string;
+  instructions?: string[];
 }
 
 /**
- * Component to show transaction signing status with Ledger device
+ * Component to show Ledger device interaction status
+ * Only handles device-related steps (preparing, waiting, signing)
+ * Final states (submitting, success, error) should use AsyncTransaction
  */
 export const LedgerSigningStatus: FC<LedgerSigningStatusProps> = ({
   step,
-  error,
-  txHash,
-  onCancel,
-  onRetry
+  onCancel
 }) => {
-  const getContent = () => {
+  const getContent = (): StepContent => {
     switch (step) {
       case 'preparing':
         return {
-          icon: <CircularProgress size={60} />,
           title: 'Preparing Transaction',
-          description: 'Encoding transaction for your Ledger device...',
-          severity: 'info' as const
+          description: 'Encoding transaction for your Ledger device...'
         };
 
       case 'waiting':
         return {
-          icon: <CircularProgress size={60} />,
           title: 'Review on Device',
-          description: 'Please review and approve the transaction on your Ledger device',
+          description: 'Please review and approve the transaction on your Ledger',
           instructions: [
             'Check the transaction details on your device screen',
             'Use the buttons to navigate through the details',
-            'Press both buttons together to approve',
-            'Or press the right button to reject'
-          ],
-          severity: 'warning' as const
+            'Press both buttons together to approve'
+          ]
         };
 
       case 'signing':
         return {
-          icon: <CircularProgress size={60} />,
           title: 'Signing Transaction',
-          description: 'Your Ledger is signing the transaction...',
-          severity: 'info' as const
-        };
-
-      case 'submitting':
-        return {
-          icon: <CircularProgress size={60} />,
-          title: 'Submitting to Network',
-          description: 'Broadcasting your transaction to the XRP Ledger...',
-          severity: 'info' as const
-        };
-
-      case 'success':
-        return {
-          icon: <CheckCircleIcon sx={{ fontSize: 60, color: 'success.main' }} />,
-          title: 'Transaction Successful',
-          description: txHash ? `Transaction Hash: ${txHash.substring(0, 16)}...` : 'Your transaction has been confirmed on the ledger',
-          severity: 'success' as const
-        };
-
-      case 'error':
-        return {
-          icon: <ErrorIcon sx={{ fontSize: 60, color: 'error.main' }} />,
-          title: 'Transaction Failed',
-          description: error || 'An error occurred while processing your transaction',
-          severity: 'error' as const
+          description: 'Please sign the transaction on your Ledger device...'
         };
 
       default:
-        return null;
+        return {
+          title: 'Processing',
+          description: 'Please wait...'
+        };
     }
   };
 
   const content = getContent();
-  if (!content) return null;
 
   return (
     <Box
@@ -99,54 +84,88 @@ export const LedgerSigningStatus: FC<LedgerSigningStatusProps> = ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        py: 4,
-        px: 2
+        py: 3,
+        px: 2,
+        animation: `${fadeIn} 0.4s ease-out`
       }}
     >
-      <Box sx={{ mb: 3 }}>{content.icon}</Box>
+      {/* Lottie Animation */}
+      <Box sx={{ mb: 2 }}>
+        <Lottie
+          animationData={loadingAnimation}
+          loop
+          style={{ width: 150, height: 150 }}
+        />
+      </Box>
 
-      <Typography variant="h6" gutterBottom align="center">
+      {/* Title */}
+      <Typography
+        variant="h5"
+        component="h1"
+        align="center"
+        sx={{ fontWeight: 500, mb: 1 }}
+      >
         {content.title}
       </Typography>
 
-      <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 2 }}>
+      {/* Description */}
+      <Typography
+        variant="body1"
+        color="text.secondary"
+        align="center"
+        sx={{ mb: 2 }}
+      >
         {content.description}
       </Typography>
 
-      {content.instructions && (
-        <Alert severity={content.severity} sx={{ width: '100%', mt: 2 }}>
-          <Typography variant="subtitle2" gutterBottom>
-            Instructions:
-          </Typography>
-          <Box component="ul" sx={{ mt: 1, mb: 0, pl: 2 }}>
+      {/* Instructions Box */}
+      {content.instructions && content.instructions.length > 0 && (
+        <Paper
+          elevation={0}
+          sx={{
+            width: '100%',
+            maxWidth: 320,
+            p: 2,
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: 1,
+            mb: 2
+          }}
+        >
+          <Box component="ol" sx={{ m: 0, pl: 2.5 }}>
             {content.instructions.map((instruction, index) => (
-              <Typography key={index} variant="body2" component="li" sx={{ mb: 0.5 }}>
+              <Typography
+                key={index}
+                variant="body2"
+                component="li"
+                sx={{
+                  mb: index < content.instructions!.length - 1 ? 1 : 0,
+                  color: 'text.secondary'
+                }}
+              >
                 {instruction}
               </Typography>
             ))}
           </Box>
-        </Alert>
+        </Paper>
       )}
 
-      {step === 'error' && error && (
-        <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
-          <Typography variant="body2">{error}</Typography>
-        </Alert>
-      )}
-
-      {/* Action Buttons */}
-      {(onCancel || onRetry) && (
-        <Box sx={{ display: 'flex', gap: 2, mt: 3, width: '100%', justifyContent: 'center' }}>
-          {onCancel && step !== 'success' && (
-            <Button variant="outlined" onClick={onCancel} sx={{ minWidth: 120 }}>
-              Cancel
-            </Button>
-          )}
-          {onRetry && step === 'error' && (
-            <Button variant="contained" onClick={onRetry} sx={{ minWidth: 120 }}>
-              Retry
-            </Button>
-          )}
+      {/* Cancel Button */}
+      {onCancel && (
+        <Box
+          sx={{
+            mt: 2,
+            width: '100%',
+            maxWidth: 320
+          }}
+        >
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
         </Box>
       )}
     </Box>
