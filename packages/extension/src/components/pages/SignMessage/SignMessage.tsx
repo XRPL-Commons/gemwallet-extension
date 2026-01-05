@@ -140,10 +140,10 @@ export const SignMessage: FC = () => {
     handleSendMessage({ signedMessage: null });
   }, [handleSendMessage]);
 
-  const handleSign = useCallback(() => {
+  const handleSign = useCallback(async () => {
     try {
       // The message will be a string, otherwise the transaction would have been rejected already
-      const signature = signMessage(params.message as string, params.isHex);
+      const signature = await signMessage(params.message as string, params.isHex);
       handleSendMessage({ signedMessage: signature });
     } catch (e) {
       handleSendMessage({ signedMessage: undefined, error: e as Error });

@@ -34,6 +34,7 @@ export const NFTImage: FC<NFTImageProps> = ({
         ...style
       }}
     >
+      {/* @ts-ignore - React 19 compatibility issue */}
       <LazyLoadImage
         alt="NFT"
         height={height}
@@ -42,6 +43,7 @@ export const NFTImage: FC<NFTImageProps> = ({
         effect="blur"
         src={imageURL}
         width={width}
+        // @ts-ignore - React 19 compatibility issue with lazy-load-image-component
       />
     </div>
   ) : (

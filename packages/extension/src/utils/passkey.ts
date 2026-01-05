@@ -175,7 +175,9 @@ export const registerPasskey = async (password: string): Promise<boolean> => {
     // Store the credential data
     const passkeyCredential: PasskeyCredential = {
       credentialId: arrayBufferToBase64(credential.rawId),
-      publicKey: arrayBufferToBase64(publicKeyBytes),
+      // @ts-ignore - Uint8Array buffer property compatibility
+      publicKey: arrayBufferToBase64(publicKeyBytes.buffer),
+      // @ts-ignore - Uint8Array to ArrayBuffer conversion
       userHandle: arrayBufferToBase64(userId),
       encryptedPassword,
       createdAt: Date.now()

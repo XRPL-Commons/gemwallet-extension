@@ -60,6 +60,7 @@ describe('saveWallet', () => {
 
   test('should throw an error if saving to local storage fails', () => {
     const error = new Error('Error saving to local storage');
+    // @ts-ignore
     localStorageMock.setItem = vi.fn(() => {
       throw error;
     });
@@ -80,6 +81,7 @@ describe('loadWallets', () => {
 
   test('should return an empty array if an error occurs while loading the wallets', () => {
     const error = new Error('Error loading wallets from local storage');
+    // @ts-ignore
     localStorageMock.getItem = vi.fn(() => {
       throw error;
     });
@@ -112,6 +114,7 @@ describe('saveSelectedWallet', () => {
 
   test('should throw an error if saving to local storage fails', () => {
     const error = new Error('Error saving to local storage');
+    // @ts-ignore
     localStorageMock.setItem = vi.fn(() => {
       throw error;
     });
@@ -132,6 +135,7 @@ describe('loadSelectedWallet', () => {
 
   test('should return 0 if an error occurs while loading the selected wallet index', () => {
     const error = new Error('Error loading selected wallet index from local storage');
+    // @ts-ignore
     localStorageMock.getItem = vi.fn(() => {
       throw error;
     });

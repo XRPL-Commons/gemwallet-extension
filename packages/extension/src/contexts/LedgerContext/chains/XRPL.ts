@@ -1,5 +1,6 @@
 import {
   Client,
+  encode,
   NFTokenMint,
   Transaction,
   TransactionMetadata,
@@ -11,6 +12,8 @@ import {
 import { XRPLTransaction } from '@gemwallet/constants';
 
 import { WalletLedger } from '../../../types';
+import { signTransactionWithLedger } from '../../../utils/ledger';
+import type { LedgerSigningStep } from '../../../components/organisms';
 
 export const handleTransaction = async (param: {
   transaction: XRPLTransaction;
@@ -18,8 +21,9 @@ export const handleTransaction = async (param: {
   wallet?: WalletLedger;
   signOnly?: boolean;
   shouldCheck?: boolean;
+  onLedgerProgress?: (step: LedgerSigningStep) => void;
 }): Promise<{ hash?: string; signature?: string }> => {
-  const { transaction, client, wallet, signOnly, shouldCheck } = param;
+  const { transaction, client, wallet, signOnly, shouldCheck, onLedgerProgress } = param;
 
   if (!wallet) {
     throw new Error('You need to have a wallet connected');
@@ -39,6 +43,54 @@ export const handleTransaction = async (param: {
       prepared = await client.autofill(transaction);
     }
 
+    // Handle Ledger hardware wallet signing
+    if (wallet.type === 'ledger') {
+      if (!wallet.derivationPath) {
+        throw new Error('Ledger wallet missing derivation path');
+      }
+      console.log("wallet", wallet)
+
+      const txForSigning = { ...prepared };
+      console.log(txForSigning)
+      delete (txForSigning as any).TxnSignature;
+      delete (txForSigning as any).Signers;
+
+      // Check if this is a multisig transaction
+      const isMultisig = txForSigning.SigningPubKey === '';
+
+      // Set SigningPubKey appropriately
+      if (isMultisig) {
+        // For multisig: keep SigningPubKey empty
+        txForSigning.SigningPubKey = '';
+      } else {
+        // For single-sig: set SigningPubKey to device's public key
+        txForSigning.SigningPubKey = wallet.wallet.publicKey;
+      }
+
+
+      // Encode transaction to binary format for Ledger
+      const txBlob = encode(txForSigning).toUpperCase();
+
+      // Sign with Ledger device - use progress callback
+      const signature = await signTransactionWithLedger(
+        wallet.derivationPath,
+        txBlob,
+        120000, // 2 minute timeout
+        onLedgerProgress
+      );
+      console.log("SIGNATURE: ", signature)
+
+      // Build the signed transaction blob with signature
+      const signedTx = {
+        ...txForSigning,
+        TxnSignature: signature.toUpperCase()
+      };
+
+      const tx_blob = encode(signedTx as any).toUpperCase();
+      return { signature: tx_blob };
+    }
+
+    // Software wallet signing
     const signed = wallet.wallet.sign(prepared);
 
     if (!signed.tx_blob) {
@@ -54,7 +106,7 @@ export const handleTransaction = async (param: {
   }
 
   // Prepare and submit the transaction using the `submit` function
-  const tx = await submit({ transaction, client, wallet });
+  const tx = await submit({ transaction, client, wallet, onLedgerProgress });
 
   // Return the transaction hash
   return { hash: tx.result.hash };
@@ -87,7 +139,7 @@ export const handleMintNFT = async (param: {
 
   throw new Error(
     (tx.result.meta as TransactionMetadata)?.TransactionResult ||
-      "Something went wrong, we couldn't submit properly the transaction"
+    "Something went wrong, we couldn't submit properly the transaction"
   );
 };
 
@@ -109,17 +161,69 @@ const submit = async (param: {
   transaction: XRPLTransaction;
   client: Client;
   wallet: WalletLedger;
+  onLedgerProgress?: (step: LedgerSigningStep) => void;
 }): Promise<TxResponse<Transaction>> => {
-  const { transaction, client, wallet } = param;
+  const { transaction, client, wallet, onLedgerProgress } = param;
 
   // Prepare the transaction
   const prepared = await client.autofill(transaction);
 
+  let tx_blob: string;
+
   // Sign the transaction
-  const signed = wallet.wallet.sign(prepared);
+  if (wallet.type === 'ledger') {
+    if (!wallet.derivationPath) {
+      throw new Error('Ledger wallet missing derivation path');
+    }
+    console.log("wallet", wallet)
+
+    // Remove fields that shouldn't be in the signing blob
+    const txForSigning = { ...prepared };
+    console.log(txForSigning)
+    delete (txForSigning as any).TxnSignature;
+    delete (txForSigning as any).Signers;
+
+    // Check if this is a multisig transaction
+    const isMultisig = txForSigning.SigningPubKey === '';
+
+    // Set SigningPubKey appropriately
+    if (isMultisig) {
+      // For multisig: keep SigningPubKey empty
+      txForSigning.SigningPubKey = '';
+    } else {
+      // For single-sig: set SigningPubKey to device's public key
+      txForSigning.SigningPubKey = wallet.wallet.publicKey;
+    }
+
+    // Encode transaction to binary format for Ledger
+    const txBlob = encode(txForSigning).toUpperCase();
+
+    // Sign with Ledger device - use progress callback
+    const signature = await signTransactionWithLedger(
+      wallet.derivationPath,
+      txBlob,
+      120000, // 2 minute timeout
+      onLedgerProgress
+    );
+    console.log("SIGNATURE", signature)
+
+    // Build the signed transaction blob with signature
+    const signedTx = {
+      ...txForSigning,
+      TxnSignature: signature.toUpperCase()
+    };
+    console.log("SIGNED TX", signedTx)
+
+    tx_blob = encode(signedTx as any).toUpperCase();
+    console.log("TX BLOB", tx_blob)
+  } else {
+    // Software wallet signing
+    const signed = wallet.wallet.sign(prepared);
+    tx_blob = signed.tx_blob;
+  }
 
   // Submit the signed blob
-  const tx = await client.submitAndWait(signed.tx_blob);
+  const tx = await client.submitAndWait(tx_blob);
 
   if (!tx.result.hash) {
     throw new Error("Couldn't submit the transaction");
@@ -131,7 +235,7 @@ const submit = async (param: {
 
   throw new Error(
     (tx.result.meta as TransactionMetadata)?.TransactionResult ||
-      `Something went wrong, we couldn't submit properly the transaction`
+    `Something went wrong, we couldn't submit properly the transaction`
   );
 };
 

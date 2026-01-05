@@ -31,10 +31,10 @@ interface Params {
 }
 
 export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
-  payment: { address, token, value, memos, destinationTag }
+  payment: { address, token, value, memos, destinationTag },
 }) => {
   const [params, setParams] = useState<Params>({
-    transaction: null
+    transaction: null,
   });
   const { getCurrentWallet } = useWallet();
   const { estimateNetworkFees, sendPayment } = useLedger();
@@ -43,6 +43,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
   const [errorFees, setErrorFees] = useState<string>('');
   const [errorRequestRejection, setErrorRequestRejection] = useState<string>('');
   const [transaction, setTransaction] = useState<TransactionStatus>();
+
   const wallet = getCurrentWallet();
 
   const buildPaymentFromProps = useCallback(
@@ -61,7 +62,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
         Amount: buildAmount(value, currency, issuer),
         Destination: address,
         Memos: toXRPLMemos(memos),
-        DestinationTag: destinationTag
+        DestinationTag: destinationTag,
       };
     },
     [wallet]
@@ -76,7 +77,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
         issuer,
         address,
         memos,
-        destinationTag
+        destinationTag,
       });
       estimateNetworkFees(paymentTx)
         .then((fees) => {
@@ -98,25 +99,29 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
     memos,
     token,
     value,
-    wallet
+    wallet,
   ]);
 
   const handleReject = useCallback(() => {
     setTransaction(TransactionStatus.Rejected);
   }, []);
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = useCallback(async () => {
     const [currency, issuer] = token.split('-');
     setTransaction(TransactionStatus.Pending);
-    sendPayment(buildPaymentFromProps({ value, currency, issuer, address, memos, destinationTag }))
-      .then(() => {
-        setTransaction(TransactionStatus.Success);
-      })
-      .catch((e) => {
-        setErrorRequestRejection(toUIError(e).message);
-        setTransaction(TransactionStatus.Rejected);
-        Sentry.captureException(e);
-      });
+
+    try {
+      await sendPayment(
+        buildPaymentFromProps({ value, currency, issuer, address, memos, destinationTag })
+      );
+
+      setTransaction(TransactionStatus.Success);
+    } catch (e) {
+      const errorMessage = toUIError(e as Error).message;
+      setErrorRequestRejection(errorMessage);
+      setTransaction(TransactionStatus.Rejected);
+      Sentry.captureException(e);
+    }
   }, [address, buildPaymentFromProps, destinationTag, memos, sendPayment, token, value]);
 
   const handleTransactionClick = useCallback(() => {
@@ -151,7 +156,7 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
   if (transaction === TransactionStatus.Rejected) {
     return (
       <AsyncTransaction
-        title="Transaction rejected"
+        title='Transaction rejected'
         subtitle={
           <>
             Your transaction failed, please try again.
@@ -167,9 +172,9 @@ export const ConfirmPayment: FC<ConfirmPaymentProps> = ({
 
   return (
     <TransactionPage
-      title="Send Payment"
-      description="Please review the transaction below."
-      approveButtonText="Submit"
+      title='Send Payment'
+      description='Please review the transaction below.'
+      approveButtonText='Submit'
       onClickApprove={handleConfirm}
       onClickReject={handleReject}
     >
