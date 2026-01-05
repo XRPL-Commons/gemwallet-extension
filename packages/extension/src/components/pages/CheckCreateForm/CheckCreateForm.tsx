@@ -1,17 +1,18 @@
 import { FC, FocusEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Alert, Button, CircularProgress, Snackbar, TextField, Typography } from '@mui/material';
-import * as Sentry from '@sentry/react';
+import { Button, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { isValidAddress } from 'xrpl';
 
 import {
-  CHECKS_PATH,
+  CHECK_CREATE_PATH,
   DEFAULT_RESERVE,
   RESERVE_PER_OWNER,
-  SECONDARY_GRAY
+  SECONDARY_GRAY,
+  STORAGE_MESSAGING_KEY
 } from '../../../constants';
-import { buildCheckCreate, useLedger, useNetwork, useServer, useWallet } from '../../../contexts';
+import { useLedger, useNetwork, useServer, useWallet } from '../../../contexts';
+import { generateKey, saveInChromeSessionStorage } from '../../../utils';
 import { NumericInput } from '../../atoms';
 import { InformationMessage } from '../../molecules';
 import { PageWithReturn } from '../../templates';
@@ -36,7 +37,7 @@ export const CheckCreateForm: FC = () => {
   const { getCurrentWallet } = useWallet();
   const { client } = useNetwork();
   const { serverInfo } = useServer();
-  const { checkCreate, getAccountInfo } = useLedger();
+  const { getAccountInfo } = useLedger();
 
   // Form state
   const [destination, setDestination] = useState('');
@@ -49,12 +50,9 @@ export const CheckCreateForm: FC = () => {
   const [errorExpiration, setErrorExpiration] = useState('');
 
   // UI state
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWalletActivated, setIsWalletActivated] = useState(true);
   const [ownerCount, setOwnerCount] = useState(0);
   const [balance, setBalance] = useState(0);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   const baseReserve = useMemo(
     () => serverInfo?.info.validated_ledger?.reserve_base_xrp || DEFAULT_RESERVE,
@@ -153,45 +151,22 @@ export const CheckCreateForm: FC = () => {
   const handleSubmit = useCallback(async () => {
     if (!isFormValid) return;
 
-    const wallet = getCurrentWallet();
-    if (!wallet) {
-      setErrorMessage('Wallet not found');
-      return;
-    }
+    // Convert amount to drops
+    const amountDrops = String(Math.floor(Number(amount) * 1_000_000));
 
-    setIsSubmitting(true);
-    setErrorMessage('');
+    // Save transaction data to session storage and navigate to confirmation page
+    const key = generateKey();
+    await saveInChromeSessionStorage(
+      key,
+      JSON.stringify({
+        destination,
+        sendMax: amountDrops,
+        ...(expiration && { expiration: dateToRippleTime(new Date(expiration)) })
+      })
+    );
 
-    try {
-      // Convert amount to drops
-      const amountDrops = String(Math.floor(Number(amount) * 1_000_000));
-
-      // Build the check create transaction
-      const transaction = buildCheckCreate(
-        {
-          destination,
-          sendMax: amountDrops,
-          ...(expiration && { expiration: dateToRippleTime(new Date(expiration)) })
-        },
-        wallet
-      );
-
-      const result = await checkCreate(transaction);
-
-      if (result.hash) {
-        setSuccessMessage('Check created successfully!');
-        // Navigate back to checks list after short delay
-        setTimeout(() => {
-          navigate(CHECKS_PATH);
-        }, 1500);
-      }
-    } catch (e) {
-      Sentry.captureException(e);
-      setErrorMessage((e as Error).message || 'Failed to create check');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [isFormValid, getCurrentWallet, amount, destination, expiration, checkCreate, navigate]);
+    navigate(`${CHECK_CREATE_PATH}?inAppCall=true&${STORAGE_MESSAGING_KEY}=${key}`);
+  }, [isFormValid, amount, destination, expiration, navigate]);
 
   if (!isWalletActivated) {
     return (
@@ -259,33 +234,11 @@ export const CheckCreateForm: FC = () => {
         fullWidth
         variant="contained"
         onClick={handleSubmit}
-        disabled={!isFormValid || isSubmitting}
+        disabled={!isFormValid}
         style={{ marginTop: '20px' }}
       >
-        {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Create Check'}
+        Continue
       </Button>
-
-      <Snackbar
-        open={!!successMessage}
-        autoHideDuration={3000}
-        onClose={() => setSuccessMessage('')}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="success" onClose={() => setSuccessMessage('')}>
-          {successMessage}
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={!!errorMessage}
-        autoHideDuration={5000}
-        onClose={() => setErrorMessage('')}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="error" onClose={() => setErrorMessage('')}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>
     </PageWithReturn>
   );
 };
