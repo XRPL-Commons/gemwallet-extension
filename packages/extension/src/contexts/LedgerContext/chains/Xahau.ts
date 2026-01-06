@@ -31,8 +31,17 @@ export const handleTransaction = async (param: {
     throw new Error('You need to be connected to a ledger');
   }
 
-  if (!wallet?.seed) {
+  if (!wallet) {
     throw new Error('You need to have a wallet connected');
+  }
+
+  // Ledger hardware wallets not yet supported for Xahau transactions
+  if (wallet.type === 'ledger') {
+    throw new Error('Ledger hardware wallets are not yet supported for Xahau transactions. Please use XRPL network or a software wallet.');
+  }
+
+  if (!wallet.seed) {
+    throw new Error('Wallet seed is required for Xahau transactions');
   }
 
   const account = derive.familySeed(wallet.seed);

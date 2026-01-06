@@ -78,8 +78,10 @@ import {
 import { WalletLedger } from '../../types';
 import { toUIError } from '../../utils/errors';
 import { resolveNFTData } from '../../utils/NFTDataResolver';
+import { signMessageWithLedger } from '../../utils/ledger';
 import { useNetwork } from '../NetworkContext';
 import { useWallet } from '../WalletContext';
+import { LEDGER_WAITING_PATH } from '../../constants';
 import {
   calculateFees as calculateFeesXahau,
   fundWallet as fundWalletXahau,
@@ -248,7 +250,7 @@ export interface LedgerContextType {
   // Return transaction hash in case of success
   sendPayment: (payload: Payment) => Promise<string>;
   setTrustline: (payload: TrustSet) => Promise<string>;
-  signMessage: (message: string, isHex: boolean) => string | undefined;
+  signMessage: (message: string, isHex: boolean) => Promise<string | undefined>;
   estimateNetworkFees: (payload: Transaction) => Promise<string>;
   getNFTs: (payload?: GetNFTRequest) => Promise<AccountNFTokenResponse>;
   getTransactions: () => Promise<AccountTxTransaction<typeof RIPPLED_API_V1>[]>;
@@ -304,7 +306,7 @@ export interface LedgerContextType {
 const LedgerContext = createContext<LedgerContextType>({
   sendPayment: () => new Promise(() => {}),
   setTrustline: () => new Promise(() => {}),
-  signMessage: () => undefined,
+  signMessage: async () => undefined,
   estimateNetworkFees: () => Promise.resolve('0'),
   getNFTs: () =>
     new Promise(() => ({
@@ -375,6 +377,102 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     }): Promise<{ hash?: string; signature?: string }> => {
       const { transaction, client, wallet, signOnly, shouldCheck } = params;
 
+      // Check if this is a Ledger wallet - if so, handle with waiting page
+      const isLedgerWallet = wallet?.type === 'ledger';
+      if (isLedgerWallet) {
+        // Create the transaction execution function with captured context
+        const executeTransaction = async () => {
+          let result: { hash?: string; signature?: string };
+
+          switch (chainName) {
+            case Chain.XAHAU:
+              result = (await handleTransactionXahau({
+                transaction,
+                client,
+                wallet,
+                signOnly
+              })) as SubmitTransactionResponse;
+              break;
+            default:
+              result = (await handleTransactionXRPL({
+                transaction: transaction as XRPLTransaction,
+                client,
+                wallet,
+                signOnly,
+                shouldCheck,
+                // Pass progress callback for Ledger signing
+                onLedgerProgress: (step) => {
+                  window.dispatchEvent(
+                    new CustomEvent('ledger:signing:progress', { detail: { step } })
+                  );
+                }
+              })) as SubmitTransactionResponse;
+              break;
+          }
+
+          return result;
+        };
+
+        // Return a promise that will be resolved by the waiting page events
+        return new Promise((resolve, reject) => {
+          // Store transaction execution function for the waiting page
+          (window as any).__ledgerTransactionPending = async () => {
+            try {
+              const result = await executeTransaction();
+
+              // Emit success event
+              window.dispatchEvent(
+                new CustomEvent('ledger:signing:success', {
+                  detail: { hash: result.hash, signature: result.signature }
+                })
+              );
+
+              resolve(result);
+              return result;
+            } catch (error) {
+              // Emit error event
+              window.dispatchEvent(
+                new CustomEvent('ledger:signing:error', {
+                  detail: { error: error instanceof Error ? error.message : 'Transaction failed' }
+                })
+              );
+              reject(error);
+              throw error;
+            }
+          };
+
+          // Listen for cancel event
+          const handleCancel = () => {
+            reject(new Error('User cancelled'));
+            cleanup();
+          };
+
+          // Listen for retry event
+          const handleRetry = async () => {
+            if ((window as any).__ledgerTransactionPending) {
+              try {
+                await (window as any).__ledgerTransactionPending();
+              } catch (e) {
+                // Error already handled in pending function
+              }
+            }
+          };
+
+          const cleanup = () => {
+            window.removeEventListener('ledger:signing:cancel' as any, handleCancel);
+            window.removeEventListener('ledger:signing:retry' as any, handleRetry);
+            delete (window as any).__ledgerTransactionPending;
+          };
+
+          window.addEventListener('ledger:signing:cancel' as any, handleCancel);
+          window.addEventListener('ledger:signing:retry' as any, handleRetry);
+
+          // Navigate to Ledger Waiting page AFTER setting up the promise
+          window.location.hash = LEDGER_WAITING_PATH;
+        });
+      }
+
+      // Non-Ledger wallet - execute normally
       switch (chainName) {
         case Chain.XAHAU:
           return (await handleTransactionXahau({
@@ -504,15 +602,25 @@ const LedgerProvider: FC<Props> = ({ children }) => {
   );
 
   const signMessage = useCallback(
-    (message: string, isHex: boolean) => {
+    async (message: string, isHex: boolean) => {
       const wallet = getCurrentWallet();
       try {
         if (!wallet) {
           throw new Error('You need to have a wallet connected to sign a message');
-        } else {
-          const messageHex = isHex ? message : Buffer.from(message, 'utf8').toString('hex');
-          return sign(messageHex, wallet.wallet.privateKey);
         }
+
+        // Check if this is a Ledger hardware wallet
+        if (wallet.type === 'ledger') {
+          if (!wallet.derivationPath) {
+            throw new Error('Ledger wallet missing derivation path');
+          }
+          const messageToSign = isHex ? Buffer.from(message, 'hex').toString('utf8') : message;
+          return await signMessageWithLedger(wallet.derivationPath, messageToSign);
+        }
+
+        // Software wallet - use private key signing
+        const messageHex = isHex ? message : Buffer.from(message, 'utf8').toString('hex');
+        return sign(messageHex, wallet.wallet.privateKey);
       } catch (e) {
         Sentry.captureException(e);
         throw e;

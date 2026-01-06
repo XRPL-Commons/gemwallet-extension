@@ -9,6 +9,7 @@ export * from './TransactionHeader';
 export * from './DataCard';
 export * from './InformationMessage';
 export * from './InsufficientFundsWarning';
+export * from './LedgerSigningModal';
 export * from './MPTokenDisplay';
 export * from './NetworkIndicator';
 export * from './NFTCard';
