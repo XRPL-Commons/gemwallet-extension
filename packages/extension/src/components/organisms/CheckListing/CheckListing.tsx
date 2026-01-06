@@ -62,32 +62,40 @@ export const CheckListing: FC<CheckListingProps> = ({ address }) => {
   }, [navigate]);
 
   const handleCashClick = useCallback(
-    (check: CheckDisplayData) => {
-      const key = generateKey();
-      saveInChromeSessionStorage(
-        key,
-        JSON.stringify({
-          checkID: check.index,
-          amount: typeof check.SendMax === 'string' ? check.SendMax : check.SendMax.value
-        })
-      ).then(() => {
+    async (check: CheckDisplayData) => {
+      try {
+        const key = generateKey();
+        await saveInChromeSessionStorage(
+          key,
+          JSON.stringify({
+            checkID: check.index,
+            amount: typeof check.SendMax === 'string' ? check.SendMax : check.SendMax.value
+          })
+        );
         navigate(`${CHECK_CASH_PATH}?inAppCall=true&${STORAGE_MESSAGING_KEY}=${key}`);
-      });
+      } catch (e) {
+        console.error('Error saving check data:', e);
+        Sentry.captureException(e);
+      }
     },
     [navigate]
   );
 
   const handleCancelClick = useCallback(
-    (check: CheckDisplayData) => {
-      const key = generateKey();
-      saveInChromeSessionStorage(
-        key,
-        JSON.stringify({
-          checkID: check.index
-        })
-      ).then(() => {
+    async (check: CheckDisplayData) => {
+      try {
+        const key = generateKey();
+        await saveInChromeSessionStorage(
+          key,
+          JSON.stringify({
+            checkID: check.index
+          })
+        );
         navigate(`${CHECK_CANCEL_PATH}?inAppCall=true&${STORAGE_MESSAGING_KEY}=${key}`);
-      });
+      } catch (e) {
+        console.error('Error saving check data:', e);
+        Sentry.captureException(e);
+      }
     },
     [navigate]
   );
