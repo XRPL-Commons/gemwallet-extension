@@ -42,6 +42,14 @@ type ImportNumbersProps = {
   algorithm?: ECDSA;
 };
 
+type ImportLedgerProps = {
+  name: string;
+  publicAddress: string;
+  publicKey: string;
+  derivationPath: string;
+  password: string;
+};
+
 export interface WalletContextType {
   signIn: (password: string, rememberSession?: boolean) => boolean;
   signOut: () => void;
@@ -59,6 +67,7 @@ export interface WalletContextType {
     walletName,
     algorithm
   }: ImportNumbersProps) => boolean | undefined;
+  importLedgerWallet: (props: ImportLedgerProps) => Promise<boolean | undefined>;
   getCurrentWallet: () => WalletLedger | undefined;
   getWalletByPublicAddress: (publicAddress: string) => WalletLedger | undefined;
   renameWallet: (name: string, publicAddress: string) => void;
@@ -81,6 +90,7 @@ const WalletContext = createContext<WalletContextType>({
   isValidNumbers: () => false,
   isPasswordCorrect: () => false,
   importNumbers: () => false,
+  importLedgerWallet: async () => false,
   renameWallet: () => {},
   removeWallet: () => {},
   wallets: [],
@@ -110,7 +120,22 @@ const WalletProvider: FC<Props> = ({ children }) => {
         });
       }
 
-      const _wallets = wallets.map(({ name, publicAddress, seed, mnemonic, algorithm }) => {
+      const _wallets = wallets.map(({ name, publicAddress, seed, mnemonic, algorithm, type, derivationPath, publicKey }) => {
+        // Handle Ledger hardware wallets
+        if (type === 'ledger') {
+          // For Ledger wallets, we create a placeholder wallet object
+          // The actual signing will be done via the Ledger device
+          return {
+            name,
+            publicAddress,
+            type,
+            derivationPath,
+            publicKey,
+            wallet: { address: publicAddress, publicKey } as any // Placeholder
+          };
+        }
+
+        // Handle software wallets
         if (seed) {
           return {
             name,
@@ -303,6 +328,42 @@ const WalletProvider: FC<Props> = ({ children }) => {
     [wallets]
   );
 
+  const importLedgerWallet = useCallback(
+    async ({ name, publicAddress, publicKey, derivationPath, password }: ImportLedgerProps) => {
+      try {
+        // Check if wallet already exists
+        if (wallets.filter((w) => w.publicAddress === publicAddress).length > 0) {
+          return undefined;
+        }
+
+        const _wallet: WalletToSaveType = {
+          name,
+          publicAddress,
+          type: 'ledger',
+          derivationPath,
+          publicKey // Store the public key
+        };
+
+        saveWallet(_wallet, password);
+        setWallets((wallets) => [
+          ...wallets,
+          {
+            name,
+            publicAddress,
+            type: 'ledger',
+            derivationPath,
+            publicKey,
+            wallet: { address: publicAddress, publicKey } as any // Placeholder for Ledger
+          }
+        ]);
+        return true;
+      } catch (e) {
+        throw new Error(e instanceof Error ? e.message : 'Failed to import Ledger wallet');
+      }
+    },
+    [wallets]
+  );
+
   const renameWallet = useCallback(
     (name: string, publicAddress: string) => {
       const walletIndex = wallets.findIndex((wallet) => wallet.publicAddress === publicAddress);
@@ -313,11 +374,14 @@ const WalletProvider: FC<Props> = ({ children }) => {
         newWallets[walletIndex] = newWallet;
         setWallets(newWallets);
         const walletToSave: WalletToSaveType[] = newWallets.map(
-          ({ name, publicAddress, seed, mnemonic }) => ({
+          ({ name, publicAddress, seed, mnemonic, type, derivationPath, publicKey }) => ({
             name,
             publicAddress,
             seed,
-            mnemonic
+            mnemonic,
+            type,
+            derivationPath,
+            publicKey
           })
         );
         saveData(STORAGE_WALLETS, encrypt(JSON.stringify(walletToSave), password));
@@ -337,11 +401,14 @@ const WalletProvider: FC<Props> = ({ children }) => {
         newWallets.splice(walletIndex, 1);
         setWallets(newWallets);
         const walletToSave: WalletToSaveType[] = newWallets.map(
-          ({ name, publicAddress, seed, mnemonic }) => ({
+          ({ name, publicAddress, seed, mnemonic, type, derivationPath, publicKey }) => ({
             name,
             publicAddress,
             seed,
-            mnemonic
+            mnemonic,
+            type,
+            derivationPath,
+            publicKey
           })
         );
         // We also want to remove the trusted apps associated to this wallet
@@ -383,6 +450,7 @@ const WalletProvider: FC<Props> = ({ children }) => {
     isValidNumbers,
     isPasswordCorrect,
     importNumbers,
+    importLedgerWallet,
     renameWallet,
     removeWallet,
     wallets,

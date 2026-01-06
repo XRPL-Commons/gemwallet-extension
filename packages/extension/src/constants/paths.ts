@@ -77,3 +77,8 @@ export const DID_SET_FORM_PATH = '/did-set-form';
 export const DID_DELETE_PATH = '/did-delete';
 // Swap
 export const SWAP_PATH = '/swap';
+// Hardware Wallet
+export const HARDWARE_WALLET_PATH = '/hardware-wallet';
+export const REQUEST_LEDGER_PERMISSION_PATH = '/request-ledger-permission';
+export const IMPORT_LEDGER_PATH = '/import/ledger';
+export const LEDGER_WAITING_PATH = '/ledger-waiting';

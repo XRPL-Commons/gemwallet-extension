@@ -2,20 +2,28 @@ import { FC, useCallback, useState } from 'react';
 
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 
 import {
   IMPORT_MNEMONIC_PATH,
   IMPORT_SECRET_NUMBERS_PATH,
   IMPORT_SEED_PATH,
-  LIST_WALLETS_PATH
+  LIST_WALLETS_PATH,
+  REQUEST_LEDGER_PERMISSION_PATH
 } from '../../../../constants';
 import { ButtonOption } from '../../../atoms';
 import { PageWithStepper } from '../../../templates';
 import { ImportMnemonic } from './ImportMnemonic';
 import { ImportSecretNumbers } from './ImportSecretNumbers';
 import { ImportSeed } from './ImportSeed';
+import { ImportLedger } from './ImportLedger';
 
 const SECRET_TYPES = [
+  {
+    name: 'Ledger Hardware Wallet',
+    description: 'Connect your Ledger device',
+    link: ''
+  },
   {
     name: 'Family Seed',
     description: 'Looks like sXXX1234XXX...',
@@ -45,7 +53,26 @@ export const ImportNewWallet: FC<ImportNewWalletProps> = ({ password }) => {
     navigate(LIST_WALLETS_PATH);
   }, [navigate]);
 
-  if (activeStep === 3) {
+  const handleLedgerClick = useCallback(async () => {
+    // Check if HID permission is already granted
+    try {
+      const devices = await TransportWebHID.list();
+      if (devices.length > 0) {
+        // Permission already granted, proceed to import flow
+        setActiveStep(1);
+        return;
+      }
+    } catch {
+      // WebHID not available or permission not granted
+    }
+
+    // No permission yet - open permission request page in a new tab
+    // This is required because WebHID doesn't work from extension popup
+    const url = chrome.runtime.getURL(`index.html#${REQUEST_LEDGER_PERMISSION_PATH}`);
+    chrome.tabs.create({ url });
+  }, []);
+
+  if (activeStep === 4) {
     return (
       <ImportSecretNumbers
         activeStep={activeStep}
@@ -55,7 +82,7 @@ export const ImportNewWallet: FC<ImportNewWalletProps> = ({ password }) => {
     );
   }
 
-  if (activeStep === 2) {
+  if (activeStep === 3) {
     return (
       <ImportMnemonic
         activeStep={activeStep}
@@ -65,9 +92,19 @@ export const ImportNewWallet: FC<ImportNewWalletProps> = ({ password }) => {
     );
   }
 
-  if (activeStep === 1) {
+  if (activeStep === 2) {
     return (
       <ImportSeed activeStep={activeStep} password={password} handleBack={() => setActiveStep(0)} />
+    );
+  }
+
+  if (activeStep === 1) {
+    return (
+      <ImportLedger
+        activeStep={activeStep}
+        password={password}
+        handleBack={() => setActiveStep(0)}
+      />
     );
   }
 
@@ -88,7 +125,14 @@ export const ImportNewWallet: FC<ImportNewWalletProps> = ({ password }) => {
           key={index}
           name={name}
           description={description}
-          onClick={() => setActiveStep(index + 1)}
+          onClick={() => {
+            // Special handling for Ledger: open in tab
+            if (index === 0) {
+              handleLedgerClick();
+            } else {
+              setActiveStep(index + 1);
+            }
+          }}
         />
       ))}
     </PageWithStepper>

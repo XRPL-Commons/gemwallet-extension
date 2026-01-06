@@ -30,6 +30,7 @@ export interface GenerateWalletContextParams {
   isValidNumbers?: () => boolean;
   isPasswordCorrect?: () => boolean;
   importNumbers?: () => boolean;
+  importLedgerWallet?: () => Promise<boolean | undefined>;
   renameWallet?: () => void;
   removeWallet?: () => void;
   selectedWallet?: number;
@@ -48,6 +49,7 @@ export const generateWalletContext = (params?: GenerateWalletContextParams): Wal
     isValidNumbers = () => true,
     isPasswordCorrect = () => true,
     importNumbers = () => true,
+    importLedgerWallet = async () => true,
     selectedWallet = 0,
     wallets = [mockWalletLedger]
   } = params || {};
@@ -66,6 +68,7 @@ export const generateWalletContext = (params?: GenerateWalletContextParams): Wal
     isValidNumbers,
     isPasswordCorrect,
     importNumbers,
+    importLedgerWallet,
     renameWallet: vi.fn(),
     removeWallet: vi.fn(),
     selectedWallet,

@@ -47,6 +47,7 @@ export const SignTransaction: FC = () => {
   const [isParamsMissing, setIsParamsMissing] = useState(false);
   const [transaction, setTransaction] = useState<TransactionStatus>(TransactionStatus.Waiting);
   const [resultValue, setResultValue] = useState<string | undefined>();
+
   const { signTransaction } = useLedger();
   const { isConnectionFailed, networkName } = useNetwork();
   const { setTransactionProgress } = useTransactionProgress();
@@ -151,33 +152,37 @@ export const SignTransaction: FC = () => {
     }
   }, [createMessage, params.inAppCall, sendMessageToBackground]);
 
-  const handleSign = useCallback(() => {
+  const handleSign = useCallback(async () => {
     setTransaction(TransactionStatus.Pending);
-    // txParam will be present because if not,
-    // we won't be able to go to the confirm transaction state
-    signTransaction({
-      // SignTransaction fields
-      transaction: params.txParam as SubmittableTransaction
-    })
-      .then((response) => {
-        setTransaction(TransactionStatus.Success);
-        if (!params.inAppCall) {
-          sendMessageToBackground(createMessage(response));
-        } else {
-          setResultValue(response.signature);
-        }
-      })
-      .catch((e) => {
-        setErrorRequestRejection(e);
-        setTransaction(TransactionStatus.Rejected);
-        if (!params.inAppCall) {
-          const message = createMessage({
-            signature: undefined,
-            error: e
-          });
-          sendMessageToBackground(message);
-        }
+
+    try {
+      // txParam will be present because if not,
+      // we won't be able to go to the confirm transaction state
+      const response = await signTransaction({
+        // SignTransaction fields
+        transaction: params.txParam as SubmittableTransaction
       });
+
+      setTransaction(TransactionStatus.Success);
+
+      if (!params.inAppCall) {
+        sendMessageToBackground(createMessage(response));
+      } else {
+        setResultValue(response.signature);
+      }
+    } catch (e) {
+      const error = e as Error;
+      setErrorRequestRejection(error);
+      setTransaction(TransactionStatus.Rejected);
+
+      if (!params.inAppCall) {
+        const message = createMessage({
+          signature: undefined,
+          error: error
+        });
+        sendMessageToBackground(message);
+      }
+    }
   }, [signTransaction, params.txParam, params.inAppCall, sendMessageToBackground, createMessage]);
 
   const { txParam } = params;

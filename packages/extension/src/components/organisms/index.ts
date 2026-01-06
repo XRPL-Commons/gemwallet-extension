@@ -5,6 +5,8 @@ export * from './DIDListing';
 export * from './EscrowListing';
 export * from './PaymentChannelListing';
 export * from './Header';
+export * from './LedgerDeviceStatus';
+export * from './LedgerSigningStatus';
 export * from './NavMenu';
 export * from './NFTDetails';
 export * from './NFTListing';

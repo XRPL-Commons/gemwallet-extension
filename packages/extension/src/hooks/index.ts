@@ -5,6 +5,7 @@ export * from './useBookOffers';
 export * from './useFees';
 export * from './useFetchFromSessionStorage';
 export * from './useKeyUp';
+export * from './useLedgerTransaction';
 export * from './useMainToken';
 export * from './useSwapQuote';
 export * from './useSwapTokens';

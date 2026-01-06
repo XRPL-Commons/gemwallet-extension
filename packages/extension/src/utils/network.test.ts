@@ -62,6 +62,7 @@ describe('loadNetwork', () => {
 
   test('should return the mainnet network if an error occurs while loading the network', () => {
     const error = new Error('Error loading network from local storage');
+    // @ts-ignore
     localStorageMock.getItem = vi.fn(() => {
       throw error;
     });
