@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 
+import { useNavigate } from 'react-router-dom';
 import { DIDSet as DIDSetXRPL } from 'xrpl';
 
 import {
@@ -9,7 +10,7 @@ import {
   DIDSetRequest
 } from '@gemwallet/constants';
 
-import { STORAGE_MESSAGING_KEY } from '../../../constants';
+import { HOME_PATH, STORAGE_MESSAGING_KEY } from '../../../constants';
 import {
   buildDIDSet,
   TransactionProgressStatus,
@@ -31,6 +32,10 @@ interface Params {
 }
 
 export const DIDSet: FC = () => {
+  const navigate = useNavigate();
+  const urlParams = new URLSearchParams(window.location.search);
+  const inAppCall = urlParams.get('inAppCall') === 'true';
+
   const [params, setParams] = useState<Params>({
     id: 0,
     transaction: null
@@ -46,8 +51,6 @@ export const DIDSet: FC = () => {
     params.transaction ?? [],
     params.transaction?.Fee
   );
-
-  const urlParams = new URLSearchParams(window.location.search);
   const { fetchedData } = useFetchFromSessionStorage(
     urlParams.get(STORAGE_MESSAGING_KEY) ?? undefined
   ) as {
@@ -60,7 +63,8 @@ export const DIDSet: FC = () => {
     network: networkName,
     difference,
     transaction,
-    errorRequestRejection
+    errorRequestRejection,
+    onClick: inAppCall ? () => navigate(HOME_PATH) : undefined
   });
 
   const sendMessageToBackground = useCallback(
