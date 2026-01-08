@@ -59,6 +59,7 @@ import {
   SIGN_TRANSACTION_PATH,
   SUBMIT_TRANSACTION_PATH,
   SUBMIT_TRANSACTIONS_BULK_PATH,
+  SWAP_PATH,
   TRANSACTION_PATH,
   TRUSTED_APPS_PATH
 } from '../../../constants';
@@ -124,6 +125,7 @@ import { SubmitRawTransaction } from '../SubmitRawTransaction';
 import { SubmitTransaction } from '../SubmitTransaction';
 import { Transaction } from '../Transaction';
 import { TrustedApps } from '../TrustedApps';
+import { Swap } from '../Swap';
 
 type PrivateRouteConfig = {
   path: string;
@@ -199,5 +201,7 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: SUBMIT_TRANSACTION_PATH, element: SubmitTransaction },
   { path: SUBMIT_TRANSACTIONS_BULK_PATH, element: SubmitBulkTransactions },
   { path: TRANSACTION_PATH, element: Transaction },
-  { path: TRUSTED_APPS_PATH, element: TrustedApps }
+  { path: TRUSTED_APPS_PATH, element: TrustedApps },
+  // Swap Route
+  { path: SWAP_PATH, element: Swap }
 ];
