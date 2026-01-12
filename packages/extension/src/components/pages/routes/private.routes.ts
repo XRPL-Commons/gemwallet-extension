@@ -12,6 +12,7 @@ import {
   CREATE_NFT_OFFER_PATH,
   CREATE_OFFER_PATH,
   DELETE_ACCOUNT_PATH,
+  DESTROY_MPTOKEN_ISSUANCE_PATH,
   EDIT_WALLET_PATH,
   HISTORY_PATH,
   HOME_PATH,
@@ -25,6 +26,7 @@ import {
   SETTINGS_PATH,
   SET_ACCOUNT_PATH,
   SET_HOOK_PATH,
+  SET_MPTOKEN_ISSUANCE_PATH,
   SET_REGULAR_KEY_PATH,
   SHARE_NFT_PATH,
   SHARE_PUBLIC_ADDRESS_PATH,
@@ -46,6 +48,8 @@ import { CancelNFTOffer } from '../CancelNFTOffer';
 import { CancelOffer } from '../CancelOffer';
 import { CreateMPTokenIssuance } from '../CreateMPTokenIssuance';
 import { CreateNFTOffer } from '../CreateNFTOffer';
+import { MPTokenIssuanceDestroy } from '../MPTokenIssuanceDestroy';
+import { MPTokenIssuanceSet } from '../MPTokenIssuanceSet';
 import { CreateOffer } from '../CreateOffer';
 import { DeleteAccount } from '../DeleteAccount';
 import { EditWallet } from '../EditWallet';
@@ -91,6 +95,7 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: CREATE_NFT_OFFER_PATH, element: CreateNFTOffer },
   { path: CREATE_OFFER_PATH, element: CreateOffer },
   { path: DELETE_ACCOUNT_PATH, element: DeleteAccount },
+  { path: DESTROY_MPTOKEN_ISSUANCE_PATH, element: MPTokenIssuanceDestroy },
   { path: EDIT_WALLET_PATH, element: EditWallet },
   { path: HISTORY_PATH, element: History },
   { path: HOME_PATH, element: Home },
@@ -103,6 +108,7 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: SEND_PATH, element: SendPayment },
   { path: SET_ACCOUNT_PATH, element: SetAccount },
   { path: SET_HOOK_PATH, element: SetHook },
+  { path: SET_MPTOKEN_ISSUANCE_PATH, element: MPTokenIssuanceSet },
   { path: SET_REGULAR_KEY_PATH, element: SetRegularKey },
   { path: SETTINGS_PATH, element: Settings },
   { path: SHARE_NFT_PATH, element: ShareNFT },
