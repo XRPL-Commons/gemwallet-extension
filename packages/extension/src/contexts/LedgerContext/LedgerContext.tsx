@@ -150,6 +150,20 @@ interface MPTokenIssuanceCreateParams {
   flags?: number;
 }
 
+interface MPTokenIssuanceDestroyResponse {
+  hash: string;
+}
+
+interface MPTokenIssuanceSetResponse {
+  hash: string;
+}
+
+interface MPTokenIssuanceSetParams {
+  mptIssuanceId: string;
+  holder?: string;
+  flags?: number;
+}
+
 interface Props {
   children: React.ReactElement;
 }
@@ -191,6 +205,8 @@ export interface LedgerContextType {
   createMPTokenIssuance: (
     params: MPTokenIssuanceCreateParams
   ) => Promise<MPTokenIssuanceCreateResponse>;
+  destroyMPTokenIssuance: (mptIssuanceId: string) => Promise<MPTokenIssuanceDestroyResponse>;
+  setMPTokenIssuance: (params: MPTokenIssuanceSetParams) => Promise<MPTokenIssuanceSetResponse>;
 }
 
 const LedgerContext = createContext<LedgerContextType>({
@@ -225,7 +241,9 @@ const LedgerContext = createContext<LedgerContextType>({
   // MPToken
   addMPTokenAuthorization: () => new Promise(() => {}),
   removeMPTokenAuthorization: () => new Promise(() => {}),
-  createMPTokenIssuance: () => new Promise(() => {})
+  createMPTokenIssuance: () => new Promise(() => {}),
+  destroyMPTokenIssuance: () => new Promise(() => {}),
+  setMPTokenIssuance: () => new Promise(() => {})
 });
 
 const LedgerProvider: FC<Props> = ({ children }) => {
@@ -859,6 +877,73 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     [client, getCurrentWallet, handleTransaction]
   );
 
+  const destroyMPTokenIssuance = useCallback(
+    async (mptIssuanceId: string): Promise<MPTokenIssuanceDestroyResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error(LEDGER_CONNECTION_ERROR);
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected to destroy an MPToken issuance');
+      } else {
+        try {
+          // Build MPTokenIssuanceDestroy transaction
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transaction: any = {
+            TransactionType: 'MPTokenIssuanceDestroy',
+            Account: wallet.publicAddress,
+            MPTokenIssuanceID: mptIssuanceId
+          };
+
+          const { hash } = await handleTransaction({ transaction, client, wallet });
+          if (!hash) throw new Error("Couldn't destroy MPToken issuance");
+
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
+  const setMPTokenIssuance = useCallback(
+    async (params: MPTokenIssuanceSetParams): Promise<MPTokenIssuanceSetResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error(LEDGER_CONNECTION_ERROR);
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected to modify an MPToken issuance');
+      } else {
+        try {
+          // Build MPTokenIssuanceSet transaction
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transaction: any = {
+            TransactionType: 'MPTokenIssuanceSet',
+            Account: wallet.publicAddress,
+            MPTokenIssuanceID: params.mptIssuanceId
+          };
+
+          if (params.holder !== undefined) {
+            transaction.Holder = params.holder;
+          }
+          if (params.flags !== undefined) {
+            transaction.Flags = params.flags;
+          }
+
+          const { hash } = await handleTransaction({ transaction, client, wallet });
+          if (!hash) throw new Error("Couldn't modify MPToken issuance");
+
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
   /*
    * Getters
    */
@@ -1028,7 +1113,9 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     // MPToken
     addMPTokenAuthorization,
     removeMPTokenAuthorization,
-    createMPTokenIssuance
+    createMPTokenIssuance,
+    destroyMPTokenIssuance,
+    setMPTokenIssuance
   };
 
   return <LedgerContext.Provider value={value}>{children}</LedgerContext.Provider>;
