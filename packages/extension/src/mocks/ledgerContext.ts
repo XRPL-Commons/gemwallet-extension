@@ -29,5 +29,6 @@ export const valueLedgerContext: LedgerContextType = {
   setHook: vi.fn(),
   // MPToken
   addMPTokenAuthorization: vi.fn(),
-  removeMPTokenAuthorization: vi.fn()
+  removeMPTokenAuthorization: vi.fn(),
+  createMPTokenIssuance: vi.fn()
 };

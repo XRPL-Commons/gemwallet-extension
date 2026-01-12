@@ -137,6 +137,19 @@ interface MPTokenAuthorizeResponse {
   hash: string;
 }
 
+interface MPTokenIssuanceCreateResponse {
+  hash: string;
+  mptIssuanceId?: string;
+}
+
+interface MPTokenIssuanceCreateParams {
+  assetScale?: number;
+  maximumAmount?: string;
+  transferFee?: number;
+  metadata?: string;
+  flags?: number;
+}
+
 interface Props {
   children: React.ReactElement;
 }
@@ -175,6 +188,9 @@ export interface LedgerContextType {
   // MPToken
   addMPTokenAuthorization: (mptIssuanceId: string) => Promise<MPTokenAuthorizeResponse>;
   removeMPTokenAuthorization: (mptIssuanceId: string) => Promise<MPTokenAuthorizeResponse>;
+  createMPTokenIssuance: (
+    params: MPTokenIssuanceCreateParams
+  ) => Promise<MPTokenIssuanceCreateResponse>;
 }
 
 const LedgerContext = createContext<LedgerContextType>({
@@ -208,7 +224,8 @@ const LedgerContext = createContext<LedgerContextType>({
   setHook: () => new Promise(() => {}),
   // MPToken
   addMPTokenAuthorization: () => new Promise(() => {}),
-  removeMPTokenAuthorization: () => new Promise(() => {})
+  removeMPTokenAuthorization: () => new Promise(() => {}),
+  createMPTokenIssuance: () => new Promise(() => {})
 });
 
 const LedgerProvider: FC<Props> = ({ children }) => {
@@ -794,6 +811,54 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     [client, getCurrentWallet, handleTransaction]
   );
 
+  const createMPTokenIssuance = useCallback(
+    async (params: MPTokenIssuanceCreateParams): Promise<MPTokenIssuanceCreateResponse> => {
+      const wallet = getCurrentWallet();
+      if (!client) {
+        throw new Error('You need to be connected to a ledger');
+      } else if (!wallet) {
+        throw new Error('You need to have a wallet connected');
+      } else {
+        try {
+          // Build MPTokenIssuanceCreate transaction
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transaction: any = {
+            TransactionType: 'MPTokenIssuanceCreate',
+            Account: wallet.publicAddress
+          };
+
+          // Add optional fields if provided
+          if (params.assetScale !== undefined) {
+            transaction.AssetScale = params.assetScale;
+          }
+          if (params.maximumAmount !== undefined) {
+            transaction.MaximumAmount = params.maximumAmount;
+          }
+          if (params.transferFee !== undefined) {
+            transaction.TransferFee = params.transferFee;
+          }
+          if (params.metadata !== undefined) {
+            transaction.MPTokenMetadata = params.metadata;
+          }
+          if (params.flags !== undefined) {
+            transaction.Flags = params.flags;
+          }
+
+          const { hash } = await handleTransaction({ transaction, client, wallet });
+          if (!hash) throw new Error("Couldn't create MPToken issuance");
+
+          // Note: The MPTokenIssuanceID is returned in the transaction metadata
+          // For now, we return just the hash - the caller can look up the issuance ID
+          return { hash };
+        } catch (e) {
+          Sentry.captureException(e);
+          throw e;
+        }
+      }
+    },
+    [client, getCurrentWallet, handleTransaction]
+  );
+
   /*
    * Getters
    */
@@ -962,7 +1027,8 @@ const LedgerProvider: FC<Props> = ({ children }) => {
     setHook,
     // MPToken
     addMPTokenAuthorization,
-    removeMPTokenAuthorization
+    removeMPTokenAuthorization,
+    createMPTokenIssuance
   };
 
   return <LedgerContext.Provider value={value}>{children}</LedgerContext.Provider>;

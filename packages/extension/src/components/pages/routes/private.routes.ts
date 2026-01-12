@@ -8,6 +8,7 @@ import {
   BURN_NFT_PATH,
   CANCEL_NFT_OFFER_PATH,
   CANCEL_OFFER_PATH,
+  CREATE_MPTOKEN_ISSUANCE_PATH,
   CREATE_NFT_OFFER_PATH,
   CREATE_OFFER_PATH,
   DELETE_ACCOUNT_PATH,
@@ -43,6 +44,7 @@ import { AddNewWallet } from '../AddNewWallet';
 import { BurnNFT } from '../BurnNFT';
 import { CancelNFTOffer } from '../CancelNFTOffer';
 import { CancelOffer } from '../CancelOffer';
+import { CreateMPTokenIssuance } from '../CreateMPTokenIssuance';
 import { CreateNFTOffer } from '../CreateNFTOffer';
 import { CreateOffer } from '../CreateOffer';
 import { DeleteAccount } from '../DeleteAccount';
@@ -85,6 +87,7 @@ export const privateRoutes: PrivateRouteConfig[] = [
   { path: BURN_NFT_PATH, element: BurnNFT },
   { path: CANCEL_NFT_OFFER_PATH, element: CancelNFTOffer },
   { path: CANCEL_OFFER_PATH, element: CancelOffer },
+  { path: CREATE_MPTOKEN_ISSUANCE_PATH, element: CreateMPTokenIssuance },
   { path: CREATE_NFT_OFFER_PATH, element: CreateNFTOffer },
   { path: CREATE_OFFER_PATH, element: CreateOffer },
   { path: DELETE_ACCOUNT_PATH, element: DeleteAccount },
