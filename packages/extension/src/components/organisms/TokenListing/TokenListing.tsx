@@ -20,6 +20,7 @@ import { isLPToken } from '../../../utils/trustlines';
 import { TokenLoader } from '../../atoms';
 import { InformationMessage } from '../../molecules/InformationMessage';
 import { TokenDisplay } from '../../molecules/TokenDisplay';
+import { MPTokenListing } from '../MPTokenListing';
 import { DialogPage } from '../../templates';
 
 export interface TokenListingProps {
@@ -195,6 +196,7 @@ export const TokenListing: FC<TokenListingProps> = ({ address }) => {
           />
         );
       })}
+      <MPTokenListing address={address} />
       <div style={{ height: '60px' }} />
       <DialogPage title="Account balance" onClose={handleClose} open={explanationOpen}>
         <div style={{ margin: '20px' }}>
