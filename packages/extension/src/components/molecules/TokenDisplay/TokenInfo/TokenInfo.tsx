@@ -2,7 +2,7 @@ import { Ref, forwardRef, useMemo } from 'react';
 
 import { Tooltip, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../../constants';
+import { useGemTokens } from '../../../../hooks';
 import { formatToken } from '../../../../utils';
 import { LP_TOKEN_NAME } from '../../../../utils/trustlines';
 import { RenderTokenIcon } from './RenderTokenIcon';
@@ -21,6 +21,7 @@ const MAX_TOKEN_LENGTH = 5;
 const MAX_ISSUER_LENGTH = 20;
 
 export const TokenInfo = forwardRef((props: TokenInfoProps, ref: Ref<HTMLDivElement>) => {
+  const tokens = useGemTokens();
   const {
     isMainToken,
     tokenIconUrl,
@@ -64,7 +65,7 @@ export const TokenInfo = forwardRef((props: TokenInfoProps, ref: Ref<HTMLDivElem
                 marginLeft: '5px',
                 fontSize: 'smaller',
                 fontStyle: 'italic',
-                color: SECONDARY_GRAY
+                color: tokens.text.secondary
               }}
             >
               by {issuerName}
@@ -86,7 +87,7 @@ export const TokenInfo = forwardRef((props: TokenInfoProps, ref: Ref<HTMLDivElem
                   marginLeft: '15px',
                   fontSize: 'smaller',
                   fontStyle: 'italic',
-                  color: SECONDARY_GRAY
+                  color: tokens.text.secondary
                 }}
               >
                 {formattedIssuerAddress}
@@ -94,7 +95,7 @@ export const TokenInfo = forwardRef((props: TokenInfoProps, ref: Ref<HTMLDivElem
             </Tooltip>
           ) : null}
         </Typography>
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary }}>
           {formatToken(balance, token)}
         </Typography>
       </div>

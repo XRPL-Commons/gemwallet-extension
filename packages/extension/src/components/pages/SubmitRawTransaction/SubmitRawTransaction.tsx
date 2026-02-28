@@ -17,10 +17,12 @@ import {
   SUBMIT_TRANSACTION_PATH
 } from '../../../constants';
 import { useNetwork, useWallet } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { generateKey, saveInChromeSessionStorage } from '../../../utils';
 import { PageWithReturn } from '../../templates';
 
 export const SubmitRawTransaction: FC = () => {
+  const tokens = useGemTokens();
   const { getCurrentWallet } = useWallet();
   const { hasOfflineBanner } = useNetwork();
   const editorHeight = useMemo(() => {
@@ -39,6 +41,7 @@ export const SubmitRawTransaction: FC = () => {
   }, [navigate]);
 
   const validateTx = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (parsed: any) => {
       if (!('Account' in parsed)) {
         parsed.Account = wallet?.publicAddress;
@@ -134,7 +137,7 @@ export const SubmitRawTransaction: FC = () => {
               fontFamily: '"Fira code", "Fira Mono", monospace',
               fontSize: 12,
               tabSize: 2,
-              backgroundColor: '#2d2d2d',
+              backgroundColor: tokens.surface.primary,
               borderRadius: '2px',
               minHeight: editorHeight
             }}

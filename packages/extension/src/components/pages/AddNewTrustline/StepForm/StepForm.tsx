@@ -8,6 +8,7 @@ import { Chain, XRPLNetwork } from '@gemwallet/constants';
 
 import { HOME_PATH, MAX_TOKEN_LENGTH } from '../../../../constants';
 import { useNetwork } from '../../../../contexts';
+import { useGemTokens } from '../../../../hooks';
 import { NumericInput } from '../../../atoms';
 import { PageWithReturn } from '../../../templates';
 import { SearchToken } from './SearchToken';
@@ -32,6 +33,7 @@ export interface StepFormProps {
 }
 
 export const StepForm: FC<StepFormProps> = ({ onTrustlineSubmit, initialValues }) => {
+  const tokens = useGemTokens();
   const [issuer, setIssuer] = useState<string>(initialValues?.issuer || '');
   const [token, setToken] = useState<string>(initialValues?.token || '');
   const [limit, setLimit] = useState<string>(initialValues?.limit.toString() || '');
@@ -209,7 +211,7 @@ export const StepForm: FC<StepFormProps> = ({ onTrustlineSubmit, initialValues }
             label="Prevent Rippling"
             style={{
               marginTop: '5px',
-              color: '#bababa'
+              color: tokens.text.secondary
             }}
           />
         ) : null}
@@ -219,7 +221,7 @@ export const StepForm: FC<StepFormProps> = ({ onTrustlineSubmit, initialValues }
             component="p"
             style={{
               fontStyle: 'italic',
-              color: '#757575',
+              color: tokens.text.disabled,
               marginBottom: '10px'
             }}
           >

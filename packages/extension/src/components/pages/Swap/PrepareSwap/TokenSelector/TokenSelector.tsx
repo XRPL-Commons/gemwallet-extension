@@ -17,6 +17,7 @@ import {
   Typography
 } from '@mui/material';
 
+import { useGemTokens } from '../../../../../hooks';
 import { SwapToken } from '../../../../../types/swap.types';
 import { convertHexCurrencyString } from '../../../../../utils';
 
@@ -39,6 +40,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   excludeToken,
   title = 'Select Token'
 }) => {
+  const gemTokens = useGemTokens();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +106,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
           borderRadius: 1,
           mb: 0.5,
           '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.08)'
+            backgroundColor: gemTokens.surface.hover
           }
         }}
       >

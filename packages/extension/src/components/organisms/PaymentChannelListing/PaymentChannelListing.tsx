@@ -11,10 +11,10 @@ import {
   PAYMENT_CHANNEL_CLAIM_PATH,
   PAYMENT_CHANNEL_CREATE_FORM_PATH,
   PAYMENT_CHANNEL_FUND_PATH,
-  SECONDARY_GRAY,
   STORAGE_MESSAGING_KEY
 } from '../../../constants';
 import { useNetwork } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import {
   PaymentChannelDisplayData,
   fetchAllPaymentChannelDisplayData
@@ -28,6 +28,7 @@ export interface PaymentChannelListingProps {
 }
 
 export const PaymentChannelListing: FC<PaymentChannelListingProps> = ({ address }) => {
+  const tokens = useGemTokens();
   const [channels, setChannels] = useState<PaymentChannelDisplayData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,14 +124,14 @@ export const PaymentChannelListing: FC<PaymentChannelListingProps> = ({ address 
       <div>
         <InformationMessage title="No Payment Channels Found">
           <AccountBalanceWalletIcon
-            style={{ fontSize: 48, color: SECONDARY_GRAY, marginBottom: '10px' }}
+            style={{ fontSize: 48, color: tokens.text.secondary, marginBottom: '10px' }}
           />
-          <Typography style={{ marginBottom: '15px', color: SECONDARY_GRAY }}>
+          <Typography style={{ marginBottom: '15px', color: tokens.text.secondary }}>
             You don't have any active payment channels.
           </Typography>
           <Typography
             variant="body2"
-            style={{ marginBottom: '20px', color: SECONDARY_GRAY, maxWidth: '280px' }}
+            style={{ marginBottom: '20px', color: tokens.text.secondary, maxWidth: '280px' }}
           >
             Payment channels allow you to make rapid, off-ledger payments to a specific destination.
             They're ideal for streaming payments or frequent micro-transactions.
@@ -158,7 +159,7 @@ export const PaymentChannelListing: FC<PaymentChannelListingProps> = ({ address 
         <Typography
           variant="subtitle1"
           style={{
-            color: SECONDARY_GRAY,
+            color: tokens.text.secondary,
             fontWeight: 600
           }}
         >

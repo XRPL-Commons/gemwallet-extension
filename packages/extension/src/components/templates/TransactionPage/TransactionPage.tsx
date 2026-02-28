@@ -4,6 +4,7 @@ import { Container } from '@mui/material';
 
 import { NETWORK_BANNER_HEIGHT } from '../../../constants';
 import { useNetwork } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { TransactionTextDescription } from '../../atoms';
 import {
   ActionButtons,
@@ -40,6 +41,7 @@ export const TransactionPage: FC<TransactionPageProps> = ({
   children
 }) => {
   const { hasOfflineBanner } = useNetwork();
+  const tokens = useGemTokens();
 
   return (
     <>
@@ -55,8 +57,8 @@ export const TransactionPage: FC<TransactionPageProps> = ({
           overflowY: 'auto',
           height: 'auto',
           paddingBottom: '100px',
-          backgroundColor: '#121212',
-          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))'
+          backgroundColor: tokens.background.default,
+          backgroundImage: `linear-gradient(${tokens.surface.hover}, ${tokens.surface.hover})`
         }}
       >
         <TransactionHeader title={title} favicon={favicon} url={url} />

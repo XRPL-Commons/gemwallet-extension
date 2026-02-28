@@ -11,11 +11,10 @@ import {
   ADD_MPTOKEN_PATH,
   ADD_NEW_TRUSTLINE_PATH,
   DEFAULT_RESERVE,
-  ERROR_RED,
   STORAGE_MESSAGING_KEY
 } from '../../../constants';
 import { useLedger, useNetwork, useServer } from '../../../contexts';
-import { useAccountBalances, accountQueryKeys, useMainToken } from '../../../hooks';
+import { useAccountBalances, accountQueryKeys, useGemTokens, useMainToken } from '../../../hooks';
 import { convertHexCurrencyString, generateKey, saveInChromeSessionStorage } from '../../../utils';
 import { isLPToken } from '../../../utils/trustlines';
 import { TokenLoader } from '../../atoms';
@@ -36,6 +35,7 @@ export const TokenListing: FC<TokenListingProps> = ({ address }) => {
   const { serverInfo } = useServer();
   const { fundWallet } = useLedger();
   const mainToken = useMainToken();
+  const tokens = useGemTokens();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -104,7 +104,9 @@ export const TokenListing: FC<TokenListingProps> = ({ address }) => {
           <Button variant="contained" onClick={reconnectToNetwork} style={{ marginBottom: '10px' }}>
             Refresh
           </Button>
-          {errorMessage && <Typography style={{ color: ERROR_RED }}>{errorMessage}</Typography>}
+          {errorMessage && (
+            <Typography style={{ color: tokens.action.danger }}>{errorMessage}</Typography>
+          )}
         </div>
       </InformationMessage>
     );

@@ -6,7 +6,7 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import { Button, Chip, Paper, Tooltip, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 import {
   CheckDisplayData,
   CheckStatus,
@@ -49,6 +49,7 @@ export const CheckCard: FC<CheckCardProps> = ({
   onCancelClick,
   style
 }) => {
+  const tokens = useGemTokens();
   const statusConfig = STATUS_CONFIG[check.status];
 
   const isOutgoing = check.Account === currentAddress;
@@ -101,7 +102,7 @@ export const CheckCard: FC<CheckCardProps> = ({
 
       {/* Counterparty */}
       <div style={{ marginBottom: '10px' }}>
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary }}>
           {counterpartyLabel}:{' '}
           <Tooltip title={counterpartyAddress} arrow>
             <span style={{ fontFamily: 'monospace' }}>{displayAddress}</span>
@@ -112,7 +113,7 @@ export const CheckCard: FC<CheckCardProps> = ({
       {/* Expiration date */}
       {check.expirationDate && (
         <div style={{ marginBottom: '10px' }}>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontSize: '0.85rem' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontSize: '0.85rem' }}>
             <ScheduleIcon
               fontSize="inherit"
               style={{ verticalAlign: 'middle', marginRight: '4px' }}

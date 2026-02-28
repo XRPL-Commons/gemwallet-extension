@@ -19,7 +19,7 @@ import {
   PRICE_IMPACT_BLOCK_THRESHOLD,
   QUOTE_REFRESH_INTERVAL
 } from '../../../../constants';
-import { useSwapQuote, useSwapTokens } from '../../../../hooks';
+import { useGemTokens, useSwapQuote, useSwapTokens } from '../../../../hooks';
 import { SwapData, SwapToken } from '../../../../types/swap.types';
 import { convertHexCurrencyString } from '../../../../utils';
 import { PageWithReturn } from '../../../templates';
@@ -33,6 +33,7 @@ export interface PrepareSwapProps {
 
 export const PrepareSwap: FC<PrepareSwapProps> = ({ onSwapClick }) => {
   const navigate = useNavigate();
+  const gemTokens = useGemTokens();
   const { tokens, popularTokens } = useSwapTokens();
 
   // State
@@ -171,13 +172,13 @@ export const PrepareSwap: FC<PrepareSwapProps> = ({ onSwapClick }) => {
       sx={{
         minWidth: 120,
         justifyContent: 'space-between',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        backgroundColor: gemTokens.surface.hover,
         borderRadius: 2,
         py: 1,
         px: 1.5,
         textTransform: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255, 255, 255, 0.1)'
+          backgroundColor: gemTokens.surface.active
         }
       }}
     >
@@ -210,8 +211,8 @@ export const PrepareSwap: FC<PrepareSwapProps> = ({ onSwapClick }) => {
           sx={{
             p: 2,
             borderRadius: 2,
-            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            backgroundColor: gemTokens.surface.hover,
+            border: `1px solid ${gemTokens.surface.border}`
           }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
@@ -276,8 +277,8 @@ export const PrepareSwap: FC<PrepareSwapProps> = ({ onSwapClick }) => {
           sx={{
             p: 2,
             borderRadius: 2,
-            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundColor: gemTokens.surface.hover,
+            border: `1px solid ${gemTokens.surface.border}`,
             mb: 2
           }}
         >
@@ -336,9 +337,9 @@ export const PrepareSwap: FC<PrepareSwapProps> = ({ onSwapClick }) => {
             disabled={!canSwap}
             sx={{
               py: 1.5,
-              backgroundColor: '#9C27B0',
+              backgroundColor: gemTokens.accent.purple,
               '&:hover': {
-                backgroundColor: '#7B1FA2'
+                backgroundColor: gemTokens.accent.purple
               }
             }}
           >

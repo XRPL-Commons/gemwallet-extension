@@ -6,7 +6,7 @@ import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import LinkIcon from '@mui/icons-material/Link';
 import { Button, Chip, Paper, Tooltip, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 import { DIDDisplayData, truncateString } from '../../../utils/fetchDIDData';
 
 export interface DIDCardProps {
@@ -17,6 +17,7 @@ export interface DIDCardProps {
 }
 
 export const DIDCard: FC<DIDCardProps> = ({ did, onEditClick, onDeleteClick, style }) => {
+  const tokens = useGemTokens();
   return (
     <Paper
       elevation={5}
@@ -40,7 +41,7 @@ export const DIDCard: FC<DIDCardProps> = ({ did, onEditClick, onDeleteClick, sty
       {/* DID Document */}
       {did.decodedDIDDocument && (
         <div style={{ marginBottom: '10px' }}>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontWeight: 'bold' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontWeight: 'bold' }}>
             DID Document
           </Typography>
           <Tooltip title={did.decodedDIDDocument} arrow>
@@ -50,7 +51,7 @@ export const DIDCard: FC<DIDCardProps> = ({ did, onEditClick, onDeleteClick, sty
                 fontFamily: 'monospace',
                 fontSize: '0.85rem',
                 wordBreak: 'break-all',
-                backgroundColor: 'rgba(0,0,0,0.05)',
+                backgroundColor: tokens.surface.hover,
                 padding: '8px',
                 borderRadius: '4px'
               }}
@@ -64,7 +65,7 @@ export const DIDCard: FC<DIDCardProps> = ({ did, onEditClick, onDeleteClick, sty
       {/* URI */}
       {did.decodedURI && (
         <div style={{ marginBottom: '10px' }}>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontWeight: 'bold' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontWeight: 'bold' }}>
             <LinkIcon fontSize="inherit" style={{ verticalAlign: 'middle', marginRight: '4px' }} />
             URI
           </Typography>
@@ -86,7 +87,7 @@ export const DIDCard: FC<DIDCardProps> = ({ did, onEditClick, onDeleteClick, sty
       {/* Data */}
       {did.decodedData && (
         <div style={{ marginBottom: '10px' }}>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontWeight: 'bold' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontWeight: 'bold' }}>
             Additional Data
           </Typography>
           <Tooltip title={did.decodedData} arrow>
@@ -106,7 +107,7 @@ export const DIDCard: FC<DIDCardProps> = ({ did, onEditClick, onDeleteClick, sty
 
       {/* Show message if no data is set */}
       {!did.decodedDIDDocument && !did.decodedURI && !did.decodedData && (
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY, marginBottom: '10px' }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary, marginBottom: '10px' }}>
           No DID document, URI, or data set.
         </Typography>
       )}

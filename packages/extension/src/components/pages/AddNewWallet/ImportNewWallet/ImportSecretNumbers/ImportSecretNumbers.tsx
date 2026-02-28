@@ -4,8 +4,9 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Checkbox, FormControlLabel, Grid, Tooltip, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import { ERROR_RED, LIST_WALLETS_PATH, SECONDARY_GRAY } from '../../../../../constants';
+import { LIST_WALLETS_PATH } from '../../../../../constants';
 import { useNetwork, useWallet } from '../../../../../contexts';
+import { useGemTokens } from '../../../../../hooks';
 import { PageWithStepper } from '../../../../templates';
 import { ECDSA } from 'xrpl';
 import { SecretNumberInput } from '../../../../atoms';
@@ -36,6 +37,7 @@ export const ImportSecretNumbers: FC<ImportSecretNumbersProps> = ({
   password,
   handleBack
 }) => {
+  const tokens = useGemTokens();
   const navigate = useNavigate();
   const { importNumbers } = useWallet();
   const { hasOfflineBanner } = useNetwork();
@@ -126,7 +128,12 @@ export const ImportSecretNumbers: FC<ImportSecretNumbersProps> = ({
           );
         })}
       </Grid>
-      <Typography align="center" variant="caption" display="block" style={{ color: ERROR_RED }}>
+      <Typography
+        align="center"
+        variant="caption"
+        display="block"
+        style={{ color: tokens.action.danger }}
+      >
         {numbersError}
       </Typography>
       <FormControlLabel
@@ -140,7 +147,7 @@ export const ImportSecretNumbers: FC<ImportSecretNumbersProps> = ({
           />
         }
         label={
-          <Typography style={{ display: 'flex', fontSize: '0.9rem' }} color={SECONDARY_GRAY}>
+          <Typography style={{ display: 'flex', fontSize: '0.9rem' }} color={tokens.text.secondary}>
             Use "secp256k1" algorithm{' '}
             <Tooltip title="Note: if you don’t know what it means, you should probably keep it unchecked">
               <InfoOutlinedIcon style={{ marginLeft: '5px' }} fontSize="small" />

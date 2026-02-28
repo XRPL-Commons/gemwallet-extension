@@ -4,7 +4,7 @@ import { Check as CheckIcon } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../../constants';
+import { useGemTokens } from '../../../../hooks';
 
 interface NetworkDisplayProps {
   name: string;
@@ -23,6 +23,7 @@ export const NetworkDisplay: FC<NetworkDisplayProps> = ({
   onClick,
   onRemove
 }) => {
+  const tokens = useGemTokens();
   return (
     <Card
       style={{
@@ -35,10 +36,10 @@ export const NetworkDisplay: FC<NetworkDisplayProps> = ({
         >
           <Box>
             <Typography gutterBottom>{name}</Typography>
-            <Typography variant="subtitle2" color={SECONDARY_GRAY}>
+            <Typography variant="subtitle2" color={tokens.text.secondary}>
               {server}
             </Typography>
-            <Typography style={{ marginTop: '10px' }} variant="body2" color={SECONDARY_GRAY}>
+            <Typography style={{ marginTop: '10px' }} variant="body2" color={tokens.text.secondary}>
               {description}
             </Typography>
           </Box>

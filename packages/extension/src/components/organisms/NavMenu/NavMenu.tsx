@@ -4,8 +4,9 @@ import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 
-import { GEMWALLET_BLUE, navigation as navigationConstant } from '../../../constants';
+import { navigation as navigationConstant } from '../../../constants';
 import { useNavBarPosition } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 
 const defaultDecoration = {
   '--decoration-left': '50%',
@@ -24,15 +25,16 @@ export interface NavMenuProps {
 export const NavMenu: FC<NavMenuProps> = ({ indexDefaultNav }) => {
   const navigate = useNavigate();
   const { navBarPosition, setNavBarPosition } = useNavBarPosition();
+  const tokens = useGemTokens();
 
   const StyledBottomNavigation = useMemo(() => {
-    const backgroundColor = GEMWALLET_BLUE;
+    const indicatorColor = tokens.nav.indicator;
 
     return styled(BottomNavigation)`
       ${defaultDecoration}
       position: relative;
       border-top: none !important;
-      box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.35);
+      box-shadow: ${tokens.nav.shadow};
 
       &::after {
         content: '';
@@ -41,12 +43,12 @@ export const NavMenu: FC<NavMenuProps> = ({ indexDefaultNav }) => {
         left: var(--decoration-left);
         width: var(--decoration-width);
         height: 2px;
-        background: ${backgroundColor};
+        background: ${indicatorColor};
         transition: 300ms;
         border-radius: 2px;
       }
     `;
-  }, []);
+  }, [tokens.nav.indicator, tokens.nav.shadow]);
 
   const navigation = useMemo(() => {
     return navigationConstant;
@@ -78,7 +80,7 @@ export const NavMenu: FC<NavMenuProps> = ({ indexDefaultNav }) => {
     left: 0,
     bottom: 0,
     width: '100%',
-    backgroundColor: '#272727',
+    backgroundColor: tokens.nav.background,
     '--decoration-left': navBarPosition.left,
     '--decoration-width': navBarPosition.width
   };

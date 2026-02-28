@@ -7,6 +7,7 @@ import { convertHexToString } from 'xrpl';
 import { AccountNFToken, NFTData } from '@gemwallet/constants';
 
 import { useLedger } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { NFTImage, TruncatedText } from '../../atoms';
 import { NFTDetails } from '../../organisms';
 import { DialogPage } from '../../templates';
@@ -19,6 +20,7 @@ export interface NFTCardProps {
 }
 
 export const NFTCard: FC<NFTCardProps> = ({ NFT, layout = 'large' }) => {
+  const tokens = useGemTokens();
   const { getNFTData } = useLedger();
   const [NFTData, setNFTData] = useState<NFTData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,7 +78,7 @@ export const NFTCard: FC<NFTCardProps> = ({ NFT, layout = 'large' }) => {
           layout !== 'large'
             ? {
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)'
+                  backgroundColor: tokens.surface.hover
                 }
               }
             : {}

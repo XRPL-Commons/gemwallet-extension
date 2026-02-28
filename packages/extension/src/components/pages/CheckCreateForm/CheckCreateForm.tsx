@@ -8,10 +8,10 @@ import {
   CHECK_CREATE_PATH,
   DEFAULT_RESERVE,
   RESERVE_PER_OWNER,
-  SECONDARY_GRAY,
   STORAGE_MESSAGING_KEY
 } from '../../../constants';
 import { useLedger, useNetwork, useServer, useWallet } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { generateKey, saveInChromeSessionStorage } from '../../../utils';
 import { NumericInput } from '../../atoms';
 import { InformationMessage } from '../../molecules';
@@ -33,6 +33,7 @@ const dateToRippleTime = (date: Date): number => {
 };
 
 export const CheckCreateForm: FC = () => {
+  const tokens = useGemTokens();
   const navigate = useNavigate();
   const { getCurrentWallet } = useWallet();
   const { client } = useNetwork();
@@ -190,7 +191,7 @@ export const CheckCreateForm: FC = () => {
       }}
     >
       <div>
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY, marginBottom: '20px' }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary, marginBottom: '20px' }}>
           Create a check that can be cashed by the destination address.
         </Typography>
 

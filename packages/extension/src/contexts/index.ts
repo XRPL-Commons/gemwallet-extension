@@ -4,5 +4,6 @@ export * from './NavBarContext';
 export * from './NetworkContext';
 export * from './QueryContext';
 export * from './ServerContext';
+export * from './ThemeContext';
 export * from './TransactionProgressContext';
 export * from './WalletContext';

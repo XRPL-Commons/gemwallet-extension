@@ -1,6 +1,6 @@
 export * from './apiErrors';
 export * from './chains';
-export * from './colors';
+export * from './designTokens';
 export * from './links';
 export * from './storage';
 export * from './navigation';

@@ -19,15 +19,9 @@ import { isValidAddress } from 'xrpl';
 
 import { Memo } from '@gemwallet/constants';
 
-import {
-  DEFAULT_RESERVE,
-  HOME_PATH,
-  RESERVE_PER_OWNER,
-  navigation,
-  GEMWALLET_BLUE
-} from '../../../../constants';
+import { DEFAULT_RESERVE, HOME_PATH, RESERVE_PER_OWNER, navigation } from '../../../../constants';
 import { useLedger, useNetwork, useServer, useWallet } from '../../../../contexts';
-import { useMainToken } from '../../../../hooks';
+import { useGemTokens, useMainToken } from '../../../../hooks';
 import {
   buildDefaultMemos,
   convertHexCurrencyString,
@@ -66,6 +60,7 @@ export const PreparePayment: FC<PreparePaymentProps> = ({ onSendPaymentClick }) 
   const { serverInfo } = useServer();
   const { getCurrentWallet } = useWallet();
   const mainToken = useMainToken();
+  const gemTokens = useGemTokens();
   const navigate = useNavigate();
   const [address, setAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>('');
@@ -146,6 +141,7 @@ export const PreparePayment: FC<PreparePaymentProps> = ({ onSendPaymentClick }) 
         } else {
           setErrorTokens("Impossible to fetch tokens, we couldn't get your current wallet");
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         setErrorTokens('Impossible to fetch tokens, please try again');
         Sentry.captureException(e);
@@ -508,7 +504,7 @@ export const PreparePayment: FC<PreparePaymentProps> = ({ onSendPaymentClick }) 
           <span
             style={{
               cursor: 'pointer',
-              color: GEMWALLET_BLUE,
+              color: gemTokens.accent.blue,
               textDecoration: 'underline',
               display: 'inline',
               marginLeft: '4px'

@@ -13,8 +13,7 @@ import {
   TrustSetFlags
 } from '@gemwallet/constants';
 
-import { ERROR_RED } from '../../../constants';
-import { useMainToken } from '../../../hooks';
+import { useGemTokens, useMainToken } from '../../../hooks';
 import { formatAmount, formatFlags, formatToken } from '../../../utils';
 import { TileLoader } from '../../atoms';
 
@@ -85,6 +84,7 @@ export const BaseTransaction: FC<BaseTransactionProps> = ({
 
 export const Fee: FC<FeeProps> = ({ errorFees, estimatedFees, fee, isBulk, useLegacy = true }) => {
   const mainToken = useMainToken();
+  const tokens = useGemTokens();
 
   if (useLegacy) {
     return (
@@ -105,7 +105,7 @@ export const Fee: FC<FeeProps> = ({ errorFees, estimatedFees, fee, isBulk, useLe
         </Typography>
         <Typography variant="body2" gutterBottom align="right">
           {errorFees ? (
-            <Typography variant="caption" style={{ color: ERROR_RED }}>
+            <Typography variant="caption" style={{ color: tokens.action.danger }}>
               {errorFees}
             </Typography>
           ) : estimatedFees === DEFAULT_FEES ? (
@@ -138,7 +138,7 @@ export const Fee: FC<FeeProps> = ({ errorFees, estimatedFees, fee, isBulk, useLe
       </Typography>
       <Typography variant="body2" gutterBottom align="right">
         {errorFees ? (
-          <Typography variant="caption" style={{ color: ERROR_RED }}>
+          <Typography variant="caption" style={{ color: tokens.action.danger }}>
             {errorFees}
           </Typography>
         ) : estimatedFees === DEFAULT_FEES ? (

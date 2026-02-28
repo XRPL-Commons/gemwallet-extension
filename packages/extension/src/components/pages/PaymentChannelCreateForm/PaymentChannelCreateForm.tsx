@@ -5,12 +5,7 @@ import * as Sentry from '@sentry/react';
 import { useNavigate } from 'react-router-dom';
 import { isValidAddress } from 'xrpl';
 
-import {
-  DEFAULT_RESERVE,
-  PAYMENT_CHANNELS_PATH,
-  RESERVE_PER_OWNER,
-  SECONDARY_GRAY
-} from '../../../constants';
+import { DEFAULT_RESERVE, PAYMENT_CHANNELS_PATH, RESERVE_PER_OWNER } from '../../../constants';
 import {
   buildPaymentChannelCreate,
   useLedger,
@@ -18,6 +13,7 @@ import {
   useServer,
   useWallet
 } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { NumericInput } from '../../atoms';
 import { InformationMessage } from '../../molecules';
 import { PageWithReturn } from '../../templates';
@@ -41,6 +37,7 @@ const getMinDateTime = () => {
 };
 
 export const PaymentChannelCreateForm: FC = () => {
+  const tokens = useGemTokens();
   const navigate = useNavigate();
   const { getCurrentWallet } = useWallet();
   const { client } = useNetwork();
@@ -270,7 +267,7 @@ export const PaymentChannelCreateForm: FC = () => {
       }}
     >
       <div>
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY, marginBottom: '20px' }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary, marginBottom: '20px' }}>
           Create a payment channel for rapid off-ledger payments to a specific destination.
         </Typography>
 

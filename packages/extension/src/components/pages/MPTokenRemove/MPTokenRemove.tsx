@@ -3,9 +3,9 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Container, Paper, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import { HOME_PATH, SECONDARY_GRAY, STORAGE_MESSAGING_KEY } from '../../../constants';
+import { HOME_PATH, STORAGE_MESSAGING_KEY } from '../../../constants';
 import { useLedger, useNetwork, useWallet } from '../../../contexts';
-import { useFees, useFetchFromSessionStorage } from '../../../hooks';
+import { useFees, useFetchFromSessionStorage, useGemTokens } from '../../../hooks';
 import { TransactionStatus } from '../../../types';
 import { MPTokenAuthorizeFlags } from '../../../types/mptoken.types';
 import { truncateMPTIssuanceId } from '../../../utils/fetchMPTokenData';
@@ -19,6 +19,7 @@ interface MPTokenRemoveParams {
 }
 
 export const MPTokenRemove: FC = () => {
+  const tokens = useGemTokens();
   const urlParams = new URLSearchParams(window.location.search);
   const inAppCall = urlParams.get('inAppCall') === 'true' || false;
 
@@ -126,14 +127,20 @@ export const MPTokenRemove: FC = () => {
         </Typography>
 
         <Paper elevation={3} style={{ padding: '15px', marginBottom: '20px' }}>
-          <Typography variant="subtitle2" style={{ color: SECONDARY_GRAY, marginBottom: '5px' }}>
+          <Typography
+            variant="subtitle2"
+            style={{ color: tokens.text.secondary, marginBottom: '5px' }}
+          >
             Token
           </Typography>
           <Typography variant="body1" style={{ marginBottom: '15px' }}>
             {params.tokenName}
           </Typography>
 
-          <Typography variant="subtitle2" style={{ color: SECONDARY_GRAY, marginBottom: '5px' }}>
+          <Typography
+            variant="subtitle2"
+            style={{ color: tokens.text.secondary, marginBottom: '5px' }}
+          >
             Issuance ID
           </Typography>
           <Typography
@@ -147,7 +154,7 @@ export const MPTokenRemove: FC = () => {
             <>
               <Typography
                 variant="subtitle2"
-                style={{ color: SECONDARY_GRAY, marginBottom: '5px' }}
+                style={{ color: tokens.text.secondary, marginBottom: '5px' }}
               >
                 Issuer
               </Typography>
@@ -157,7 +164,10 @@ export const MPTokenRemove: FC = () => {
             </>
           )}
 
-          <Typography variant="subtitle2" style={{ color: SECONDARY_GRAY, marginBottom: '5px' }}>
+          <Typography
+            variant="subtitle2"
+            style={{ color: tokens.text.secondary, marginBottom: '5px' }}
+          >
             Issuer Address
           </Typography>
           <Typography variant="body2" style={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
@@ -166,14 +176,20 @@ export const MPTokenRemove: FC = () => {
         </Paper>
 
         <Paper elevation={3} style={{ padding: '15px', marginBottom: '20px' }}>
-          <Typography variant="subtitle2" style={{ color: SECONDARY_GRAY, marginBottom: '5px' }}>
+          <Typography
+            variant="subtitle2"
+            style={{ color: tokens.text.secondary, marginBottom: '5px' }}
+          >
             Network
           </Typography>
           <Typography variant="body1" style={{ marginBottom: '15px' }}>
             {networkName}
           </Typography>
 
-          <Typography variant="subtitle2" style={{ color: SECONDARY_GRAY, marginBottom: '5px' }}>
+          <Typography
+            variant="subtitle2"
+            style={{ color: tokens.text.secondary, marginBottom: '5px' }}
+          >
             Estimated Fee
           </Typography>
           <Typography variant="body1">

@@ -4,6 +4,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Box, Typography } from '@mui/material';
 import { Area, AreaChart, ResponsiveContainer, YAxis } from 'recharts';
 
+import { useGemTokens } from '../../../hooks';
 import { PortfolioSnapshot, formatPortfolioDataForChart, getPortfolioChange } from '../../../utils';
 
 const CHART_HEIGHT = 100;
@@ -24,6 +25,7 @@ export const PortfolioChart: FC<PortfolioChartProps> = ({
   currency = 'USD',
   onClick
 }) => {
+  const tokens = useGemTokens();
   const chartData = useMemo(() => formatPortfolioDataForChart(snapshots), [snapshots]);
   const percentageChange = useMemo(() => getPortfolioChange(snapshots), [snapshots]);
 
@@ -64,7 +66,7 @@ export const PortfolioChart: FC<PortfolioChartProps> = ({
     <Box
       onClick={onClick}
       sx={{
-        background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 100%)',
+        background: `linear-gradient(135deg, ${tokens.background.paper} 0%, ${tokens.surface.primary} 100%)`,
         borderRadius: 2,
         padding: 2,
         marginBottom: 2,
@@ -84,7 +86,7 @@ export const PortfolioChart: FC<PortfolioChartProps> = ({
           <Typography
             variant="h4"
             sx={{
-              color: 'white',
+              color: tokens.text.primary,
               fontWeight: 600,
               fontSize: '1.75rem',
               lineHeight: 1.2
@@ -96,7 +98,7 @@ export const PortfolioChart: FC<PortfolioChartProps> = ({
             <Typography
               variant="body2"
               sx={{
-                color: 'rgba(255, 255, 255, 0.7)',
+                color: tokens.text.secondary,
                 fontSize: '0.75rem',
                 mt: 0.5
               }}
@@ -105,7 +107,7 @@ export const PortfolioChart: FC<PortfolioChartProps> = ({
             </Typography>
             {onClick && (
               <KeyboardArrowDownIcon
-                sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1rem', mt: 0.5 }}
+                sx={{ color: tokens.text.secondary, fontSize: '1rem', mt: 0.5 }}
               />
             )}
           </Box>

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { NETWORK_BANNER_HEIGHT } from '../../../constants';
 import { useNetwork } from '../../../contexts';
-import { useKeyUp } from '../../../hooks';
+import { useGemTokens, useKeyUp } from '../../../hooks';
 
 export interface PageWithStepperProps {
   steps: number;
@@ -29,6 +29,7 @@ export const PageWithStepper: FC<PageWithStepperProps> = ({
 }) => {
   const navigate = useNavigate();
   const { hasOfflineBanner } = useNetwork();
+  const tokens = useGemTokens();
 
   //Handle Next step button by pressing 'Enter'
   useKeyUp('Enter', handleNext ? handleNext : () => {});
@@ -66,7 +67,7 @@ export const PageWithStepper: FC<PageWithStepperProps> = ({
           </Button>
         }
         style={{
-          backgroundColor: '#282c34',
+          backgroundColor: tokens.background.elevated,
           ...(hasOfflineBanner ? { top: NETWORK_BANNER_HEIGHT } : {})
         }}
       />

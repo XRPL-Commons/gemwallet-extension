@@ -4,7 +4,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import TokenIcon from '@mui/icons-material/Token';
 import { Avatar, Paper, Tooltip, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 import { MPTokenDisplayData } from '../../../types/mptoken.types';
 import { formatToken } from '../../../utils';
 import { truncateMPTIssuanceId } from '../../../utils/fetchMPTokenData';
@@ -20,6 +20,7 @@ const MAX_NAME_LENGTH = 12;
 const MAX_ISSUER_LENGTH = 16;
 
 export const MPTokenDisplay: FC<MPTokenDisplayProps> = ({ mpToken, onRemoveClick, style }) => {
+  const tokens = useGemTokens();
   const displayName = useMemo(() => {
     // Priority: ticker > name > truncated issuance ID
     const name = mpToken.ticker || mpToken.name;
@@ -94,7 +95,7 @@ export const MPTokenDisplay: FC<MPTokenDisplayProps> = ({ mpToken, onRemoveClick
                       marginLeft: '5px',
                       fontSize: 'smaller',
                       fontStyle: 'italic',
-                      color: SECONDARY_GRAY
+                      color: tokens.text.secondary
                     }}
                   >
                     by {displayIssuer}
@@ -103,7 +104,7 @@ export const MPTokenDisplay: FC<MPTokenDisplayProps> = ({ mpToken, onRemoveClick
               )}
             </Typography>
           </Tooltip>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary }}>
             {formatToken(mpToken.formattedBalance, mpToken.ticker || mpToken.name || 'MPT')}
           </Typography>
         </div>
@@ -111,8 +112,8 @@ export const MPTokenDisplay: FC<MPTokenDisplayProps> = ({ mpToken, onRemoveClick
       {onRemoveClick && mpToken.canRemove && (
         <Tooltip title="Remove MPToken authorization" placement="top" arrow>
           <IconTextButton onClick={onRemoveClick}>
-            <DeleteOutlineIcon style={{ color: SECONDARY_GRAY }} fontSize="small" />
-            <Typography variant="body2" style={{ color: SECONDARY_GRAY, marginLeft: '3px' }}>
+            <DeleteOutlineIcon style={{ color: tokens.text.secondary }} fontSize="small" />
+            <Typography variant="body2" style={{ color: tokens.text.secondary, marginLeft: '3px' }}>
               Remove
             </Typography>
           </IconTextButton>
