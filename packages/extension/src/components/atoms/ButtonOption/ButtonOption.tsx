@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { Check as CheckIcon } from '@mui/icons-material';
 import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 
 export interface ButtonOptionProps {
   name: string;
@@ -18,6 +18,8 @@ export const ButtonOption: FC<ButtonOptionProps> = ({
   isSelected = false,
   onClick
 }) => {
+  const tokens = useGemTokens();
+
   return (
     <Card
       style={{
@@ -32,12 +34,12 @@ export const ButtonOption: FC<ButtonOptionProps> = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             textAlign: 'initial',
-            border: `solid ${isSelected ? '#FFFFFF' : SECONDARY_GRAY}`
+            border: `solid ${isSelected ? tokens.text.primary : tokens.text.secondary}`
           }}
         >
           <Box>
             <Typography gutterBottom>{name}</Typography>
-            <Typography variant="subtitle2" color={SECONDARY_GRAY}>
+            <Typography variant="subtitle2" color={tokens.text.secondary}>
               {description}
             </Typography>
           </Box>

@@ -11,10 +11,10 @@ import {
   ESCROW_CANCEL_PATH,
   ESCROW_CREATE_FORM_PATH,
   ESCROW_FINISH_PATH,
-  SECONDARY_GRAY,
   STORAGE_MESSAGING_KEY
 } from '../../../constants';
 import { useNetwork } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { EscrowDisplayData, fetchAllEscrowDisplayData } from '../../../utils/fetchEscrowData';
 import { generateKey, saveInChromeSessionStorage } from '../../../utils';
 import { EscrowCard } from '../../molecules/EscrowCard';
@@ -25,6 +25,7 @@ export interface EscrowListingProps {
 }
 
 export const EscrowListing: FC<EscrowListingProps> = ({ address }) => {
+  const tokens = useGemTokens();
   const [escrows, setEscrows] = useState<EscrowDisplayData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -125,13 +126,15 @@ export const EscrowListing: FC<EscrowListingProps> = ({ address }) => {
     return (
       <div>
         <InformationMessage title="No Escrows Found">
-          <LockClockIcon style={{ fontSize: 48, color: SECONDARY_GRAY, marginBottom: '10px' }} />
-          <Typography style={{ marginBottom: '15px', color: SECONDARY_GRAY }}>
+          <LockClockIcon
+            style={{ fontSize: 48, color: tokens.text.secondary, marginBottom: '10px' }}
+          />
+          <Typography style={{ marginBottom: '15px', color: tokens.text.secondary }}>
             You don't have any active escrows.
           </Typography>
           <Typography
             variant="body2"
-            style={{ marginBottom: '20px', color: SECONDARY_GRAY, maxWidth: '280px' }}
+            style={{ marginBottom: '20px', color: tokens.text.secondary, maxWidth: '280px' }}
           >
             Escrows allow you to lock XRP that can be released when certain conditions are met, such
             as a specific time or cryptographic fulfillment.
@@ -159,7 +162,7 @@ export const EscrowListing: FC<EscrowListingProps> = ({ address }) => {
         <Typography
           variant="subtitle1"
           style={{
-            color: SECONDARY_GRAY,
+            color: tokens.text.secondary,
             fontWeight: 600
           }}
         >

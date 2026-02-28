@@ -10,6 +10,7 @@ import {
   PRICE_IMPACT_WARNING_THRESHOLD,
   SWAP_FEE_PERCENTAGE
 } from '../../../../../constants';
+import { useGemTokens } from '../../../../../hooks';
 import { SwapQuote, SwapToken } from '../../../../../types/swap.types';
 import { convertHexCurrencyString } from '../../../../../utils';
 
@@ -28,6 +29,8 @@ export const QuoteDisplay: FC<QuoteDisplayProps> = ({
   fromToken,
   toToken
 }) => {
+  const tokens = useGemTokens();
+
   if (!fromToken || !toToken) {
     return null;
   }
@@ -38,8 +41,8 @@ export const QuoteDisplay: FC<QuoteDisplayProps> = ({
         sx={{
           p: 2,
           borderRadius: 2,
-          backgroundColor: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid rgba(255, 255, 255, 0.1)'
+          backgroundColor: tokens.surface.hover,
+          border: `1px solid ${tokens.surface.border}`
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -95,8 +98,8 @@ export const QuoteDisplay: FC<QuoteDisplayProps> = ({
       sx={{
         p: 2,
         borderRadius: 2,
-        backgroundColor: 'rgba(255, 255, 255, 0.03)',
-        border: '1px solid rgba(255, 255, 255, 0.1)'
+        backgroundColor: tokens.surface.hover,
+        border: `1px solid ${tokens.surface.border}`
       }}
     >
       {/* Exchange Rate */}
@@ -167,7 +170,7 @@ export const QuoteDisplay: FC<QuoteDisplayProps> = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           pt: 1.5,
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+          borderTop: `1px solid ${tokens.surface.border}`
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>

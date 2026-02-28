@@ -7,7 +7,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import { Button, Chip, Paper, Tooltip, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 import {
   EscrowDisplayData,
   EscrowStatus,
@@ -65,6 +65,7 @@ export const EscrowCard: FC<EscrowCardProps> = ({
   onCancelClick,
   style
 }) => {
+  const tokens = useGemTokens();
   const statusConfig = STATUS_CONFIG[escrow.status];
 
   const isOutgoing = escrow.Account === currentAddress;
@@ -113,7 +114,7 @@ export const EscrowCard: FC<EscrowCardProps> = ({
 
       {/* Counterparty */}
       <div style={{ marginBottom: '10px' }}>
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary }}>
           {counterpartyLabel}:{' '}
           <Tooltip title={counterpartyAddress} arrow>
             <span style={{ fontFamily: 'monospace' }}>{displayAddress}</span>
@@ -124,7 +125,7 @@ export const EscrowCard: FC<EscrowCardProps> = ({
       {/* Dates */}
       <div style={{ marginBottom: '10px' }}>
         {escrow.finishAfterDate && (
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontSize: '0.85rem' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontSize: '0.85rem' }}>
             <ScheduleIcon
               fontSize="inherit"
               style={{ verticalAlign: 'middle', marginRight: '4px' }}
@@ -133,7 +134,7 @@ export const EscrowCard: FC<EscrowCardProps> = ({
           </Typography>
         )}
         {escrow.cancelAfterDate && (
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontSize: '0.85rem' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontSize: '0.85rem' }}>
             <CancelIcon
               fontSize="inherit"
               style={{ verticalAlign: 'middle', marginRight: '4px' }}

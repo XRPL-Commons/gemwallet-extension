@@ -4,8 +4,9 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { IconButton, Paper, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import { EDIT_WALLET_PATH, SECONDARY_GRAY } from '../../../../constants';
+import { EDIT_WALLET_PATH } from '../../../../constants';
 import { injectPathParams, truncateAddress } from '../../../../utils';
+import { useGemTokens } from '../../../../hooks';
 import { WalletIcon } from '../../../atoms';
 
 export interface WalletProps {
@@ -16,6 +17,7 @@ export interface WalletProps {
 }
 
 export const Wallet: FC<WalletProps> = ({ publicAddress, name, isSelected = false, onClick }) => {
+  const tokens = useGemTokens();
   const navigate = useNavigate();
 
   const truncatedAddress = useMemo(() => truncateAddress(publicAddress), [publicAddress]);
@@ -30,7 +32,7 @@ export const Wallet: FC<WalletProps> = ({ publicAddress, name, isSelected = fals
         justifyContent: 'space-between',
         marginBottom: '10px',
         cursor: 'pointer',
-        border: isSelected ? `solid 1px ${SECONDARY_GRAY}` : 'none'
+        border: isSelected ? `solid 1px ${tokens.text.secondary}` : 'none'
       }}
       onClick={onClick}
     >
@@ -47,7 +49,7 @@ export const Wallet: FC<WalletProps> = ({ publicAddress, name, isSelected = fals
           >
             {name}
           </Typography>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary }}>
             {truncatedAddress}
           </Typography>
         </div>

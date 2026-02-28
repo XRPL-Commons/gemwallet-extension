@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import Paper from '@mui/material/Paper';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserTracing, Replay } from '@sentry/browser';
 import * as Sentry from '@sentry/react';
 import {
@@ -9,7 +8,7 @@ import {
   useLocation,
   useNavigationType,
   createRoutesFromChildren,
-  matchRoutes,
+  matchRoutes
 } from 'react-router-dom';
 
 import App from './App';
@@ -21,8 +20,9 @@ import {
   NetworkProvider,
   QueryProvider,
   ServerProvider,
+  ThemeModeProvider,
   TransactionProgressProvider,
-  WalletProvider,
+  WalletProvider
 } from './contexts';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
@@ -40,54 +40,23 @@ Sentry.init({
         useNavigationType,
         createRoutesFromChildren,
         matchRoutes
-      ),
+      )
     }),
-    new Replay(),
+    new Replay()
   ],
 
   // We recommend adjusting this value in production, or using tracesSampler
   // for finer control
   sampleRate: process.env.NODE_ENV === 'development' ? 0.0 : 1.0,
   tracesSampleRate: process.env.NODE_ENV === 'development' ? 0.0 : 1.0,
-  replaysOnErrorSampleRate: process.env.NODE_ENV === 'development' ? 0.0 : 1.0,
+  replaysOnErrorSampleRate: process.env.NODE_ENV === 'development' ? 0.0 : 1.0
 });
 
 const GemWallet = () => {
-  const theme = useMemo(
-    () =>
-      createTheme({
-        ...{
-          palette: {
-            mode: 'dark',
-          },
-          components: {
-            MuiBottomNavigation: {
-              styleOverrides: {
-                root: {
-                  backgroundColor: 'transparent',
-                  borderTop: 'solid 1px #bcbcbc',
-                },
-              },
-            },
-            MuiBottomNavigationAction: {
-              styleOverrides: {
-                root: {
-                  '&.Mui-selected': {
-                    color: '#ffffff',
-                  },
-                },
-              },
-            },
-          },
-        },
-      }),
-    []
-  );
-
   return (
     <React.StrictMode>
-      <ThemeProvider theme={theme}>
-        <Paper style={{ height: POPUP_HEIGHT - 20, width: POPUP_WIDTH }}>
+      <ThemeModeProvider>
+        <Paper sx={{ height: POPUP_HEIGHT - 20, width: POPUP_WIDTH }}>
           <QueryProvider>
             <HashRouter>
               <BrowserProvider>
@@ -108,7 +77,7 @@ const GemWallet = () => {
             </HashRouter>
           </QueryProvider>
         </Paper>
-      </ThemeProvider>
+      </ThemeModeProvider>
     </React.StrictMode>
   );
 };

@@ -18,6 +18,7 @@ import {
   MAX_SLIPPAGE,
   SLIPPAGE_OPTIONS
 } from '../../../../../constants';
+import { useGemTokens } from '../../../../../hooks';
 
 export interface SlippageSettingsProps {
   slippage: number;
@@ -25,6 +26,7 @@ export interface SlippageSettingsProps {
 }
 
 export const SlippageSettings: FC<SlippageSettingsProps> = ({ slippage, onSlippageChange }) => {
+  const tokens = useGemTokens();
   const [isOpen, setIsOpen] = useState(false);
   const [customSlippage, setCustomSlippage] = useState('');
   const [isCustom, setIsCustom] = useState(false);
@@ -75,9 +77,9 @@ export const SlippageSettings: FC<SlippageSettingsProps> = ({ slippage, onSlippa
           cursor: 'pointer',
           p: 1,
           borderRadius: 1,
-          backgroundColor: 'rgba(255, 255, 255, 0.03)',
+          backgroundColor: tokens.surface.hover,
           '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.06)'
+            backgroundColor: tokens.surface.hover
           }
         }}
         onClick={handleToggle}

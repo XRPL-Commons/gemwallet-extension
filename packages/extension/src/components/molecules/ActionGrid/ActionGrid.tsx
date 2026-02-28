@@ -113,7 +113,7 @@ const ActionGridItem: FC<ActionGridItemProps> = ({ item, onClick }) => {
     <Paper
       elevation={0}
       onClick={onClick}
-      sx={{
+      sx={(theme) => ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -121,11 +121,11 @@ const ActionGridItem: FC<ActionGridItemProps> = ({ item, onClick }) => {
         padding: 1.5,
         borderRadius: 2,
         cursor: 'pointer',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backgroundColor: theme.gemTokens.surface.hover,
+        border: `1px solid ${theme.gemTokens.surface.border}`,
         transition: 'all 0.2s ease-in-out',
         '&:hover': {
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          backgroundColor: theme.gemTokens.surface.active,
           transform: 'translateY(-2px)',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
         },
@@ -133,7 +133,7 @@ const ActionGridItem: FC<ActionGridItemProps> = ({ item, onClick }) => {
           transform: 'translateY(0)',
           boxShadow: 'none'
         }
-      }}
+      })}
     >
       <Box
         sx={{

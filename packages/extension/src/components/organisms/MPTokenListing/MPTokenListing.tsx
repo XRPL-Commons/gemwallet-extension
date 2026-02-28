@@ -4,8 +4,9 @@ import { Typography } from '@mui/material';
 import * as Sentry from '@sentry/react';
 import { useNavigate } from 'react-router-dom';
 
-import { MPTOKEN_REMOVE_PATH, SECONDARY_GRAY, STORAGE_MESSAGING_KEY } from '../../../constants';
+import { MPTOKEN_REMOVE_PATH, STORAGE_MESSAGING_KEY } from '../../../constants';
 import { useNetwork } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { MPTokenDisplayData } from '../../../types/mptoken.types';
 import { fetchAllMPTokenDisplayData } from '../../../utils/fetchMPTokenData';
 import { generateKey, saveInChromeSessionStorage } from '../../../utils';
@@ -16,6 +17,7 @@ export interface MPTokenListingProps {
 }
 
 export const MPTokenListing: FC<MPTokenListingProps> = ({ address }) => {
+  const gemTokens = useGemTokens();
   const [mpTokens, setMPTokens] = useState<MPTokenDisplayData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { client } = useNetwork();
@@ -75,7 +77,7 @@ export const MPTokenListing: FC<MPTokenListingProps> = ({ address }) => {
       <Typography
         variant="subtitle2"
         style={{
-          color: SECONDARY_GRAY,
+          color: gemTokens.text.secondary,
           marginBottom: '10px',
           fontWeight: 600,
           textTransform: 'uppercase',

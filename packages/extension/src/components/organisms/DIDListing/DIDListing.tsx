@@ -7,13 +7,9 @@ import { Button, CircularProgress, Typography } from '@mui/material';
 import * as Sentry from '@sentry/react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  DID_DELETE_PATH,
-  DID_SET_FORM_PATH,
-  SECONDARY_GRAY,
-  STORAGE_MESSAGING_KEY
-} from '../../../constants';
+import { DID_DELETE_PATH, DID_SET_FORM_PATH, STORAGE_MESSAGING_KEY } from '../../../constants';
 import { useNetwork } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { DIDDisplayData, fetchDIDDisplayData } from '../../../utils/fetchDIDData';
 import { generateKey, saveInChromeSessionStorage } from '../../../utils';
 import { DIDCard } from '../../molecules/DIDCard';
@@ -24,6 +20,7 @@ export interface DIDListingProps {
 }
 
 export const DIDListing: FC<DIDListingProps> = ({ address }) => {
+  const tokens = useGemTokens();
   const [did, setDID] = useState<DIDDisplayData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,13 +109,15 @@ export const DIDListing: FC<DIDListingProps> = ({ address }) => {
     return (
       <div>
         <InformationMessage title="No DID Found">
-          <FingerprintIcon style={{ fontSize: 48, color: SECONDARY_GRAY, marginBottom: '10px' }} />
-          <Typography style={{ marginBottom: '15px', color: SECONDARY_GRAY }}>
+          <FingerprintIcon
+            style={{ fontSize: 48, color: tokens.text.secondary, marginBottom: '10px' }}
+          />
+          <Typography style={{ marginBottom: '15px', color: tokens.text.secondary }}>
             You don't have a DID associated with this account.
           </Typography>
           <Typography
             variant="body2"
-            style={{ marginBottom: '20px', color: SECONDARY_GRAY, maxWidth: '280px' }}
+            style={{ marginBottom: '20px', color: tokens.text.secondary, maxWidth: '280px' }}
           >
             A Decentralized Identifier (DID) allows you to create a verifiable, self-sovereign
             digital identity on the XRP Ledger.
@@ -146,7 +145,7 @@ export const DIDListing: FC<DIDListingProps> = ({ address }) => {
         <Typography
           variant="subtitle1"
           style={{
-            color: SECONDARY_GRAY,
+            color: tokens.text.secondary,
             fontWeight: 600
           }}
         >

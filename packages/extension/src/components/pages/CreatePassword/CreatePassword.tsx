@@ -11,7 +11,7 @@ import {
   MSG_INTERNAL_RECEIVE_PASSWORD
 } from '@gemwallet/constants';
 
-import { ERROR_RED } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 import { WalletToSave, saveWallet } from '../../../utils';
 import { PageWithStepper } from '../../templates';
 
@@ -30,6 +30,7 @@ export const CreatePassword: FC<CreatePasswordProps> = ({
   handleBack,
   setActiveStep
 }) => {
+  const tokens = useGemTokens();
   const [passwordError, setPasswordError] = useState('');
   const [saveWalletError, setSaveWalletError] = useState('');
   const [showPassword, setShowPassword] = useState(false); // State for showing/hiding the password
@@ -151,7 +152,7 @@ export const CreatePassword: FC<CreatePasswordProps> = ({
         onChange={handleConfirmPasswordChange} // Clear old errors when user interacts with this field
       />
       {saveWalletError ? (
-        <Typography variant="body2" style={{ marginTop: '15px', color: ERROR_RED }}>
+        <Typography variant="body2" style={{ marginTop: '15px', color: tokens.action.danger }}>
           {saveWalletError}
         </Typography>
       ) : null}

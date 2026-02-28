@@ -5,13 +5,9 @@ import * as Sentry from '@sentry/react';
 import { useNavigate } from 'react-router-dom';
 import { isValidAddress } from 'xrpl';
 
-import {
-  DEFAULT_RESERVE,
-  ESCROW_PATH,
-  RESERVE_PER_OWNER,
-  SECONDARY_GRAY
-} from '../../../constants';
+import { DEFAULT_RESERVE, ESCROW_PATH, RESERVE_PER_OWNER } from '../../../constants';
 import { buildEscrowCreate, useLedger, useNetwork, useServer, useWallet } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { dateToRippleTime } from '../../../utils/fetchEscrowData';
 import { NumericInput } from '../../atoms';
 import { InformationMessage } from '../../molecules';
@@ -27,6 +23,7 @@ const getMinDateTime = () => {
 };
 
 export const EscrowCreateForm: FC = () => {
+  const tokens = useGemTokens();
   const navigate = useNavigate();
   const { getCurrentWallet } = useWallet();
   const { client } = useNetwork();
@@ -253,7 +250,7 @@ export const EscrowCreateForm: FC = () => {
       }}
     >
       <div>
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY, marginBottom: '20px' }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary, marginBottom: '20px' }}>
           Create an escrow to lock XRP that can be released after a specific time.
         </Typography>
 
@@ -281,7 +278,7 @@ export const EscrowCreateForm: FC = () => {
 
         <Typography
           variant="caption"
-          style={{ color: SECONDARY_GRAY, display: 'block', marginBottom: '10px' }}
+          style={{ color: tokens.text.secondary, display: 'block', marginBottom: '10px' }}
         >
           At least one of the following times must be set:
         </Typography>

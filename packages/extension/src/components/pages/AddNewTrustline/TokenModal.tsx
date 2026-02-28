@@ -1,5 +1,6 @@
 import { FC } from 'react';
 
+import { useGemTokens } from '../../../hooks';
 import {
   Modal,
   List,
@@ -49,13 +50,15 @@ export const TokenModal: FC<TokenModalProps> = ({
   onClose,
   onSelectToken
 }) => {
+  const gemTokens = useGemTokens();
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box
         style={{
           maxHeight: '350px',
           width: '300px',
-          backgroundColor: '#272727',
+          backgroundColor: gemTokens.nav.background,
           borderRadius: '10px',
           position: 'absolute',
           top: '50%',
@@ -63,7 +66,7 @@ export const TokenModal: FC<TokenModalProps> = ({
           transform: 'translate(-50%, -50%)',
           outline: 'none',
           overflow: 'hidden',
-          color: 'white'
+          color: gemTokens.text.primary
         }}
       >
         <DialogTitle sx={{ margin: 0, paddingX: 2, paddingBottom: '8px' }}>Tokens</DialogTitle>
@@ -122,7 +125,7 @@ export const TokenModal: FC<TokenModalProps> = ({
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      color: 'white'
+                      color: gemTokens.text.primary
                     }
                   }}
                   secondaryTypographyProps={{ component: 'div' }}
@@ -133,7 +136,7 @@ export const TokenModal: FC<TokenModalProps> = ({
         )}
         <DialogActions
           style={{
-            backgroundColor: '#272727',
+            backgroundColor: gemTokens.nav.background,
             height: '30px',
             paddingTop: '0'
           }}

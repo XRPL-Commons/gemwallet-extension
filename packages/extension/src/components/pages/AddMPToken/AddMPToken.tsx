@@ -3,13 +3,14 @@ import { FC, useCallback, useState } from 'react';
 import { Button, Container, Paper, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import { HOME_PATH, SECONDARY_GRAY } from '../../../constants';
+import { HOME_PATH } from '../../../constants';
 import { useLedger, useNetwork, useWallet } from '../../../contexts';
-import { useFees } from '../../../hooks';
+import { useFees, useGemTokens } from '../../../hooks';
 import { TransactionStatus } from '../../../types';
 import { AsyncTransaction, PageWithTitle } from '../../templates';
 
 export const AddMPToken: FC = () => {
+  const tokens = useGemTokens();
   const [mptIssuanceId, setMptIssuanceId] = useState('');
   const [transaction, setTransaction] = useState<TransactionStatus>(TransactionStatus.Waiting);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -117,14 +118,20 @@ export const AddMPToken: FC = () => {
         </Paper>
 
         <Paper elevation={3} style={{ padding: '15px', marginBottom: '20px' }}>
-          <Typography variant="subtitle2" style={{ color: SECONDARY_GRAY, marginBottom: '5px' }}>
+          <Typography
+            variant="subtitle2"
+            style={{ color: tokens.text.secondary, marginBottom: '5px' }}
+          >
             Network
           </Typography>
           <Typography variant="body1" style={{ marginBottom: '15px' }}>
             {networkName}
           </Typography>
 
-          <Typography variant="subtitle2" style={{ color: SECONDARY_GRAY, marginBottom: '5px' }}>
+          <Typography
+            variant="subtitle2"
+            style={{ color: tokens.text.secondary, marginBottom: '5px' }}
+          >
             Estimated Fee
           </Typography>
           <Typography variant="body1">

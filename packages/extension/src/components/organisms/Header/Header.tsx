@@ -7,12 +7,8 @@ import { styled } from '@mui/material/styles';
 import copyToClipboard from 'copy-to-clipboard';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  HEADER_HEIGHT_WITHOUT_PADDING,
-  LIST_WALLETS_PATH,
-  SECONDARY_GRAY
-} from '../../../constants';
-import { useTimeout } from '../../../hooks';
+import { HEADER_HEIGHT_WITHOUT_PADDING, LIST_WALLETS_PATH } from '../../../constants';
+import { useGemTokens, useTimeout } from '../../../hooks';
 import { WalletLedger } from '../../../types';
 import { truncateAddress, truncateWalletName } from '../../../utils';
 import { WalletIcon } from '../../atoms';
@@ -36,6 +32,7 @@ export interface HeaderProps {
 export const Header: FC<HeaderProps> = ({ wallet: { name, publicAddress } }) => {
   const navigate = useNavigate();
   const setTimeout = useTimeout(2000);
+  const tokens = useGemTokens();
 
   const [isCopied, setIsCopied] = useState(false);
 
@@ -75,7 +72,7 @@ export const Header: FC<HeaderProps> = ({ wallet: { name, publicAddress } }) => 
                   {truncateWalletName(name, 16)}
                 </Typography>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="caption" style={{ color: SECONDARY_GRAY }}>
+                  <Typography variant="caption" style={{ color: tokens.text.secondary }}>
                     {truncatedAddress}
                   </Typography>
                   <Tooltip title="Copy your address">
@@ -90,7 +87,10 @@ export const Header: FC<HeaderProps> = ({ wallet: { name, publicAddress } }) => 
                       {isCopied ? (
                         <DoneIcon sx={{ fontSize: '0.8rem' }} color="success" />
                       ) : (
-                        <ContentCopyIcon sx={{ fontSize: '0.8rem' }} htmlColor={SECONDARY_GRAY} />
+                        <ContentCopyIcon
+                          sx={{ fontSize: '0.8rem' }}
+                          htmlColor={tokens.text.secondary}
+                        />
                       )}
                     </IconButton>
                   </Tooltip>

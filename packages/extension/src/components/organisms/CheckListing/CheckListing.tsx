@@ -11,10 +11,10 @@ import {
   CHECK_CANCEL_PATH,
   CHECK_CASH_PATH,
   CHECK_CREATE_FORM_PATH,
-  SECONDARY_GRAY,
   STORAGE_MESSAGING_KEY
 } from '../../../constants';
 import { useNetwork } from '../../../contexts';
+import { useGemTokens } from '../../../hooks';
 import { CheckDisplayData, fetchAllCheckDisplayData } from '../../../utils/fetchCheckData';
 import { generateKey, saveInChromeSessionStorage } from '../../../utils';
 import { CheckCard } from '../../molecules/CheckCard';
@@ -25,6 +25,7 @@ export interface CheckListingProps {
 }
 
 export const CheckListing: FC<CheckListingProps> = ({ address }) => {
+  const tokens = useGemTokens();
   const [checks, setChecks] = useState<CheckDisplayData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -127,14 +128,14 @@ export const CheckListing: FC<CheckListingProps> = ({ address }) => {
       <div>
         <InformationMessage title="No Checks Found">
           <MonetizationOnIcon
-            style={{ fontSize: 48, color: SECONDARY_GRAY, marginBottom: '10px' }}
+            style={{ fontSize: 48, color: tokens.text.secondary, marginBottom: '10px' }}
           />
-          <Typography style={{ marginBottom: '15px', color: SECONDARY_GRAY }}>
+          <Typography style={{ marginBottom: '15px', color: tokens.text.secondary }}>
             You don't have any active checks.
           </Typography>
           <Typography
             variant="body2"
-            style={{ marginBottom: '20px', color: SECONDARY_GRAY, maxWidth: '280px' }}
+            style={{ marginBottom: '20px', color: tokens.text.secondary, maxWidth: '280px' }}
           >
             Checks are deferred payments that can be cashed by the destination account at their
             convenience. The sender can cancel uncashed checks.
@@ -162,7 +163,7 @@ export const CheckListing: FC<CheckListingProps> = ({ address }) => {
         <Typography
           variant="subtitle1"
           style={{
-            color: SECONDARY_GRAY,
+            color: tokens.text.secondary,
             fontWeight: 600
           }}
         >

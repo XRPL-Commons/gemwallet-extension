@@ -3,13 +3,15 @@ import { FC } from 'react';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Typography } from '@mui/material';
 
-import { ERROR_RED } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 
 export interface InsufficientFundsWarningProps {
   hasEnoughFunds?: boolean;
 }
 
 export const InsufficientFundsWarning: FC<InsufficientFundsWarningProps> = ({ hasEnoughFunds }) => {
+  const tokens = useGemTokens();
+
   if (hasEnoughFunds === false) {
     return (
       <div
@@ -20,8 +22,8 @@ export const InsufficientFundsWarning: FC<InsufficientFundsWarningProps> = ({ ha
           marginTop: '10px'
         }}
       >
-        <ErrorIcon style={{ color: ERROR_RED }} />
-        <Typography variant="body1" style={{ marginLeft: '10px', color: ERROR_RED }}>
+        <ErrorIcon style={{ color: tokens.action.danger }} />
+        <Typography variant="body1" style={{ marginLeft: '10px', color: tokens.action.danger }}>
           Insufficient funds.
         </Typography>
       </div>

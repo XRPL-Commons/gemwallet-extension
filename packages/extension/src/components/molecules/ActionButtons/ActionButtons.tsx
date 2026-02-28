@@ -4,7 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Button, Container, Grid, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 
 const BUTTONS_WIDTH = '150px';
 
@@ -35,6 +35,8 @@ export const ActionButtons: FC<ActionButtonsProps> = ({
   rejectButtonText = 'Reject',
   navigation
 }) => {
+  const tokens = useGemTokens();
+
   const buttonStyle = {
     minWidth: navigation?.isNavigationEnabled ? undefined : BUTTONS_WIDTH,
     height: headerText ? undefined : '42px'
@@ -43,13 +45,13 @@ export const ActionButtons: FC<ActionButtonsProps> = ({
   return (
     <div
       style={{
-        backgroundColor: '#272727',
+        backgroundColor: tokens.nav.background,
         position: 'fixed',
         width: '100%',
         bottom: 0,
         paddingTop: '10px',
         paddingBottom: '10px',
-        boxShadow: '0 -2px 15px rgba(0, 0, 0, 0.35)'
+        boxShadow: tokens.nav.shadow
       }}
     >
       {headerText ? (
@@ -57,7 +59,7 @@ export const ActionButtons: FC<ActionButtonsProps> = ({
           style={{
             display: 'flex',
             justifyContent: 'center',
-            color: SECONDARY_GRAY,
+            color: tokens.text.secondary,
             paddingBottom: '10px'
           }}
         >

@@ -9,7 +9,7 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import { Button, Chip, LinearProgress, Paper, Tooltip, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 import {
   PaymentChannelDisplayData,
   PaymentChannelStatus,
@@ -58,6 +58,7 @@ export const PaymentChannelCard: FC<PaymentChannelCardProps> = ({
   onClaimClick,
   style
 }) => {
+  const tokens = useGemTokens();
   const statusConfig = STATUS_CONFIG[channel.status];
 
   const isSource = channel.Account === currentAddress;
@@ -108,10 +109,10 @@ export const PaymentChannelCard: FC<PaymentChannelCardProps> = ({
       {/* Progress bar showing claimed amount */}
       <div style={{ marginBottom: '10px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontSize: '0.85rem' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontSize: '0.85rem' }}>
             Claimed: {Number(channel.formattedBalance).toLocaleString()} XRP
           </Typography>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontSize: '0.85rem' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontSize: '0.85rem' }}>
             {claimedPercentage.toFixed(1)}%
           </Typography>
         </div>
@@ -122,7 +123,7 @@ export const PaymentChannelCard: FC<PaymentChannelCardProps> = ({
         />
         <Typography
           variant="body2"
-          style={{ color: SECONDARY_GRAY, fontSize: '0.75rem', marginTop: '4px' }}
+          style={{ color: tokens.text.secondary, fontSize: '0.75rem', marginTop: '4px' }}
         >
           Remaining: {Number(channel.remainingAmount).toLocaleString()} XRP
         </Typography>
@@ -130,7 +131,7 @@ export const PaymentChannelCard: FC<PaymentChannelCardProps> = ({
 
       {/* Counterparty */}
       <div style={{ marginBottom: '10px' }}>
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary }}>
           {counterpartyLabel}:{' '}
           <Tooltip title={counterpartyAddress} arrow>
             <span style={{ fontFamily: 'monospace' }}>{displayAddress}</span>
@@ -139,14 +140,14 @@ export const PaymentChannelCard: FC<PaymentChannelCardProps> = ({
       </div>
 
       {/* Settle delay */}
-      <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontSize: '0.85rem' }}>
+      <Typography variant="body2" style={{ color: tokens.text.secondary, fontSize: '0.85rem' }}>
         Settle Delay: {channel.SettleDelay} seconds
       </Typography>
 
       {/* Expiration date */}
       {channel.expirationDate && (
         <div style={{ marginTop: '5px' }}>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontSize: '0.85rem' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontSize: '0.85rem' }}>
             <ScheduleIcon
               fontSize="inherit"
               style={{ verticalAlign: 'middle', marginRight: '4px' }}
@@ -159,7 +160,7 @@ export const PaymentChannelCard: FC<PaymentChannelCardProps> = ({
       {/* Cancel after date */}
       {channel.cancelAfterDate && (
         <div style={{ marginTop: '5px' }}>
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, fontSize: '0.85rem' }}>
+          <Typography variant="body2" style={{ color: tokens.text.secondary, fontSize: '0.85rem' }}>
             <CancelIcon
               fontSize="inherit"
               style={{ verticalAlign: 'middle', marginRight: '4px' }}

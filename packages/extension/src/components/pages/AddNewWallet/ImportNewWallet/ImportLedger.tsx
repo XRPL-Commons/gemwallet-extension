@@ -1,12 +1,5 @@
 import { FC, useState, useCallback, useEffect } from 'react';
-import {
-  Typography,
-  TextField,
-  Alert,
-  Box,
-  Paper,
-  keyframes
-} from '@mui/material';
+import { Typography, TextField, Alert, Box, Paper, keyframes } from '@mui/material';
 import UsbIcon from '@mui/icons-material/Usb';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -17,6 +10,7 @@ import loadingAnimation from '../../../../assets/loading.json';
 import { LIST_WALLETS_PATH } from '../../../../constants';
 import { PageWithStepper } from '../../../templates';
 import { useWallet } from '../../../../contexts';
+import { useGemTokens } from '../../../../hooks';
 import { LedgerDeviceStatus } from '../../../organisms';
 import {
   getLedgerAccounts,
@@ -45,6 +39,7 @@ export interface ImportLedgerProps {
 
 export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, handleBack }) => {
   const navigate = useNavigate();
+  const tokens = useGemTokens();
   const { importLedgerWallet } = useWallet();
 
   const [step, setStep] = useState<'select' | 'name'>('select');
@@ -154,7 +149,7 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
               mt: 3,
               p: 2,
               borderRadius: 1,
-              backgroundColor: 'rgba(255, 255, 255, 0.05)'
+              backgroundColor: tokens.surface.hover
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
@@ -220,7 +215,7 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
             width: 80,
             height: 80,
             borderRadius: '50%',
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            backgroundColor: tokens.surface.hover,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -259,11 +254,7 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
             py: 3
           }}
         >
-          <Lottie
-            animationData={loadingAnimation}
-            loop
-            style={{ width: 100, height: 100 }}
-          />
+          <Lottie animationData={loadingAnimation} loop style={{ width: 100, height: 100 }} />
           <Typography variant="body1" sx={{ mt: 1 }}>
             Connecting to Ledger...
           </Typography>
@@ -288,11 +279,11 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
                 sx={{
                   p: 2,
                   borderRadius: 1,
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  backgroundColor: tokens.surface.hover,
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                    backgroundColor: tokens.surface.active
                   }
                 }}
               >
@@ -302,16 +293,14 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
                       width: 40,
                       height: 40,
                       borderRadius: '50%',
-                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                      backgroundColor: tokens.surface.hover,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0
                     }}
                   >
-                    <AccountBalanceWalletIcon
-                      sx={{ fontSize: 20, color: 'text.secondary' }}
-                    />
+                    <AccountBalanceWalletIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
                   </Box>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
@@ -348,7 +337,7 @@ export const ImportLedger: FC<ImportLedgerProps> = ({ activeStep, password, hand
           sx={{
             p: 3,
             borderRadius: 1,
-            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            backgroundColor: tokens.surface.hover,
             textAlign: 'center'
           }}
         >

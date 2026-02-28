@@ -3,8 +3,8 @@ import { FC, useCallback, useState, FocusEvent } from 'react';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Checkbox, FormControlLabel, Grid, Tooltip, Typography } from '@mui/material';
 
-import { ERROR_RED, SECONDARY_GRAY } from '../../../../constants';
 import { useNetwork, useWallet } from '../../../../contexts';
+import { useGemTokens } from '../../../../hooks';
 import { PageWithStepper } from '../../../templates';
 import { ECDSA } from 'xrpl';
 import { SecretNumberInput } from '../../../atoms';
@@ -32,6 +32,7 @@ export interface SecretNumbersProps {
 }
 
 export const SecretNumbers: FC<SecretNumbersProps> = ({ activeStep, steps, onBack, onNext }) => {
+  const tokens = useGemTokens();
   const { isValidNumbers } = useWallet();
   const { hasOfflineBanner } = useNetwork();
   const [isSecp256k1, setSecp256k1] = useState(false);
@@ -114,7 +115,12 @@ export const SecretNumbers: FC<SecretNumbersProps> = ({ activeStep, steps, onBac
           );
         })}
       </Grid>
-      <Typography align="center" variant="caption" display="block" style={{ color: ERROR_RED }}>
+      <Typography
+        align="center"
+        variant="caption"
+        display="block"
+        style={{ color: tokens.action.danger }}
+      >
         {numbersError}
       </Typography>
       <FormControlLabel
@@ -128,7 +134,7 @@ export const SecretNumbers: FC<SecretNumbersProps> = ({ activeStep, steps, onBac
           />
         }
         label={
-          <Typography style={{ display: 'flex', fontSize: '0.9rem' }} color={SECONDARY_GRAY}>
+          <Typography style={{ display: 'flex', fontSize: '0.9rem' }} color={tokens.text.secondary}>
             Use "secp256k1" algorithm{' '}
             <Tooltip title="Note: if you don’t know what it means, you should probably keep it unchecked">
               <InfoOutlinedIcon style={{ marginLeft: '5px' }} fontSize="small" />

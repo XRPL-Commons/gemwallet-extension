@@ -3,6 +3,7 @@ import { CSSProperties, FC } from 'react';
 import { CircularProgress } from '@mui/material';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
+import { useGemTokens } from '../../../hooks';
 import { GemWallet } from '../index';
 
 import './NFTImage.css';
@@ -24,6 +25,8 @@ export const NFTImage: FC<NFTImageProps> = ({
   fallbackScale = 2,
   pulseDuration = 0
 }) => {
+  const tokens = useGemTokens();
+
   return imageURL ? (
     <div
       style={{
@@ -34,7 +37,7 @@ export const NFTImage: FC<NFTImageProps> = ({
         ...style
       }}
     >
-      {/* @ts-ignore - React 19 compatibility issue */}
+      {/* @ts-expect-error - React 19 compatibility issue */}
       <LazyLoadImage
         alt="NFT"
         height={height}
@@ -43,7 +46,7 @@ export const NFTImage: FC<NFTImageProps> = ({
         effect="blur"
         src={imageURL}
         width={width}
-        // @ts-ignore - React 19 compatibility issue with lazy-load-image-component
+        // @ts-expect-error - React 19 compatibility issue with lazy-load-image-component
       />
     </div>
   ) : (
@@ -54,7 +57,7 @@ export const NFTImage: FC<NFTImageProps> = ({
         alignItems: 'center',
         height,
         width,
-        backgroundColor: '#1e1e1e',
+        backgroundColor: tokens.background.default,
         borderRadius: '4px',
         boxShadow: '4px 4px 0px black',
         animation: `pulse-nft ${pulseDuration}s linear`,

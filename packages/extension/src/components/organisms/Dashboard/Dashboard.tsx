@@ -11,13 +11,12 @@ import {
   ADD_MPTOKEN_PATH,
   ADD_NEW_TRUSTLINE_PATH,
   DEFAULT_RESERVE,
-  ERROR_RED,
   RESERVE_PER_OWNER,
   STORAGE_MESSAGING_KEY,
   XAHAU_RESERVE_PER_OWNER
 } from '../../../constants';
 import { useLedger, useNetwork, useServer } from '../../../contexts';
-import { useMainToken } from '../../../hooks';
+import { useGemTokens, useMainToken } from '../../../hooks';
 import {
   addPortfolioSnapshot,
   convertHexCurrencyString,
@@ -65,6 +64,7 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
   const { serverInfo } = useServer();
   const { fundWallet, getAccountInfo } = useLedger();
   const mainToken = useMainToken();
+  const gemTokens = useGemTokens();
   const navigate = useNavigate();
 
   const baseReserve = serverInfo?.info.validated_ledger?.reserve_base_xrp || DEFAULT_RESERVE;
@@ -224,7 +224,9 @@ export const Dashboard: FC<DashboardProps> = ({ address }) => {
           <Button variant="contained" onClick={reconnectToNetwork} style={{ marginBottom: '10px' }}>
             Refresh
           </Button>
-          {errorMessage && <Typography style={{ color: ERROR_RED }}>{errorMessage}</Typography>}
+          {errorMessage && (
+            <Typography style={{ color: gemTokens.action.danger }}>{errorMessage}</Typography>
+          )}
         </div>
       </InformationMessage>
     );

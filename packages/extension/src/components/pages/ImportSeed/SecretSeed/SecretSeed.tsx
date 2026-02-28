@@ -5,8 +5,8 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Checkbox, FormControlLabel, TextField, Tooltip, Typography } from '@mui/material';
 
 import { useWallet } from '../../../../contexts';
+import { useGemTokens } from '../../../../hooks';
 import { PageWithStepper } from '../../../templates';
-import { SECONDARY_GRAY } from '../../../../constants';
 
 export interface SecretSeedProps {
   activeStep: number;
@@ -16,6 +16,7 @@ export interface SecretSeedProps {
 }
 
 export const SecretSeed: FC<SecretSeedProps> = ({ activeStep, steps, onBack, onNext }) => {
+  const tokens = useGemTokens();
   const [seedError, setSeedError] = useState('');
   const [isSecp256k1, setSecp256k1] = useState(false);
   const { isValidSeed } = useWallet();
@@ -65,7 +66,7 @@ export const SecretSeed: FC<SecretSeedProps> = ({ activeStep, steps, onBack, onN
           />
         }
         label={
-          <Typography style={{ display: 'flex', fontSize: '0.9rem' }} color={SECONDARY_GRAY}>
+          <Typography style={{ display: 'flex', fontSize: '0.9rem' }} color={tokens.text.secondary}>
             Use "secp256k1" algorithm{' '}
             <Tooltip title="Note: if you don’t know what it means, you should probably keep it unchecked">
               <InfoOutlinedIcon style={{ marginLeft: '5px' }} fontSize="small" />

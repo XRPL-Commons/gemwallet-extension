@@ -4,9 +4,10 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconButton, Paper, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 
 export interface DataCardProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formattedData: any;
   dataName?: string;
   isExpanded: boolean;
@@ -25,6 +26,7 @@ export const DataCard: FC<DataCardProps> = ({
   paddingTop = 30,
   alwaysExpand = false
 }) => {
+  const tokens = useGemTokens();
   const messageBoxRef = useRef<HTMLDivElement>(null);
   const [isExpandable, setIsExpandable] = useState(false);
 
@@ -45,7 +47,7 @@ export const DataCard: FC<DataCardProps> = ({
         padding: '15px',
         marginTop: `${paddingTop}px`,
         borderRadius: '8px',
-        backgroundColor: '#000000'
+        backgroundColor: tokens.background.paper
       }}
     >
       <div
@@ -78,7 +80,7 @@ export const DataCard: FC<DataCardProps> = ({
       >
         <pre
           style={{
-            color: SECONDARY_GRAY,
+            color: tokens.text.secondary,
             whiteSpace: 'pre-wrap',
             overflowWrap: 'break-word',
             borderRadius: '10px',
@@ -100,7 +102,7 @@ export const DataCard: FC<DataCardProps> = ({
               left: '0',
               right: '0',
               height: '20px',
-              backgroundImage: 'linear-gradient(to top, rgba(40, 40, 40), rgba(0, 0, 0, 0))'
+              backgroundImage: `linear-gradient(to top, ${tokens.background.paper}, transparent)`
             }}
           />
         ) : null}

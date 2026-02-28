@@ -4,9 +4,9 @@ import { Alert, Button, CircularProgress, Snackbar, TextField, Typography } from
 import * as Sentry from '@sentry/react';
 import { useNavigate } from 'react-router-dom';
 
-import { DID_PATH, SECONDARY_GRAY, STORAGE_MESSAGING_KEY } from '../../../constants';
+import { DID_PATH, STORAGE_MESSAGING_KEY } from '../../../constants';
 import { buildDIDSet, useLedger, useNetwork, useWallet } from '../../../contexts';
-import { useFetchFromSessionStorage } from '../../../hooks';
+import { useFetchFromSessionStorage, useGemTokens } from '../../../hooks';
 import { stringToHex } from '../../../utils/fetchDIDData';
 import { InformationMessage } from '../../molecules';
 import { PageWithReturn } from '../../templates';
@@ -23,6 +23,7 @@ interface StoredDIDData {
 }
 
 export const DIDSetForm: FC = () => {
+  const tokens = useGemTokens();
   const navigate = useNavigate();
   const { getCurrentWallet } = useWallet();
   const { client } = useNetwork();
@@ -149,7 +150,7 @@ export const DIDSetForm: FC = () => {
       }}
     >
       <div>
-        <Typography variant="body2" style={{ color: SECONDARY_GRAY, marginBottom: '20px' }}>
+        <Typography variant="body2" style={{ color: tokens.text.secondary, marginBottom: '20px' }}>
           {isEditing
             ? 'Update your Decentralized Identifier (DID) fields below.'
             : 'Create a Decentralized Identifier (DID) for your account. At least one field is required.'}

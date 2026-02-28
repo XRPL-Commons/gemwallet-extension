@@ -4,7 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Paper, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 import { TokenDisplayData, getTrustLineData } from '../../../utils';
 import { IconTextButton } from '../../atoms/IconTextButton';
 import { TokenInfo } from './TokenInfo';
@@ -32,6 +32,7 @@ export const TokenDisplay: FC<TokenDisplayProps> = ({
   onTrustlineDetailsClick,
   style
 }) => {
+  const tokens = useGemTokens();
   const [tokenData, setTokenData] = useState<TokenDisplayData | undefined>(undefined);
 
   useEffect(() => {
@@ -96,16 +97,16 @@ export const TokenDisplay: FC<TokenDisplayProps> = ({
       )}
       {onExplainClick ? (
         <IconTextButton onClick={onExplainClick}>
-          <InfoOutlinedIcon style={{ color: SECONDARY_GRAY }} fontSize="small" />
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, marginLeft: '3px' }}>
+          <InfoOutlinedIcon style={{ color: tokens.text.secondary }} fontSize="small" />
+          <Typography variant="body2" style={{ color: tokens.text.secondary, marginLeft: '3px' }}>
             Explain
           </Typography>
         </IconTextButton>
       ) : null}
       {onTrustlineDetailsClick ? (
         <IconTextButton onClick={onTrustlineDetailsClick}>
-          <EditIcon style={{ color: SECONDARY_GRAY }} fontSize="small" />
-          <Typography variant="body2" style={{ color: SECONDARY_GRAY, marginLeft: '3px' }}>
+          <EditIcon style={{ color: tokens.text.secondary }} fontSize="small" />
+          <Typography variant="body2" style={{ color: tokens.text.secondary, marginLeft: '3px' }}>
             Edit
           </Typography>
         </IconTextButton>

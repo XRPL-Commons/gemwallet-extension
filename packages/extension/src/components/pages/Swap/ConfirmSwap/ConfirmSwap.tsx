@@ -9,6 +9,7 @@ import { OfferCreate, Payment } from 'xrpl';
 import { HOME_PATH, SWAP_FEE_PERCENTAGE } from '../../../../constants';
 // Note: getFeeAddress is available for batch transaction support (see commented code below)
 import { useLedger, useWallet } from '../../../../contexts';
+import { useGemTokens } from '../../../../hooks';
 // Note: useNetwork is available for batch transaction support (see commented code below)
 import { TransactionStatus } from '../../../../types';
 import { SwapData } from '../../../../types/swap.types';
@@ -25,6 +26,7 @@ export interface ConfirmSwapProps {
 
 export const ConfirmSwap: FC<ConfirmSwapProps> = ({ swapData, onBack }) => {
   const navigate = useNavigate();
+  const tokens = useGemTokens();
   const { getCurrentWallet } = useWallet();
   // Note: networkName from useNetwork() is available for batch transaction support
   const { estimateNetworkFees, sendPayment, createOffer } = useLedger();
@@ -207,8 +209,8 @@ export const ConfirmSwap: FC<ConfirmSwapProps> = ({ swapData, onBack }) => {
           sx={{
             p: 2,
             borderRadius: 2,
-            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            backgroundColor: tokens.surface.hover,
+            border: `1px solid ${tokens.surface.border}`
           }}
         >
           <Typography variant="caption" color="text.secondary">
@@ -244,8 +246,8 @@ export const ConfirmSwap: FC<ConfirmSwapProps> = ({ swapData, onBack }) => {
           sx={{
             p: 2,
             borderRadius: 2,
-            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            backgroundColor: tokens.surface.hover,
+            border: `1px solid ${tokens.surface.border}`
           }}
         >
           <Typography variant="caption" color="text.secondary">
@@ -276,7 +278,7 @@ export const ConfirmSwap: FC<ConfirmSwapProps> = ({ swapData, onBack }) => {
           sx={{
             p: 2,
             borderRadius: 2,
-            backgroundColor: 'rgba(255, 255, 255, 0.02)'
+            backgroundColor: tokens.surface.hover
           }}
         >
           {/* Route */}

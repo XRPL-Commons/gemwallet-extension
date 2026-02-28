@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 
 import { Avatar, Typography } from '@mui/material';
 
-import { SECONDARY_GRAY } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 
 export interface TransactionHeaderProps {
   title: string;
@@ -11,6 +11,7 @@ export interface TransactionHeaderProps {
 }
 
 export const TransactionHeader: FC<TransactionHeaderProps> = ({ title, favicon, url }) => {
+  const tokens = useGemTokens();
   const titleStyle = useMemo(
     () => ({
       marginLeft: favicon ? '10px' : '0px'
@@ -21,7 +22,11 @@ export const TransactionHeader: FC<TransactionHeaderProps> = ({ title, favicon, 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       {favicon ? (
-        <Avatar src={favicon} sx={{ bgcolor: '#2b2b2b', padding: '6px' }} variant="rounded" />
+        <Avatar
+          src={favicon}
+          sx={{ bgcolor: tokens.surface.primary, padding: '6px' }}
+          variant="rounded"
+        />
       ) : null}
       <div style={titleStyle}>
         <Typography
@@ -36,7 +41,7 @@ export const TransactionHeader: FC<TransactionHeaderProps> = ({ title, favicon, 
           <Typography
             component="h2"
             style={{
-              color: SECONDARY_GRAY,
+              color: tokens.text.secondary,
               fontSize: '0.9rem',
               overflow: 'hidden'
             }}

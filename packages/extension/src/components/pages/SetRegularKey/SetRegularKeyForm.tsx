@@ -4,7 +4,8 @@ import ErrorIcon from '@mui/icons-material/Error';
 import { Checkbox, FormControlLabel, Link, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import { ERROR_RED, SETTINGS_PATH } from '../../../constants';
+import { SETTINGS_PATH } from '../../../constants';
+import { useGemTokens } from '../../../hooks';
 import { ActionButtons } from '../../molecules';
 import { PageWithReturn } from '../../templates';
 
@@ -32,6 +33,7 @@ export const SetRegularKeyForm: FC<SetRegularKeyFormProps> = ({
   isApproveEnabled
 }) => {
   const navigate = useNavigate();
+  const tokens = useGemTokens();
 
   const handleBack = useCallback(() => {
     navigate(SETTINGS_PATH);
@@ -62,8 +64,8 @@ export const SetRegularKeyForm: FC<SetRegularKeyFormProps> = ({
         </Typography>
         {!hasEnoughFunds ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <ErrorIcon style={{ color: ERROR_RED }} />
-            <Typography variant="body1" style={{ marginLeft: '10px', color: ERROR_RED }}>
+            <ErrorIcon style={{ color: tokens.action.danger }} />
+            <Typography variant="body1" style={{ marginLeft: '10px', color: tokens.action.danger }}>
               Insufficient funds.
             </Typography>
           </div>

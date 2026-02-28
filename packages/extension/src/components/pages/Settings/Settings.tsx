@@ -24,6 +24,7 @@ import {
   loadFromChromeLocalStorage,
   openExternalLink
 } from '../../../utils';
+import { ThemeToggle } from '../../atoms';
 import { PageWithReturn } from '../../templates';
 import { ItemMenuGroup, MenuGroup } from './MenuGroup';
 
@@ -161,6 +162,7 @@ export const Settings: FC = () => {
         }}
       >
         <div style={{ paddingBottom: '0.75rem' }}>
+          <ThemeToggle />
           <MenuGroup sectionName={'Account settings'} items={accountParamsItems} />
           {securityItems.length > 0 ? (
             <MenuGroup sectionName={'Security'} items={securityItems} />

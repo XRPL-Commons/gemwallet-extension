@@ -3,6 +3,7 @@ import { FC } from 'react';
 import WarningIcon from '@mui/icons-material/Warning';
 import { Button, Container, Typography } from '@mui/material';
 
+import { useGemTokens } from '../../../../hooks';
 import { PageWithTitle } from '../../../templates';
 
 interface PermissionRequiredViewProps {
@@ -14,6 +15,8 @@ export const PermissionRequiredView: FC<PermissionRequiredViewProps> = ({
   handleReject,
   enableBulkTransactionPermission
 }) => {
+  const tokens = useGemTokens();
+
   return (
     <PageWithTitle
       title="Permission required"
@@ -22,7 +25,7 @@ export const PermissionRequiredView: FC<PermissionRequiredViewProps> = ({
       <div style={{ marginBottom: '40px' }}>
         <div style={{ textAlign: 'center' }}>
           <WarningIcon color="warning" fontSize="large" />
-          <Typography color="#ffac33">Warning</Typography>
+          <Typography color={tokens.action.warning}>Warning</Typography>
         </div>
         <div style={{ marginTop: '15px', marginBottom: '15px' }}>
           <Typography variant="body1" color="textPrimary" style={{ marginTop: '5px' }}>
@@ -50,7 +53,7 @@ export const PermissionRequiredView: FC<PermissionRequiredViewProps> = ({
             bottom: 0,
             left: 0,
             right: 0,
-            backgroundColor: '#1d1d1d'
+            backgroundColor: tokens.background.default
           }}
         >
           <Container style={{ display: 'flex', justifyContent: 'space-evenly', margin: '10px' }}>
